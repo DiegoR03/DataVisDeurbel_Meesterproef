@@ -1,6 +1,6 @@
 # DataVisDeurbel_Meesterproef
 
-### Vragen debriefing
+### Voorbereiding en vragen debriefing
 
 - Wat is de huistijl?
 - Welke onderdelen vinden jullie het belangrijkst en wat missen jullie het meest van de huidige website?
@@ -12,6 +12,7 @@
 - Moet de wesite live geüpdate worden?
 - Zijn er bestaande materialen? Dus bijvoorbeeld logo's of foto's
 - Moet de content hetzelfde blijven als op de oude website?
+- Zijn er test personen die we kunnen benaderen? Moeten we die zelf vinden?
 - Vragen over Data
 <img width="695" height="611" alt="Screenshot 2026-05-18 at 10 58 59" src="https://github.com/user-attachments/assets/d7b3e638-841d-4f7b-bce1-8c5d24e8bf45" />
 
