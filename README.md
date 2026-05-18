@@ -10,4 +10,5 @@
 - Moet de website toegankelijk zijn voor mensen met een beperking?
 - Moet je de website kunnen personaliseren? Dus bijvoorbeeld inloggen?
 - Moet de wesite live geüpdate worden?
-- 
+- Zijn er bestaande materialen? Dus bijvoorbeeld logo's of foto's
+- Moet de content hetzelfde blijven als op de oude website?
