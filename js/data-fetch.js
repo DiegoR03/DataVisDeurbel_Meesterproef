@@ -2,7 +2,7 @@ const csvUrl = 'assets/data/website_event-week.csv';
 
 const toegestaneKolommen = [
     "website_id", "session_id", "visit_id", "event_id",
-    "browser", "os", "device", "screen", "language", "country",
+    "browser", "os", "device", "language", "country",
     "region", "city", "url_path", "url_query", "referrer_query", "event_name", "created_at"
 ];
 
