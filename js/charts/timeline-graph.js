@@ -18,6 +18,7 @@ export function drawD3Graph(grafiekData, eventKeys) {
     const cssDarkGreen = rootStyles.getPropertyValue('--color-dark-green').trim();
     const cssGold = rootStyles.getPropertyValue('--color-gold').trim();
     const cssLightGold = rootStyles.getPropertyValue('--color-light-gold').trim();
+    const ccsPink = rootStyles.getPropertyValue('--color-pink').trim();
 
     const svg = d3.select("#chart")
         .append("svg")
@@ -43,8 +44,8 @@ export function drawD3Graph(grafiekData, eventKeys) {
         .domain([0, maxTotaal * 1.1])
         .range([height, 0]);
 
-    const basisKleur = d3.color(cssPurple);
-    const lichteVariant = basisKleur.copy({ opacity: 0.2 });
+    const basisKleur = d3.color(ccsPink);
+    const lichteVariant = basisKleur.copy({ opacity: 0.5 });
 
     const color = d3.scaleOrdinal()
         .domain(eventKeys)
