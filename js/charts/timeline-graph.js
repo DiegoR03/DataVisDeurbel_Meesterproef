@@ -32,7 +32,11 @@ export function drawD3Graph(grafiekData, eventKeys) {
         .range([0, width])
         .padding(isMobile ? 0.2 : 0.4);
 
-        
+    const xGolven = x.copy();
+
+    const step = x.step();
+    const paddingOuter = x.paddingOuter() * step;
+    x.range([-paddingOuter - (x.bandwidth() / 2), width + paddingOuter + (x.bandwidth() / 2)]);
 
     const maxTotaal = d3.max(grafiekData, d => d.total) || 10;
     const y = d3.scaleLinear()
@@ -49,6 +53,7 @@ export function drawD3Graph(grafiekData, eventKeys) {
             Math.max(2, eventKeys.length)
         ));
 
+    // CAPSULE MASKERS
     const defs = svg.append("defs");
     grafiekData.forEach((d, i) => {
         defs.append("clipPath")
@@ -63,6 +68,7 @@ export function drawD3Graph(grafiekData, eventKeys) {
             .attr("ry", x.bandwidth() / 2);
     });
 
+    // ACHTERGROND BALKEN
     svg.append("g")
         .selectAll(".bg-bar")
         .data(grafiekData)
@@ -76,9 +82,10 @@ export function drawD3Graph(grafiekData, eventKeys) {
         .attr("rx", x.bandwidth() / 2)
         .attr("ry", x.bandwidth() / 2);
 
+    // GOLVEN BINNEN DE CAPSULES (Gekoppeld aan xGolven)
     const stackedData = d3.stack().keys(eventKeys)(grafiekData);
     const area = d3.area()
-        .x(d => x(d.data.hour) + x.bandwidth() / 2)
+        .x(d => xGolven(d.data.hour) + xGolven.bandwidth() / 2)
         .y0(d => y(d[0]))
         .y1(d => y(d[1]))
         .curve(d3.curveBasis);
@@ -94,6 +101,7 @@ export function drawD3Graph(grafiekData, eventKeys) {
             .attr("d", area);
     });
 
+    // DE DYNAMISCHE BOLLETJES
     svg.append("g")
         .selectAll("circle")
         .data(grafiekData)
@@ -106,6 +114,7 @@ export function drawD3Graph(grafiekData, eventKeys) {
         .attr("stroke", "var(--color-gold)")
         .attr("stroke-width", 2);
 
+    // AS-LABELS
     svg.append("g")
         .attr("transform", `translate(0, ${height + 25})`)
         .selectAll("text")
@@ -120,6 +129,7 @@ export function drawD3Graph(grafiekData, eventKeys) {
             return d.hour;
         });
 
+    // INTERACTIE EN TOOLTIP
     svg.append("g")
         .selectAll(".interaction-rect")
         .data(grafiekData)
@@ -215,15 +225,17 @@ export function createGraph(data) {
     });
 
     data.forEach(item => {
-        if (!item.created_at || !item.event_name) return;
+        // Controleer of de benodigde data aanwezig is en of created_at een geldige Date is
+        if (!item.created_at || isNaN(item.created_at.getTime()) || !item.event_name) return;
 
-        const timeCreated = item.created_at.split(' ')[1]; 
-        if (!timeCreated) return;
-        
-        const hourNumber = parseInt(timeCreated.split(':')[0], 10);
+        // --- GEWIJZIGD: Haal het uur direct op uit het Date-object via .getHours() ---
+        const hourNumber = item.created_at.getHours();
 
         if (hourNumber >= 0 && hourNumber < 24) {
-            groupedHours[hourNumber][item.event_name] += 1;
+            // Controleer of de key bestaat (voor het geval er gekke event-namen tussen zitten)
+            if (groupedHours[hourNumber].hasOwnProperty(item.event_name)) {
+                groupedHours[hourNumber][item.event_name] += 1;
+            }
             groupedHours[hourNumber].total += 1;
         }
     });

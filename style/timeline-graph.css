@@ -14,9 +14,10 @@ body {
 }
 
 #chart {
-    width: 100%;
-    max-width: 1250px;
-    margin: 40px auto;
+  max-width: 1000px;  /* Pas dit aan naar jouw gewenste maximale breedte */
+  margin: 40px auto;  /* 40px marge aan de boven- en onderkant, 'auto' centreert de grafiek */
+  padding: 0 20px;    /* Optioneel: een beetje binnenwaartse marge voor mobiele schermen */
+  width: 100%;        /* Zorgt dat hij op kleinere schermen netjes afschaalt */
 }
 
 .axis-text {
