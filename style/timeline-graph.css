@@ -1,0 +1,39 @@
+body {
+    background-color: var(--color-light-gold);
+    font-family: sans-serif;
+}
+
+.tooltip {
+    position: absolute;
+    background: var(--color-white);
+    padding: 10px;
+    border-radius: 15px;
+    font-size: var(--font-size-small);
+    pointer-events: none;
+    display: none;
+}
+
+#chart {
+    width: 100%;
+    max-width: 1250px;
+    margin: 40px auto;
+}
+
+.axis-text {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+    fill: var(--color-dark-green);
+}
+
+.bg-bar, circle {
+    transition: transform 0.2s ease-out, stroke-width 0.2s ease-out;
+    transform-origin: center;
+}
+
+.bg-bar, circle, path {
+    pointer-events: none; 
+}
+
+.interaction-rect {
+    pointer-events: all;
+}
