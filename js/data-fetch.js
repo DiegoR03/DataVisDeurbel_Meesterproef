@@ -23,11 +23,10 @@ async function laadCSV() {
 
         geformatteerdeData = verwerkDataNaarObjecten(dataText);
 
-        document.getElementById('loading').innerText = 'Geladen!';
         maakGrafieken(geformatteerdeData);
 
     } catch (error) {
-        document.getElementById('loading').innerText = 'Fout bij laden: ' + error.message;
+        console.error('Fout bij laden van CSV:', error);
     }
 }
 
