@@ -1,0 +1,18 @@
+/************************/
+/* MARK: MOBILE STYLING */
+/************************/
+
+.page-header {
+  background: var(--color-purple);
+  width: 100%;
+  height: 417px;
+}
+
+h1 {
+    color: var(--color-dark-green);
+  font-weight: var(--font-weight-headings);
+  font-size: var(--mobile-font-size-h1);
+  padding: 4rem 15px 0 15px;
+  text-align: center;
+  margin: 0;
+}
