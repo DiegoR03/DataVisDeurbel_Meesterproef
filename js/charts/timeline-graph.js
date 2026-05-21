@@ -1,6 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+// Met behulp van https://d3js.org/getting-started
 
-export function drawD3Graph(grafiekData, eventKeys) {
+export function drawD3Graph(graphData, eventKeys) {
     d3.select("#chart").selectAll("*").remove();
 
     const containerWidth = d3.select("#chart").node()?.getBoundingClientRect().width || 1250;
@@ -14,49 +15,40 @@ export function drawD3Graph(grafiekData, eventKeys) {
     const height = baseHeight - margin.top - margin.bottom;
 
     const rootStyles = getComputedStyle(document.documentElement);
-    const cssPurple = rootStyles.getPropertyValue('--color-purple').trim();
-    const cssDarkGreen = rootStyles.getPropertyValue('--color-dark-green').trim();
-    const cssGold = rootStyles.getPropertyValue('--color-gold').trim();
-    const cssLightGold = rootStyles.getPropertyValue('--color-light-gold').trim();
-    const ccsPink = rootStyles.getPropertyValue('--color-pink').trim();
+    const cssPink = rootStyles.getPropertyValue('--color-pink').trim();
 
     const svg = d3.select("#chart")
         .append("svg")
         .attr("viewBox", `0 0 ${baseWidth} ${baseHeight}`)
         .attr("width", "100%")
-        .attr("height", "auto")
+        .style("height", "auto")
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    const visibleHours = graphData.filter(d => d.hour.includes(':'));
+
     const x = d3.scaleBand()
-        .domain(grafiekData.map(d => d.hour))
+        .domain(visibleHours.map(d => d.hour))
         .range([0, width])
         .padding(isMobile ? 0.2 : 0.4);
 
-    const xGolven = x.copy();
+    const xWaves = d3.scalePoint()
+        .domain(graphData.map(d => d.hour))
+        .range([-x.step(), width + x.step()]);
 
-    const step = x.step();
-    const paddingOuter = x.paddingOuter() * step;
-    x.range([-paddingOuter - (x.bandwidth() / 2), width + paddingOuter + (x.bandwidth() / 2)]);
-
-    const maxTotaal = d3.max(grafiekData, d => d.total) || 10;
     const y = d3.scaleLinear()
-        .domain([0, maxTotaal * 1.1])
+        .domain([0, (d3.max(visibleHours, d => d.total) || 10) * 1.1])
         .range([height, 0]);
 
-    const basisKleur = d3.color(ccsPink);
-    const lichteVariant = basisKleur.copy({ opacity: 0.5 });
+    const darkPink = d3.color(cssPink).formatRgb();
+    const lightPink = d3.color(cssPink).copy({ opacity: 0.4 }).formatRgb();
 
     const color = d3.scaleOrdinal()
-        .domain(eventKeys)
-        .range(d3.quantize(
-            d3.interpolateRgb(basisKleur.formatRgb(), lichteVariant.formatRgb()), 
-            Math.max(2, eventKeys.length)
-        ));
+        .domain(["uploadedFish", "dismissedUploading"])
+        .range([darkPink, lightPink]);
 
-    // CAPSULE MASKERS
     const defs = svg.append("defs");
-    grafiekData.forEach((d, i) => {
+    visibleHours.forEach((d, i) => {
         defs.append("clipPath")
             .attr("id", `clip-${i}`)
             .append("rect")
@@ -69,29 +61,27 @@ export function drawD3Graph(grafiekData, eventKeys) {
             .attr("ry", x.bandwidth() / 2);
     });
 
-    // ACHTERGROND BALKEN
     svg.append("g")
         .selectAll(".bg-bar")
-        .data(grafiekData)
+        .data(visibleHours)
         .join("rect")
         .attr("class", (d, i) => `bg-bar bg-bar-${i}`)
         .attr("x", d => x(d.hour))
         .attr("y", 0)
         .attr("width", x.bandwidth())
         .attr("height", height)
-        .attr("fill", "var(--color-white)") 
+        .attr("fill", "var(--color-white)")
         .attr("rx", x.bandwidth() / 2)
         .attr("ry", x.bandwidth() / 2);
 
-    // GOLVEN BINNEN DE CAPSULES (Gekoppeld aan xGolven)
-    const stackedData = d3.stack().keys(eventKeys)(grafiekData);
+    const stackedData = d3.stack().keys(eventKeys)(graphData);
     const area = d3.area()
-        .x(d => xGolven(d.data.hour) + xGolven.bandwidth() / 2)
+        .x(d => xWaves(d.data.hour))
         .y0(d => y(d[0]))
         .y1(d => y(d[1]))
         .curve(d3.curveBasis);
 
-    grafiekData.forEach((d, i) => {
+    visibleHours.forEach((d, i) => {
         svg.append("g")
             .attr("clip-path", `url(#clip-${i})`)
             .selectAll(`.path-segment-${i}`)
@@ -102,38 +92,35 @@ export function drawD3Graph(grafiekData, eventKeys) {
             .attr("d", area);
     });
 
-    // DE DYNAMISCHE BOLLETJES
     svg.append("g")
         .selectAll("circle")
-        .data(grafiekData)
+        .data(visibleHours)
         .join("circle")
         .attr("class", (d, i) => `circle-${i}`)
         .attr("cx", d => x(d.hour) + x.bandwidth() / 2)
-        .attr("cy", -20) 
+        .attr("cy", -20)
         .attr("r", 8)
         .attr("fill", "var(--color-light-gold)")
         .attr("stroke", "var(--color-gold)")
         .attr("stroke-width", 2);
 
-    // AS-LABELS
     svg.append("g")
         .attr("transform", `translate(0, ${height + 25})`)
         .selectAll("text")
-        .data(grafiekData)
+        .data(visibleHours)
         .join("text")
         .attr("x", d => x(d.hour) + x.bandwidth() / 2)
         .attr("text-anchor", "middle")
         .attr("class", "axis-text")
         .style("font-size", isMobile ? "var(--mobile-font-size-small)" : "var(--font-size-small)")
         .text((d, i) => {
-            if (isMobile && i % 2 !== 0) return ""; 
+            if (isMobile && i % 2 !== 0) return "";
             return d.hour;
         });
 
-    // INTERACTIE EN TOOLTIP
     svg.append("g")
         .selectAll(".interaction-rect")
-        .data(grafiekData)
+        .data(visibleHours)
         .join("rect")
         .attr("x", d => x(d.hour))
         .attr("y", -40)
@@ -141,48 +128,42 @@ export function drawD3Graph(grafiekData, eventKeys) {
         .attr("height", height + 40)
         .attr("fill", "transparent")
         .style("cursor", "pointer")
-        .on("mouseover", function(event, d) {
-            const i = grafiekData.indexOf(d);
-            const barCenterX = x(d.hour) + x.bandwidth() / 2;
-            const standaardBreedte = x.bandwidth();
-            const nieuweBreedte = standaardBreedte * 1.25;
-            const verschuivingX = (nieuweBreedte - standaardBreedte) / 2;
+
+        .on("mouseenter", function (event, d) {
+            const i = visibleHours.indexOf(d);
+            const standardWidth = x.bandwidth();
+            const newWidth = standardWidth * 1.25;
+            const shiftX = (newWidth - standardWidth) / 2;
 
             d3.selectAll(`.bg-bar-${i}, .clip-rect-${i}`)
-                .transition()
-                .duration(150)
-                .attr("x", x(d.hour) - verschuivingX)
-                .attr("width", nieuweBreedte);
+                .attr("x", x(d.hour) - shiftX)
+                .attr("width", newWidth);
 
             d3.select(`.circle-${i}`)
-                .transition()
-                .duration(150)
-                .style("transform-origin", `${barCenterX}px -20px`)
-                .style("transform", "scale(1.35)")
-                .attr("stroke", "var(--color-dark-green)") 
-                .attr("stroke-width", 2.5);
+                .classed("active", true);
 
-            let tooltipContent = `<div style="font-family: var(--font-body); color: var(--color-dark-green);">
-                <strong style="font-size: var(--font-size-small); font-weight: var(--font-weight-headings);">${d.hour}</strong><br>
-                <span style="font-size: 14px;">Totaal: ${d.total} events</span><br><gap style="display:block; height:5px; border-bottom: 1px solid var(--color-light-gold); margin-bottom:5px;"></gap>`;
-            
+            let tooltipContent = `
+                <h3>${d.hour}</h3>
+                <p>Total: ${d.total} events</p>
+                <div id="line"></div>
+            `;
+
             eventKeys.forEach(key => {
-                if(d[key] > 0) tooltipContent += `<small style="display:block; font-size: 12px;">${key}: <strong>${d[key]}</strong></small>`;
+                if (d[key] > 0) {
+                    tooltipContent += `<small>${key}: <strong>${d[key]}</strong></small>`;
+                }
             });
-            tooltipContent += `</div>`;
 
             d3.select("#tooltip")
                 .style("display", "block")
-                .style("border", "2px solid var(--color-purple)")
-                .style("border-radius", "var(--border-radius)")
                 .html(tooltipContent);
         })
-        .on("mousemove", function(event) {
+        .on("mousemove", function (event) {
             const tooltip = d3.select("#tooltip");
             const tooltipNode = tooltip.node();
             const tooltipWidth = tooltipNode ? tooltipNode.getBoundingClientRect().width : 180;
             const windowWidth = window.innerWidth;
-            
+
             let leftPosition = event.pageX + 15;
             if (event.clientX + tooltipWidth + 20 > windowWidth) {
                 leftPosition = event.pageX - tooltipWidth - 15;
@@ -192,21 +173,15 @@ export function drawD3Graph(grafiekData, eventKeys) {
                 .style("left", leftPosition + "px")
                 .style("top", (event.pageY - 40) + "px");
         })
-        .on("mouseleave", function(event, d) {
-            const i = grafiekData.indexOf(d);
+        .on("mouseleave", function (event, d) {
+            const i = visibleHours.indexOf(d);
 
             d3.selectAll(`.bg-bar-${i}, .clip-rect-${i}`)
-                .transition()
-                .duration(150)
                 .attr("x", x(d.hour))
                 .attr("width", x.bandwidth());
 
             d3.select(`.circle-${i}`)
-                .transition()
-                .duration(150)
-                .style("transform", "scale(1)")
-                .attr("stroke", "var(--color-gold)")
-                .attr("stroke-width", 2);
+                .classed("active", false);
 
             d3.select("#tooltip").style("display", "none");
         });
@@ -214,26 +189,29 @@ export function drawD3Graph(grafiekData, eventKeys) {
 
 export function createGraph(data) {
     const uniqueEvents = [...new Set(data.map(item => item.event_name))].filter(Boolean);
-    
+
     const groupedHours = Array.from({ length: 24 }, (_, i) => {
         const hourString = `${String(i).padStart(2, '0')}:00`;
         const startObject = { hour: hourString, total: 0 };
-        
+
         uniqueEvents.forEach(event => {
             startObject[event] = 0;
         });
         return startObject;
     });
 
+    let latestDate = null;
+
     data.forEach(item => {
-        // Controleer of de benodigde data aanwezig is en of created_at een geldige Date is
         if (!item.created_at || isNaN(item.created_at.getTime()) || !item.event_name) return;
 
-        // --- GEWIJZIGD: Haal het uur direct op uit het Date-object via .getHours() ---
+        if (!latestDate || item.created_at > latestDate) {
+            latestDate = item.created_at;
+        }
+
         const hourNumber = item.created_at.getHours();
 
         if (hourNumber >= 0 && hourNumber < 24) {
-            // Controleer of de key bestaat (voor het geval er gekke event-namen tussen zitten)
             if (groupedHours[hourNumber].hasOwnProperty(item.event_name)) {
                 groupedHours[hourNumber][item.event_name] += 1;
             }
@@ -241,5 +219,20 @@ export function createGraph(data) {
         }
     });
 
-    drawD3Graph(groupedHours, uniqueEvents);
+    if (latestDate) {
+        // toLocaleDate gebruiks op basis van feedbavk van Jad
+        const formattedDate = latestDate.toLocaleDateString('nl-NL', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        
+        d3.select("#latest-date").text(formattedDate);
+    }
+
+    const previousHour = { ...groupedHours[23], hour: "last_Hour" };
+    const nextHour = { ...groupedHours[0], hour: "next_Hour" };
+    const graphDataWithBuffers = [previousHour, ...groupedHours, nextHour];
+
+    drawD3Graph(graphDataWithBuffers, uniqueEvents);
 }
