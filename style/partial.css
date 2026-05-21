@@ -1,0 +1,117 @@
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 4;
+    background-color: transparent;
+    transition: transform 0.3s ease-in-out;
+    text-transform: uppercase;
+
+    &.header--hidden {
+        transform: translateY(-100%);
+    }
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+    
+
+    div:first-child {
+        flex: 0 0 auto;
+
+        a {
+            font-size: var(--font-size-h3);
+            font-weight: bold;
+        }
+
+        svg {
+            display: block; /* Voorkomt rare witruimtes onder de SVG */
+            height: 2dvw;
+            min-height: 24px;
+            width: auto;
+            fill: var(--color-dark-green) !important;;
+        }
+    }
+
+    div:last-child {
+        flex: 1;
+    }
+
+    ul {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 8px;
+
+        li {
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            align-items: center;
+            line-height: 1rem;
+
+            a {
+                text-decoration: none;
+                color: var(--color-dark-green);
+                font-weight: var(--font-weight-headings);
+                font-size: var(--font-size-base);
+            }
+
+            div {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            &:last-of-type{
+                padding: 10px 0;
+            }
+        }
+
+        #settings-container {
+            gap: 0;
+            border-radius: 2em;
+            border: 1px solid var(--color-dark-green);
+
+            button {
+                padding: 0.5rem;
+                border: none;
+                background: transparent;
+                color: var(--color-dark-green);
+                font-weight: var(--font-weight-body);
+                font-size: var(--font-size-base);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            button:nth-of-type(1) {
+                border-right: 1px solid var(--color-dark-green);
+            }
+
+            button:nth-of-type(2) {
+                padding: 0.5rem 1rem;
+            }
+
+            #theme-icon {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: linear-gradient(90deg,
+                        var(--color-dark-green) 50%,
+                        var(--color-white, #ffffff) 50%);
+                transition: transform 0.5s ease-in-out;
+            }
+
+            #theme-toggle.is-rotated #theme-icon {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
