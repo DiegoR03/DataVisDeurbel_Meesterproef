@@ -3,7 +3,7 @@
 /************************/
 
 .hero {
-  width: 100%;
+  width: 100vw;
   position: relative;
   overflow: hidden;
   background: var(--color-purple);
@@ -14,7 +14,13 @@
 }
 
 #intro-text {
+  font-size: var(--font-size-h1);
   text-align: center;
+  font-weight: var(--font-weight-headings);
+  color: var(--color-dark-green);
+  line-height: var(--line-height-headers);
+  padding-left: 9rem;
+  padding-right: 9rem;
 }
 
 .hero__wave {
