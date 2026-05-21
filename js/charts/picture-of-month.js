@@ -1,4 +1,4 @@
-async function init() {
+async function fetchSnapshot() {
     await laadCSV();
 
     const snapshot = geformatteerdeData
@@ -14,4 +14,4 @@ async function init() {
         .map(url => `<li><img src=${url} alt="snapshot of fish"></li>`)
         .join("");
 }
-init();
+fetchSnapshot();
