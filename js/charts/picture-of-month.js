@@ -1,4 +1,4 @@
-import { loadCsvData } from "../data/data-fetch.js"
+import { loadCsvData } from "../data/data-fetch.js";
 
 export async function fetchSnapshot() {
     const data = await loadCsvData("assets/data/website_event-week.csv");
@@ -17,7 +17,14 @@ export async function fetchSnapshot() {
     const snapshotList = document.getElementById('fish-piture-list');
 
     snapshotList.innerHTML = fishSnapshots
-        .map(item => `<li class="snapshot-li"><img class="snapshot-img" src="${item.snapshot_url}" alt="snapshot-of-${item.snapshot_name}"></li>`)
+        .map(item =>
+            `<li class="snapshot-li">
+                <figure>
+                    <img class="snapshot-img" src="${item.snapshot_url}" alt="snapshot-of-${item.fish_name}">
+                </figure>
+            </li>
+        `)
         .join("");
 }
+
 fetchSnapshot();
