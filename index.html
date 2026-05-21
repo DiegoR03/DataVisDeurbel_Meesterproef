@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="/assets/img/fih.png">
     <link rel="stylesheet" href="style/style.css" />
     <link rel="stylesheet" href="style/visdeurbellers.css" />
+    <link rel="stylesheet" href="style/timeline-graph.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -35,8 +36,11 @@
       </section>
 
       <!-- grafiek 3 -->
-      <section>
-        <!-- ... -->
+      <section class="timeline-graph-section">
+        <h2>Het beste tijdstip van het seizoen</h2>
+        <p id="last-update">Laatste update: <span id="latest-date">Nog geen data geladen</span></p>
+        <div id="chart"></div>
+        <div class="tooltip" id="tooltip"></div>
       </section>
 
       <!-- Fishpictures of the month -->
