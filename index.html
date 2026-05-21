@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/assets/img/fih.png">
+    <link rel="icon" type="image/png" href="/assets/img/fih.png" />
     <link rel="stylesheet" href="style/style.css" />
     <link rel="stylesheet" href="style/visdeurbellers.css" />
     <link rel="stylesheet" href="style/timeline-graph.css" />
@@ -19,8 +19,26 @@
     <header></header>
 
     <main>
-      <section class="page-header">
-        <h1 id="intro-text"></h1>
+      <section class="hero">
+        <div class="hero__content">
+          <h1 id="intro-text"></h1>
+        </div>
+
+        <div class="hero__wave" aria-hidden="true">
+          <div class="hero__wave-track">
+            <svg
+              class="wave"
+              viewBox="0 0 1440 250"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                class="wave__path"
+                d="M 0,400 L 0,150 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
+              ></path>
+            </svg>
+          </div>
+        </div>
       </section>
 
       <section>
@@ -46,8 +64,7 @@
       <!-- Fishpictures of the month -->
       <section class="picture-of-month-container">
         <ul id="fish-piture-list">
-          <li>
-          </li>
+          <li></li>
         </ul>
       </section>
 
