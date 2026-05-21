@@ -1,6 +1,7 @@
 import { loadCsvData } from "./data/data-fetch.js";
 import { renderIntroText } from "./charts/intro-text.js";
 import {createGraph} from "./charts/timeline-graph.js";
+import { fetchSnapshot } from "./charts/picture-of-month.js";
 
 const CSV_URL = "/assets/data/website_event-week.csv";
 
