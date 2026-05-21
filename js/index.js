@@ -1,6 +1,6 @@
 import { loadCsvData } from "./data/data-fetch.js";
 import { renderIntroText } from "./charts/intro-text.js";
-import { drawWaveChart } from "./charts/wave-chart.js";
+import { drawRuisvoorn, drawBaars, drawPaling  } from "./charts/wave-chart.js";
 
 const CSV_URL = "/assets/data/website_event-week.csv";
 
@@ -10,7 +10,9 @@ async function init() {
   renderIntroText(data);
 
   if (data && data.length > 0) {
-      drawWaveChart(data);
+      drawRuisvoorn(data);
+      drawBaars(data);
+      drawPaling(data);
   }
 }
 

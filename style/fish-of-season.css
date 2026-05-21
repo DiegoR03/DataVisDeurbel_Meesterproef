@@ -7,8 +7,8 @@
 
 /* De hoofdcontainer van de viskaart */
 .vis-kaart {
-  width: 320px;
-  height: 500px;
+  width: 330px;
+  height: 550px;
   background-color: #F5EAE0; /* De beige achtergrondkleur van de bovenkant */
   border-radius: 12px;       /* Mooie afgeronde hoeken */
   overflow: hidden;          /* Zorgt dat het D3-'water' niet buiten de afgeronde hoeken snijdt */
@@ -27,14 +27,14 @@
 }
 
 .vis-kaart .kaart-titel {
-  color: #9B78FF; /* De paarse tekstkleur */
+  color: var(--color-purple); /* De paarse tekstkleur */
   font-size: 36px;
   font-weight: bold;
   margin: 0 0 10px 0;
 }
 
 .vis-kaart .kaart-subtitel {
-  color: #234033; /* De donkergroene tekstkleur */
+  color: var(--color-dark-green); /* De donkergroene tekstkleur */
   font-size: 22px;
   font-weight: bold;
   margin: 0;
@@ -55,4 +55,29 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.fish-of-season-section {
+    padding: 160px 142px 80px 142px;
+    position: relative;
+}
+
+.kaarten-container {
+    display: flex;
+    gap: 48px;
+    width: 100%;
+}
+
+#kaart-ruisvoorn {
+    transform: rotate(-2deg);
+}
+
+#kaart-paling {
+    transform: rotate(2deg);
+}
+
+.fish-of-season-section h2 {
+    color: var(--color-dark-green);
+    text-align: center;
+    font-size: 36px;
 }
