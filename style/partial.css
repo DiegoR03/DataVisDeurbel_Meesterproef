@@ -17,7 +17,7 @@ nav {
     display: flex;
     align-items: center;
     padding: 20px 20px;
-    
+
 
     div:first-child {
         flex: 0 0 auto;
@@ -28,11 +28,13 @@ nav {
         }
 
         svg {
-            display: block; /* Voorkomt rare witruimtes onder de SVG */
-            height: 2dvw;
+            display: block;
+            padding: 0.5rem;
+            height: 3.1dvw;
             min-height: 24px;
             width: auto;
-            fill: var(--color-dark-green) !important;;
+            fill: var(--color-dark-green) !important;
+            ;
         }
     }
 
@@ -58,8 +60,7 @@ nav {
             a {
                 text-decoration: none;
                 color: var(--color-dark-green);
-                font-weight: var(--font-weight-headings);
-                font-size: var(--font-size-base);
+                font-size: clamp(.875rem, 1.1111111111vw, 1.3333333333rem);
             }
 
             div {
@@ -68,8 +69,9 @@ nav {
                 gap: 10px;
             }
 
-            &:last-of-type{
-                padding: 10px 0;
+            &:last-of-type {
+                padding: 0 0 0 10px;
+                font-size: clamp(.875rem, 1.1111111111vw, 1.3333333333rem);
             }
         }
 
@@ -79,12 +81,12 @@ nav {
             border: 1px solid var(--color-dark-green);
 
             button {
-                padding: 0.5rem;
+                padding: .5em .8125em .5em 1em;
                 border: none;
                 background: transparent;
                 color: var(--color-dark-green);
                 font-weight: var(--font-weight-body);
-                font-size: var(--font-size-base);
+                font-size: clamp(.875rem, 1.1111111111vw, 1.3333333333rem);
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -112,6 +114,88 @@ nav {
             #theme-toggle.is-rotated #theme-icon {
                 transform: rotate(180deg);
             }
+        }
+    }
+}
+
+footer {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    
+    align-items: start;
+    grid-template-rows: clamp(2rem, 3.3333333333vw, 4rem) auto auto auto;
+    gap: 1.5rem;
+    width: 100%;
+    padding: clamp(3rem, 5.5555555556vw, 6.6666666667rem) 1.5rem 1.5rem;
+    background-color: var(--color-dark-green);
+    color: var(--color-white);
+
+    #footer_left {
+        grid-template-columns: subgrid;
+        grid-template-rows: subgrid;
+        grid-column: span 4;
+        grid-row: span 3;
+        display: grid;
+
+        #footer_logo {
+            grid-row: 1;
+            height: auto;
+            color: var(--color-purple);
+            width: auto;
+            height: clamp(2rem, 3.3333333333vw, 4rem);
+        }
+
+        #footer_title {
+            grid-row: 2;
+            grid-column: span 3;
+            color: var(--color-white);
+            width: auto;
+            font-weight: 400;
+            font-size: clamp(2rem, 3.75vw, 4.5rem);
+            margin: 0;
+        }
+
+        #footer_email {
+            grid-row: 3;
+            color: var(--color-dark-green);
+            text-decoration: none;
+            width: auto;
+            height: clamp(2rem, 3.3333333333vw, 4rem);
+            margin-top: 1rem;
+
+
+            span {
+                background-color: var(--color-purple);
+                border: var(--color-dark-green) 1px solid;
+                padding: 1rem;
+                border-radius: 1.5em;
+                font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+            }
+        }
+    }
+
+    #footer_right{
+        display: flex;
+        font-size: clamp(.875rem, 1.1111111111vw, 1.3333333333rem);
+        justify-content: space-between;
+        gap: 1.5rem;
+
+
+        #content_left{
+            list-style: none;
+
+            li + li {
+                margin-top: .5em;
+            }
+
+            li a{
+                text-decoration: none;
+                color: var(--color-white)
+            }
+        }
+
+        #content_middle{
+            color: var(--color-white);
         }
     }
 }
