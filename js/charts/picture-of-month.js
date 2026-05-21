@@ -1,7 +1,10 @@
-async function fetchSnapshot() {
-    await laadCSV();
+import { loadCsvData } from "../data/data-fetch.js"
 
-    const snapshot = geformatteerdeData
+export async function fetchSnapshot() {
+    const data = await loadCsvData("assets/data/website_event-week.csv");
+
+    console.log("pics", data)
+    const snapshot = data
     .map(item =>item.snapshot_url)
     .filter(Boolean)
     .slice(0, 10)
@@ -11,7 +14,7 @@ async function fetchSnapshot() {
 
     snapshotList.innerHTML = snapshot
         .filter(url => url)
-        .map(url => `<li><img src=${url} alt="snapshot of fish"></li>`)
+        .map(url => `<li><img src="${url}" alt="snapshot of fish"></li>`)
         .join("");
 }
 fetchSnapshot();
