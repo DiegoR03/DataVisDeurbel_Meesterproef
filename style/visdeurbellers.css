@@ -2,17 +2,85 @@
 /* MARK: MOBILE STYLING */
 /************************/
 
-.page-header {
-  background: var(--color-purple);
+.hero {
   width: 100%;
-  height: 417px;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
 }
 
-h1 {
-    color: var(--color-dark-green);
-  font-weight: var(--font-weight-headings);
-  font-size: var(--mobile-font-size-h1);
-  padding: 4rem 15px 0 15px;
+#intro-text {
   text-align: center;
-  margin: 0;
+}
+
+.hero__wave {
+  position: absolute;
+
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+
+  line-height: 0;
+}
+
+.wave__path {
+  fill: var(--color-white);
+
+  stroke: none;
+  stroke-width: 0;
+
+  animation: wavePathAnimation 15s ease-in-out infinite;
+}
+
+@media (max-width: 375px) {
+  .hero {
+    height: 417px;
+  }
+
+  .hero__content {
+    width: 345px;
+  }
+}
+
+@keyframes wavePathAnimation {
+  0% {
+    d: path(
+      "M 0,800 L 0,200 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
+    );
+  }
+
+  25% {
+    d: path(
+      "M 0,400 L 0,150 C 263,165.5 526,181 766,181 C 1006,181 1223,165.5 1440,200 L 1440,500 L 0,800 Z"
+    );
+  }
+
+  50% {
+    d: path(
+      "M 0,800 L 0,200 C 214.5,185 429,220 669,220 C 909,220 1174.5,185 1440,150 L 1440,400 L 0,400 Z"
+    );
+  }
+
+  75% {
+    d: path(
+      "M 0,400 L 0,150 C 273.5,158.5 547,167 787,167 C 1027,167 1233.5,158.5 1440,200 L 1440,500 L 0,800 Z"
+    );
+  }
+
+  100% {
+    d: path(
+      "M 0,800 L 0,200 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave__path {
+    animation: none;
+  }
 }
