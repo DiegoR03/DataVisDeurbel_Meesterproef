@@ -21,6 +21,7 @@ export function drawD3Graph(graphData, eventKeys) {
         .append("svg")
         .attr("viewBox", `0 0 ${baseWidth} ${baseHeight}`)
         .attr("width", "100%")
+        // inplaats van .attr heb ik .style gebruikt omdat je met .attr geen auto mag gebruiken als value
         .style("height", "auto")
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
