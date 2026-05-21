@@ -6,7 +6,7 @@
         padding: 0;
         display: grid;
         grid-template-columns: repeat(auto-fit,  minmax(400px , 1fr));
-        gap: 1rem;
+        gap: 1.5rem;
 
         li {
             list-style-type: none;
@@ -22,6 +22,10 @@
                 object-fit: cover;
                 display: block;
                 border-radius: 8px;
+
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
     }
@@ -31,3 +35,18 @@
 .active-snapshot {
     width: 150%;
 } */
+
+.fish-tip {
+    position: absolute;
+    display: none;
+    pointer-events: none;
+    background-color: var(--color-white);
+    padding: 1rem 2rem 1rem 2rem;
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+.fish-picture-popup {
+    display: none;
+    z-index: 999;
+}
