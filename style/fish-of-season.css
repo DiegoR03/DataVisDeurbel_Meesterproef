@@ -9,7 +9,7 @@
 .vis-kaart {
   width: 330px;
   height: 550px;
-  background-color: #F5EAE0; /* De beige achtergrondkleur van de bovenkant */
+  background-color: var(--color-light-gold); /* De beige achtergrondkleur van de bovenkant */
   border-radius: 12px;       /* Mooie afgeronde hoeken */
   overflow: hidden;          /* Zorgt dat het D3-'water' niet buiten de afgeronde hoeken snijdt */
   position: relative;        /* Noodzakelijk om tekst en SVG over elkaar heen te stapelen */
@@ -60,6 +60,7 @@
 .fish-of-season-section {
     padding: 160px 142px 80px 142px;
     position: relative;
+    background: var(--color-off-white);
 }
 
 .kaarten-container {
