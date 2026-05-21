@@ -1,0 +1,26 @@
+.picture-of-month-container {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    ul {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit,  minmax(400px , 1fr));
+        gap: 1rem;
+
+        li {
+            list-style-type: none;
+
+            img {
+                max-width: 100%;
+                width: 100%;
+                border-radius: 8px;
+            }
+        }
+    }
+
+}
+/* 
+.active-snapshot {
+    width: 150%;
+} */
