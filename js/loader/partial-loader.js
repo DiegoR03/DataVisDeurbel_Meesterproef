@@ -6,6 +6,7 @@ export function fetchPartial(elementId, file) {
 
             if (elementId === 'header-placeholder') {
                 initSmartHeader();
+                initNavigation();
             }
         })
         .catch(error => console.error('Fout bij laden partial:', error));
@@ -28,5 +29,46 @@ function initSmartHeader() {
         }
         
         lastScrollY = currentScrollY;
+    });
+}
+
+function initNavigation() {
+    const menuToggle = document.getElementById('menu-toggle');
+    const navList = document.getElementById('nav-list');
+
+    if (!menuToggle || !navList) {
+        console.warn('Kan menu-toggle of nav-list niet vinden in de geladen header HTML.');
+        return;
+    }
+
+    menuToggle.addEventListener('click', () => {
+        const isCurrentlyOpen = navList.classList.contains('is-open');
+
+        if (isCurrentlyOpen) {
+            navList.classList.remove('is-open');
+            navList.classList.add('is-closing');
+            menuToggle.setAttribute('aria-expanded', 'false');
+
+            navList.addEventListener('animationend', function handler() {
+                navList.classList.remove('is-closing');
+                navList.removeEventListener('animationend', handler);
+            }, { once: true });
+
+        } else {
+            navList.classList.remove('is-closing');
+            navList.classList.add('is-open');
+            menuToggle.setAttribute('aria-expanded', 'true');
+        }
+        
+        const icon = menuToggle.querySelector('i');
+        if (icon) {
+            if (!isCurrentlyOpen) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
     });
 }
