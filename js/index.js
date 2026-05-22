@@ -3,10 +3,14 @@ import { renderIntroText } from "./charts/intro-text.js";
 import { drawRuisvoorn, drawBaars, drawPaling  } from "./charts/wave-chart.js";
 import {createGraph} from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
+import { fetchPartial } from "./loader/partial-loader.js";
 
 const CSV_URL = "/assets/data/website_event-week.csv";
 
 async function init() {
+  fetchPartial('header-placeholder', '/assets/partials/header.html');
+  fetchPartial('footer-placeholder', '/assets/partials/footer.html');
+  
   const data = await loadCsvData(CSV_URL);
 
   renderIntroText(data);
