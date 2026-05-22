@@ -21,24 +21,20 @@
 
     <main>
       <section class="hero">
-        <div class="hero__content">
-          <h1 id="intro-text"></h1>
-        </div>
+        <h1 id="intro-text"></h1>
 
-        <div class="hero__wave" aria-hidden="true">
-          <div class="hero__wave-track">
-            <svg
-              class="wave"
-              viewBox="0 0 1440 250"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                class="wave__path"
-                d="M 0,400 L 0,150 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
-              ></path>
-            </svg>
-          </div>
+        <div class="hero-wave" aria-hidden="true">
+          <svg
+            class="wave"
+            viewBox="0 0 1440 215"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              class="wave-path"
+              d="M 0,400 L 0,150 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
+            ></path>
+          </svg>
         </div>
       </section>
 
@@ -57,7 +53,9 @@
       <!-- grafiek 3 -->
       <section class="timeline-graph-section">
         <h2>Het beste tijdstip van het seizoen</h2>
-        <p id="last-update">Laatste update: <span id="latest-date">Nog geen data geladen</span></p>
+        <p id="last-update">
+          Laatste update: <span id="latest-date">Nog geen data geladen</span>
+        </p>
         <div id="chart"></div>
         <div class="tooltip" id="tooltip"></div>
       </section>
