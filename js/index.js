@@ -4,6 +4,7 @@ import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
 import { createGraph } from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
 import { fetchPartial } from "./loader/partial-loader.js";
+import { renderWorldMap } from "./charts/world-map.js";
 
 const CSV_URL = "/assets/data/website_event-week.csv";
 
