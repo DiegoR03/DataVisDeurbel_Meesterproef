@@ -1,6 +1,6 @@
 .picture-of-month-container {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     ul {
         margin: 0;
         padding: 0;
@@ -15,13 +15,15 @@
                 margin: 0;
                 padding: 0;
                 border-radius: 8px;
+                position: relative;
             }
 
             img {
                 width: 100%;
+                height: 100%;
                 object-fit: cover;
                 display: block;
-                border-radius: 8px;
+                border-radius: 8px;;
 
                 &:hover {
                     cursor: pointer;
@@ -29,12 +31,7 @@
             }
         }
     }
-
 }
-/* 
-.active-snapshot {
-    width: 150%;
-} */
 
 .fish-tip {
     position: absolute;
@@ -49,7 +46,7 @@
 .fish-picture-popup {
     display: none;
     position: fixed;
-    top: 10%;
+    top: 5%;
     z-index: 999;
     flex-direction: column;
     justify-content: center;

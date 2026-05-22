@@ -25,7 +25,6 @@ export async function fetchSnapshot() {
                             alt="snapshot-of-${item.fish_name}"
                             data-fish="${item.fish_name}"
                             data-date="${item.created_at}">
-
                 </figure>
             </li>
         `)
