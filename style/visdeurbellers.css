@@ -1,86 +1,79 @@
-/************************/
-/* MARK: MOBILE STYLING */
-/************************/
+:root {
+  --padding-top: clamp(3rem, 5.5555555556vw, 6.6666666667rem);
+  --padding-bottom: calc(var(--padding-top) * 1.5);
+  --padding-side: 1.5rem;
+}
 
 .hero {
-  width: 100%;
+  width: 100vw;
   position: relative;
   overflow: hidden;
   background: var(--color-purple);
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 400px;
+  height: 416px;
+  padding: clamp(8rem, 12.5vw, 15rem) var(--padding-side) var(--padding-bottom);
 }
 
 #intro-text {
+  font-size: clamp(2rem, 3.75vw, 4.5rem);
   text-align: center;
+  font-weight: var(--font-weight-headings);
+  color: var(--color-dark-green);
+  line-height: var(--line-height-headers);
+  padding-left: 9rem;
+  padding-right: 9rem;
 }
 
-.hero__wave {
+.hero-wave {
   position: absolute;
-
   left: 0;
   bottom: 0;
-
   width: 100%;
-
   line-height: 0;
 }
 
-.wave__path {
+.wave-path {
   fill: var(--color-white);
 
   stroke: none;
   stroke-width: 0;
 
-  animation: wavePathAnimation 15s ease-in-out infinite;
+  animation: wavePathAnimation 8s ease-in-out infinite;
 }
 
+/************************/
+/* MARK: MOBILE STYLING */
+/************************/
 @media (max-width: 375px) {
   .hero {
-    height: 417px;
-  }
-
-  .hero__content {
-    width: 345px;
+    height: 337px;
   }
 }
 
 @keyframes wavePathAnimation {
   0% {
     d: path(
-      "M 0,800 L 0,200 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
-    );
-  }
-
-  25% {
-    d: path(
-      "M 0,400 L 0,150 C 263,165.5 526,181 766,181 C 1006,181 1223,165.5 1440,200 L 1440,500 L 0,800 Z"
+      "M 0,400 L 0,185 C 360,140 720,230 1080,185 C 1260,160 1350,170 1440,185 L 1440,400 L 0,400 Z"
     );
   }
 
   50% {
     d: path(
-      "M 0,800 L 0,200 C 214.5,185 429,220 669,220 C 909,220 1174.5,185 1440,150 L 1440,400 L 0,400 Z"
-    );
-  }
-
-  75% {
-    d: path(
-      "M 0,400 L 0,150 C 273.5,158.5 547,167 787,167 C 1027,167 1233.5,158.5 1440,200 L 1440,500 L 0,800 Z"
+      "M 0,400 L 0,205 C 360,250 720,160 1080,205 C 1260,230 1350,220 1440,205 L 1440,400 L 0,400 Z"
     );
   }
 
   100% {
     d: path(
-      "M 0,800 L 0,200 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
+      "M 0,400 L 0,185 C 360,140 720,230 1080,185 C 1260,160 1350,170 1440,185 L 1440,400 L 0,400 Z"
     );
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wave__path {
+  .wave-path {
     animation: none;
   }
 }
