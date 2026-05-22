@@ -16,6 +16,7 @@
   font-family: Arial, Helvetica, sans-serif;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtiele schaduw */
   margin: 20px;              /* Ruimte rondom de kaart */
+  transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* De tekstgroep (titel + subtitel) die bovenop de golf zweeft */
@@ -70,11 +71,27 @@
 }
 
 #kaart-ruisvoorn {
-    transform: rotate(-2deg);
+    transform: translateX(80px) rotate(0deg);
+}
+
+#kaart-baars {
+    transform: translateY(40px); /* Optioneel: de middelste begint iets lager */
 }
 
 #kaart-paling {
-    transform: rotate(2deg);
+    transform: translateX(-80px) rotate(0deg);
+}
+
+.kaarten-container.in-frame #kaart-ruisvoorn {
+    transform: translateX(0) rotate(-2deg);
+}
+
+.kaarten-container.in-frame #kaart-baars {
+    transform: translateY(0);
+}
+
+.kaarten-container.in-frame #kaart-paling {
+    transform: translateX(0) rotate(2deg);
 }
 
 .fish-of-season-section h2 {
