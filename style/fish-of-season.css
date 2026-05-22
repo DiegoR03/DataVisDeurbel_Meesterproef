@@ -97,3 +97,75 @@
     text-align: center;
     font-size: 36px;
 }
+
+/* =========================================================
+   Responsive Design (Tablets & Mobile) - Horizontal Scroll
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .fish-of-season-section {
+        padding: 80px 20px 60px 20px; 
+    }
+
+    .card-container {
+        display: flex;
+        flex-direction: row;     
+        overflow-x: auto;        
+        gap: 24px;                
+        padding-bottom: 24px;     
+        
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: thin; 
+        scrollbar-color: var(--color-purple) transparent;
+    }
+
+    
+    .card-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .card-container::-webkit-scrollbar-track {
+        background: transparent; 
+        margin: 0 20px; 
+    }
+
+    .card-container::-webkit-scrollbar-thumb {
+        background: var(--color-purple); 
+        border-radius: 10px; 
+    }
+
+   
+    .fish-card {
+        flex-shrink: 0;
+        scroll-snap-align: center; 
+    }
+    
+    #card-ruisvoorn, #card-baars, #card-paling {
+        transform: translateY(60px) rotate(0deg); 
+    }
+
+    #card-ruisvoorn {
+        transform: translateX(40px) rotate(0);
+    }
+
+    #card-baars {
+        transform: translateY(25px) rotate(0);
+    }
+
+    #card-paling {
+        transform: translateX(-40px) rotate(0);
+    }
+
+    .card-container.in-frame #card-ruisvoorn {
+        transform: translateX(0) rotate(-2deg);
+    }
+
+    .card-container.in-frame #card-baars {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    .card-container.in-frame #card-paling {
+        transform: translateX(0) rotate(2deg);
+    }
+}
