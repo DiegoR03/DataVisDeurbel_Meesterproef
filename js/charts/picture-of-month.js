@@ -10,7 +10,12 @@ export async function fetchSnapshot() {
     console.log("SNAPSHOTS:", snapshot);
 
     const fishSnapshots = data
-    .filter(item => item.snapshot_url && item.fish_name && item.fish_name !== "Unknown" && item.fish_name !== "Geen vis-event")
+    .filter(item => item.snapshot_url &&
+                    item.fish_name &&
+                    item.fish_name !== "Unknown" &&
+                    item.fish_name !== "unknown" &&
+                    item.fish_name !== "onbekend" &&
+                    item.fish_name !== "Geen vis-event")
     .slice(0, 40);
     console.log(fishSnapshots)
 
