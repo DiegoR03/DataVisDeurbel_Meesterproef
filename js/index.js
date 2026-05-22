@@ -43,7 +43,7 @@ function setupScrollAnimatie() {
     });
 
     // 2. Plak de sensor op de kaarten-container
-    const container = document.querySelector('.kaarten-container');
+    const container = document.querySelector('.card-container');
     if (container) {
         observer.observe(container);
     }

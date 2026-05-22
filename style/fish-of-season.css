@@ -1,12 +1,12 @@
 /* style/viskaarten.css */
 
 /* Zorg dat padding en margins de grootte van de kaart niet in de war schoppen */
-.vis-kaart *, .vis-kaart *::before, .vis-kaart *::after {
+.fish-card *, .fish-card *::before, .fish-card *::after {
   box-sizing: border-box;
 }
 
 /* De hoofdcontainer van de viskaart */
-.vis-kaart {
+.fish-card {
   width: 330px;
   height: 550px;
   background-color: var(--color-light-gold); /* De beige achtergrondkleur van de bovenkant */
@@ -20,21 +20,21 @@
 }
 
 /* De tekstgroep (titel + subtitel) die bovenop de golf zweeft */
-.vis-kaart .kaart-content {
+.fish-card .card-content {
   position: absolute;
   top: 25px;
   left: 25px;
   z-index: 10; /* Zorgt dat de tekst ALTIJD bovenop de paarse D3-golf ligt */
 }
 
-.vis-kaart .kaart-titel {
+.fish-card .card-title {
   color: var(--color-purple); /* De paarse tekstkleur */
   font-size: 36px;
   font-weight: bold;
   margin: 0 0 10px 0;
 }
 
-.vis-kaart .kaart-subtitel {
+.fish-card .card-subtitle {
   color: var(--color-dark-green); /* De donkergroene tekstkleur */
   font-size: 22px;
   font-weight: bold;
@@ -42,7 +42,7 @@
 }
 
 /* De container waar D3 de SVG in tekent */
-.vis-kaart .d3-container {
+.fish-card .d3-container {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -52,7 +52,7 @@
 }
 
 /* Zorg dat de SVG die D3 maakt de hele container netjes opvult */
-.vis-kaart .d3-container svg {
+.fish-card .d3-container svg {
   display: block;
   width: 100%;
   height: 100%;
@@ -64,33 +64,33 @@
     background: var(--color-off-white);
 }
 
-.kaarten-container {
+.card-container {
     display: flex;
     gap: 48px;
     width: 100%;
 }
 
-#kaart-ruisvoorn {
+#card-ruisvoorn {
     transform: translateX(80px) rotate(0deg);
 }
 
-#kaart-baars {
+#card-baars {
     transform: translateY(40px); /* Optioneel: de middelste begint iets lager */
 }
 
-#kaart-paling {
+#card-paling {
     transform: translateX(-80px) rotate(0deg);
 }
 
-.kaarten-container.in-frame #kaart-ruisvoorn {
+.card-container.in-frame #card-ruisvoorn {
     transform: translateX(0) rotate(-2deg);
 }
 
-.kaarten-container.in-frame #kaart-baars {
+.card-container.in-frame #card-baars {
     transform: translateY(0);
 }
 
-.kaarten-container.in-frame #kaart-paling {
+.card-container.in-frame #card-paling {
     transform: translateX(0) rotate(2deg);
 }
 
