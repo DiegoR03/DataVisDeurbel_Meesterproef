@@ -1,0 +1,25 @@
+.world-map-section {
+  background: var(--color-off-white);
+}
+
+.world-map {
+  width: 70%;
+  height: auto;
+  display: block;
+  margin: auto;
+  border-radius: 1.5rem;
+}
+
+.world-map-country {
+  stroke: var(--color-purple);
+  stroke-width: 1;
+
+  transition:
+    fill 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.world-map-country:hover {
+  opacity: 0.5;
+
+}

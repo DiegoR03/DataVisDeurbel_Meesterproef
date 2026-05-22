@@ -1,7 +1,8 @@
 import { loadCsvData } from "./data/data-fetch.js";
 import { renderIntroText } from "./charts/intro-text.js";
-import {createGraph} from "./charts/timeline-graph.js";
+import { createGraph } from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
+import { renderWorldMap } from "./charts/world-map.js";
 
 const CSV_URL = "/assets/data/website_event-week.csv";
 
@@ -10,6 +11,7 @@ async function init() {
 
   renderIntroText(data);
   createGraph(data);
+  renderWorldMap(data);
 }
 
 init();
