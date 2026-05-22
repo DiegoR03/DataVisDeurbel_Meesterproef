@@ -37,3 +37,43 @@ Het eindproduct is een interactieve web pagina (one-pager) die de verzamelde dat
 ## Design Rationale
 Om onze design rationale te weergeven kan je onze wiki bezoeken, hier hebben wij uitgebreid onze Design rationale:
 <a href="https://github.com/DiegoR03/DataVisDeurbel_Meesterproef/wiki">Wiki</a>
+
+
+## week 1 test met cyd
+Bereidt je test goed voor met vragen, debriefing laten zien en vertellen wat iedereen gaat doen. En maak een presentatie met je planning
+
+Nog goed kijken naar wat er eigenlijk in de bebriefing staat. Voorbereiding en vragen debriefing mag in een apart document. "Nieuwe functies" mag anders verwoord worden
+
+### website
+Mats, header
+emoji werkt niet op windows
+
+Rafi, vis van seizoen
+Komt direct uit design, andere manier veel interessanter
+Leuke scroll animation!
+text alignment klopt niet
+
+Diego, beste tijdstip
+Het lijkt nu op allebei de charts
+gebruik anchor positioning voor de popup
+van elke bar chart een button maken of iets accassibility proof gebruiker
+wat betekent de Y as
+
+Vis foto van de maan, Jacco
+niet helemaal de opdracht, foto's zijn hadngekozen
+let bij de label op toegankelijkheid, gebruik ook een vervangende naam
+voor elke vis is een spotify wrapped wel leuk!
+
+
+
+
+
+Header gewoon weg laten en logo laten staan
+header past op dit moment ook niet
+
+Als je een framework gebruikt kan je simpel een component maken en die hergebruiken
+Wijk vooral af van het design
+
+code aanleveren op github - met uitleg van elke sectie, of toegankelijkheid hebt getest
+
+blauwe kleur mag gebruikt worden, maar hou het subtiel
