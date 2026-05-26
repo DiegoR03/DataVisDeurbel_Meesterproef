@@ -23,10 +23,11 @@ export function renderWorldMap(data) {
   const maxCount = d3.max([...countryCounts.values()]) || 1;
 
   const colorScale = d3
-    .scaleLinear()
-    .domain([0, maxCount])
-    .range(["#ffffff", "#00ff88"]);
+    .scaleSqrt()
+    .domain([1, maxCount])
+    .range(["#dfffee", "#01463C"]);
 
+  const tooltip = d3.select("#world-map-tooltip");
   svg
     .selectAll(".world-map-country")
     .data(countryFeatures)
@@ -36,24 +37,52 @@ export function renderWorldMap(data) {
     .style("fill", (country) => {
       const count = countryCounts.get(String(country.id)) || 0;
 
-      return count > 0 ? colorScale(count) : "var(--color-white)";
+      if (count === 0) {
+        return "var(--color-white)";
+      }
+
+      return colorScale(count);
+    })
+    .on("mouseenter", (event, country) => {
+      const count = countryCounts.get(String(country.id)) || 0;
+
+      tooltip.style("display", "block").html(`
+        <strong>${country.properties.name}</strong><br>
+        ${count.toLocaleString("nl-NL")} bezoekers
+      `);
+    })
+    .on("mousemove", (event) => {
+      tooltip
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
+    })
+    .on("mouseleave", () => {
+      tooltip.style("display", "none");
     });
-}
 
-function getCountryCounts(data) {
-  const countryCounts = new Map();
+  function getCountryCounts(data) {
+    const countrySessions = new Map();
 
-  data.forEach((item) => {
-    if (!item.country) return;
+    data.forEach((item) => {
+      if (!item.country || !item.session_id) return;
 
-    const numericCountryCode = countries.alpha2ToNumeric(item.country);
+      const numericCountryCode = countries.alpha2ToNumeric(item.country);
 
-    if (!numericCountryCode) return;
+      if (!numericCountryCode) return;
 
-    const currentCount = countryCounts.get(numericCountryCode) || 0;
+      if (!countrySessions.has(numericCountryCode)) {
+        countrySessions.set(numericCountryCode, new Set());
+      }
 
-    countryCounts.set(numericCountryCode, currentCount + 1);
-  });
+      countrySessions.get(numericCountryCode).add(item.session_id);
+    });
 
-  return countryCounts;
+    const countryCounts = new Map();
+
+    countrySessions.forEach((sessions, countryCode) => {
+      countryCounts.set(countryCode, sessions.size);
+    });
+
+    return countryCounts;
+  }
 }

@@ -16,24 +16,27 @@ function getUniqueSessionCount(data) {
 
 // Finds which country appears the most
 function getMostPopularCountry(data) {
-  const countryCounts = {};
+  const countrySessions = {};
 
   data.forEach((item) => {
     const country = item.country;
-    // Skip rows without a country
-    if (!country) return;
-    // Increase count for this country
-    countryCounts[country] = (countryCounts[country] || 0) + 1;
+    const sessionId = item.session_id;
+
+    if (!country || !sessionId) return;
+
+    if (!countrySessions[country]) {
+      countrySessions[country] = new Set();
+    }
+
+    countrySessions[country].add(sessionId);
   });
 
   let mostPopularCountry = "";
   let highestCount = 0;
 
-  // Loop through all countries
-  // and find the highest value
-  Object.entries(countryCounts).forEach(([country, count]) => {
-    if (count > highestCount) {
-      highestCount = count;
+  Object.entries(countrySessions).forEach(([country, sessions]) => {
+    if (sessions.size > highestCount) {
+      highestCount = sessions.size;
       mostPopularCountry = country;
     }
   });

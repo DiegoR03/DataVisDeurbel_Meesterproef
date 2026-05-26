@@ -3,7 +3,7 @@
 }
 
 .world-map {
-  width: 70%;
+  width: 80%;
   height: auto;
   display: block;
   margin: auto;
@@ -11,8 +11,9 @@
 }
 
 .world-map-country {
-  stroke: var(--color-purple);
+  stroke: var(--color-dark-green);
   stroke-width: 1;
+  cursor: pointer;
 
   transition:
     fill 0.2s ease,
@@ -21,5 +22,54 @@
 
 .world-map-country:hover {
   opacity: 0.5;
+}
 
+.world-map-tooltip {
+  position: fixed;
+  z-index: 10;
+
+  display: none;
+
+  padding: 0.75rem 1rem;
+
+  background: var(--color-purple);
+  color: var(--color-dark-green);
+
+  border-radius: 0.75rem;
+
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.world-map-section {
+  padding: 2rem;
+}
+
+.world-map-legend {
+  display: flex;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-top: 1.5rem;
+
+  color: var(--color-dark-green);
+}
+
+.world-map-legend-gradient {
+  width: 200px;
+
+  height: 16px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    to right,
+
+    #ffffff,
+    var(--color-dark-green)
+  );
+
+  border: 1px solid #000000;
 }
