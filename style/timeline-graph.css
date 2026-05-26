@@ -8,7 +8,7 @@
         text-align: center;
     }
 
-    #last-update{
+    #last-update {
         text-align: center;
         font-style: italic;
         color: var(--color-dark-green);
@@ -62,46 +62,44 @@
         min-width: 300px;
         margin: 40px auto;
         position: relative;
+        width: 100%;        
+        height: auto;
     }
 
-    .axis-text {
+    .visible-hours {
+        fill: transparent;
+        stroke: transparent;
+        stroke-width: 3px;
+
+        transition: stroke 0.2s ease, stroke-width 0.2s ease;
+        border-radius: var(--border-radius);
+
+        &:hover {
+            stroke: #ffffff;
+            stroke-width: 2px;
+        }
+    }
+
+    .fish-layer {
+        pointer-events: none;
+    }
+
+    .axis-text, text {
         font-family: var(--font-body);
         font-weight: var(--font-weight-body);
         fill: var(--color-dark-green);
+        font-size: var(--font-size-small);
     }
 
-    .bg-bar,
-    circle {
-        transition: transform 0.2s ease-out, stroke-width 0.2s ease-out;
-        transform-box: fill-box;
-        transform-origin: center;
-    }
-
-    .bg-bar,
-    circle,
-    path {
-        pointer-events: none;
-    }
-
-    .bg-bar,
-    [class^="clip-rect-"],
-    [class^="path-segment-"],
-    [class^="circle-"] {
-        pointer-events: none;
-        transition: all 150ms ease-in-out;
-    }
-
-    [class^="circle-"].active {
-        transform: scale(1.35);
-        stroke: var(--color-pink) !important;
-        stroke-width: 2.5px !important;
+    .individual-fish{
+        z-index: -1;
     }
 
     .interaction-rect {
         pointer-events: all;
     }
 
-    @media screen and (max-width: 450px){
+    @media screen and (max-width: 450px) {
         overflow: hidden;
 
         #chart {
@@ -109,6 +107,7 @@
             overflow-x: auto;
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
+
             svg {
                 min-width: 800px;
                 width: 800px;
