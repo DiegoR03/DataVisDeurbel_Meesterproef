@@ -1,5 +1,5 @@
 .timeline-graph-section {
-    background-color: var(--color-light-gold);
+    background-color: var(--color-white);
     padding-top: 2rem;
     padding-bottom: 2rem;
 
@@ -71,13 +71,22 @@
         stroke: transparent;
         stroke-width: 3px;
 
-        transition: stroke 0.2s ease, stroke-width 0.2s ease;
+        transition: stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out, opacity 0.1s ease-in-out;
         border-radius: var(--border-radius);
 
-        &:hover {
-            stroke: #ffffff;
+        stroke: var(--color-white);
+        opacity: 0.05;
+        stroke-width: 1px;
+
+        &:hover, &:focus {
+            stroke: var(--color-gold);
             stroke-width: 2px;
+            opacity: 1;
         }
+    }
+
+    .legend {
+        background-color: var(--color-dark-green);
     }
 
     .fish-layer {
@@ -92,6 +101,11 @@
     }
 
     .individual-fish{
+        z-index: -1;
+    }
+
+    .individual-bubble{
+        pointer-events: none;
         z-index: -1;
     }
 
