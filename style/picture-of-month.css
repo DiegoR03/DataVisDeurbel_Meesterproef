@@ -1,13 +1,22 @@
 .picture-of-month-container {
-    background-color: var(--color-off-white);
+    background-color: var(--color-light-gold);
     
     h2 {
         font-size: var(--font-size-h2);
         text-align: center;
         color: var(--color-dark-green);
     }
+
+    h3 {
+        text-align: center;
+    }
+
+    p {
+        text-align: center;
+    }
 }
 
+/* img container */
 #fish-picture-list {
     margin: 0;
     padding: 0;
@@ -15,28 +24,18 @@
     grid-template-columns: repeat(auto-fit,  minmax(400px , 1fr));
     place-items: center;
     gap: 1.5rem;
-    height: 100vh;
-
-    li {
-        list-style-type: none;
-        position: absolute;
-        width: 80vw;
-    }
 }
 
+/* random img */
 #fish-image {
-    width: 100%;
-    height: 100%;
+    width: 60%;
     object-fit: cover;
     display: block;
     border-radius: 8px;
-
-    &:hover {
-        cursor: pointer;
-    }
 }
 
-.fish-icons-list {
+/* icons of all fishes */
+.fish-icons-list, .fish-icons-list-popover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     padding: 0;
@@ -49,22 +48,17 @@
         justify-content: center;
         align-items: center;
 
+        &:hover {
+            cursor: pointer;
+        }
+
         img {
             width: 65%;
         }
     }
 }
 
-.fish-tip {
-    position: absolute;
-    display: none;
-    pointer-events: none;
-    background-color: var(--color-white);
-    padding: 1rem 2rem 1rem 2rem;
-    z-index: 1000;
-    border-radius: 8px;
-}
-
+/* the popup */
 .fish-picture-popup {
     display: none;
     position: fixed;
@@ -98,6 +92,7 @@
     }
 }
 
+/* popup button */
 .fish-popup-button {
     display: none;
     position: fixed;
@@ -123,16 +118,17 @@
     }
 }
 
-.fish-picture-slide-popup {
-    animation: popup-slide .1s ease-in;
+.popover-container {
+    display: none;
 }
 
-@keyframes popup-slide {
-    from {
-        transform: translateY(-5rem);
+@media screen and (max-width: 600px) {
+    .fish-icons-list {
+        display: none;
     }
 
-    to {
-        transform: translateY(0rem);
+    .popover-container {
+        display: grid;
     }
+
 }
