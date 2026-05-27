@@ -18,25 +18,12 @@ export async function fetchSnapshot() {
                     item.fish_name !== "Geen vis-event")
     .slice(0, 40);
 
-    // const snapshotList = document.getElementById('fish-picture-list');
-
-    // snapshotList.innerHTML = fishSnapshots
-    //     .map(item =>
-    //         `<li class="snapshot-li">
-    //             <img    class="snapshot-img"
-    //                     src="${item.snapshot_url}"
-    //                     alt="snapshot-of-${item.fish_name}"
-    //                     data-fish="${item.fish_name}"
-    //                     data-date="${item.created_at}">
-    //         </li>
-    //     `)
-    //     .join("");
-
-
     const fishPopup = document.querySelector('.fish-picture-popup');
     const fishPopupButton = document.querySelector('.fish-popup-button');
 
     const fishImg = document.getElementById('fish-image');
+    const fishFeedback = document.querySelector('.guess-fish-feedback')
+    const fishButtons = document.querySelectorAll('.fish-icons-list li');
 
     let currentFish = null
 
@@ -46,16 +33,30 @@ export async function fetchSnapshot() {
         currentFish = fishSnapshots[randomFish];
 
         fishImg.src = currentFish.snapshot_url;
-        fishImg.alt = currentFish.alt
+        fishImg.alt = currentFish.fish_alt;
 
+        fishFeedback.innerHTML = "";
     }
+    getRandomFish();
 
+    fishButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const guessedFish = button.dataset.set;
+            const actualFish = currentFish.fish_name;
 
-    fishPopupButton.addEventListener('click', () => {
-        fishPopup.style.display = "none";
-        fishPopupButton.style.display = "none"
+            const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
+
+            if(isCorrect) {
+                fishFeedback.innerHTML = `Wat goed! het was inderdaad een ${actualFish}`;
+            } else {
+                fishFeedback.innerHTML = `Jammer, het juiste antwoord was ${actualFish}`;
+            }
+
+            setTimeout(() => {
+                getRandomFish();
+            }, 1200);
+        })
     })
-
 }
 
 fetchSnapshot();
