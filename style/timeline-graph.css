@@ -85,8 +85,11 @@
         }
     }
 
-    .legend {
-        background-color: var(--color-dark-green);
+    .legend text {
+        fill: var(--color-white);
+        font-size: 13px;
+        font-family: sans-serif;
+        font-weight: 600;
     }
 
     .fish-layer {
@@ -97,7 +100,7 @@
         font-family: var(--font-body);
         font-weight: var(--font-weight-body);
         fill: var(--color-dark-green);
-        font-size: var(--font-size-small);
+        font-size: var(--mobile-font-size-small);
     }
 
     .individual-fish{

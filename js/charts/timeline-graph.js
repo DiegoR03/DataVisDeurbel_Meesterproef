@@ -10,7 +10,7 @@ export function drawD3Graph(graphData, eventKeys) {
     const baseWidth = 1250;
     const baseHeight = 600;
 
-    const margin = { top: 60, right: 20, bottom: 80, left: 80 };
+    const margin = { top: 60, right: 20, bottom: 100, left: 80 };
     const width = baseWidth - margin.left - margin.right;
     const height = baseHeight - margin.top - margin.bottom;
 
@@ -20,14 +20,14 @@ export function drawD3Graph(graphData, eventKeys) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const visibleHours = graphData.filter(d => d.hour.includes(':'));
+    const visibleHours = graphData.filter(data => data.hour.includes(':'));
 
     const x = d3.scaleBand()
-        .domain(visibleHours.map(d => d.hour))
+        .domain(visibleHours.map(data => data.hour))
         .range([0, width])
         .padding(0);
 
-    const dataMax = d3.max(visibleHours, d => d.total) || 1000;
+    const dataMax = d3.max(visibleHours, data => data.total) || 1000;
     const yMaxCalculated = Math.ceil((dataMax * 1.35) / 1000) * 1000;
 
     const y = d3.scaleLinear()
@@ -59,7 +59,15 @@ export function drawD3Graph(graphData, eventKeys) {
 
     const legend = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", `translate(${isMobile ? 0 : width - 580}, -35)`);
+        .attr("transform", `translate(${isMobile ? 0 : width - 580}, -35)`)
+        
+    legend.append("rect")
+        .attr("x", -10)
+        .attr("y", -20)
+        .attr("width", isMobile ? 400 : 580)
+        .attr("height", 35)
+        .attr("rx", 5)
+        .attr("fill", "var(--color-blue-green)");
 
     const legendItems = [
         { label: "Totaal Activiteit", color: "var(--color-light-gold)", type: "line" },
@@ -79,9 +87,9 @@ export function drawD3Graph(graphData, eventKeys) {
                 .attr("cx", 12.5)
                 .attr("cy", -5)
                 .attr("r", 4)
-                .attr("fill", "var(--color-white)")
+                .attr("fill", "transparent")
                 .attr("stroke", item.color)
-                .attr("stroke-width", 1.5);
+                .attr("stroke-width", 2);
         } else if (item.type === "rect") {
             itemGroup.append("rect")
                 .attr("x", 0)
@@ -95,57 +103,56 @@ export function drawD3Graph(graphData, eventKeys) {
                 .attr("fill", "none")
                 .attr("stroke", item.color)
                 .attr("stroke-width", 3)
+                .attr("transform", "translate(0, 5)")
                 .attr("stroke-linecap", "round");
         }
 
         itemGroup.append("text")
             .attr("x", item.type === "seaweed" ? 25 : 28)
             .attr("y", 0)
-            .attr("fill", "var(--color-white)")
-            .style("font-size", isMobile ? "10px" : "13px")
-            .style("font-family", "sans-serif")
-            .text(item.label);
+            .text(item.label.toUpperCase());
     });
 
     const seaweedClip = defs.append("clipPath").attr("id", "seaweed-clip");
 
     const clipPoints = [
         { hour: visibleHours[0].hour, uploadedFish: visibleHours[0].uploadedFish, total: visibleHours[0].total, edgeX: 0 },
-        ...visibleHours.map(d => ({ ...d, edgeX: x(d.hour) + x.bandwidth() / 2 })),
+        ...visibleHours.map(data => ({ ...data, edgeX: x(data.hour) + x.bandwidth() / 2 })),
         { hour: visibleHours[visibleHours.length - 1].hour, uploadedFish: visibleHours[visibleHours.length - 1].uploadedFish, total: visibleHours[visibleHours.length - 1].total, edgeX: width }
     ];
 
     seaweedClip.append("path")
         .datum(clipPoints)
         .attr("d", d3.area()
-            .x(d => d.edgeX)
+            .x(data => data.edgeX)
             .y0(0)
-            .y1(d => y(d.uploadedFish || 0))
+            .y1(data => y(data.uploadedFish || 0))
             .curve(d3.curveBasis)
         );
 
     const seaweedContainer = svg.append("g").attr("clip-path", "url(#seaweed-clip)");
 
-    visibleHours.forEach((d, hourIdx) => {
-        const colX = x(d.hour) + x.bandwidth() / 2;
-        const fishValue = d.uploadedFish || 0;
+    // visibleHours.forEach(createColumn)
+    visibleHours.forEach((data, hourIdx) => {
+        const colX = x(data.hour) + x.bandwidth() / 2;
+        const fishValue = data.uploadedFish || 0;
         const groundY = y(fishValue);
-        const topY = y(d.total);
+        const topY = y(data.total);
         const seaweedHeight = Math.max(groundY - topY, 0);
 
-        const dismissedValue = d.dismissedUploading || 0;
+        const dismissedValue = data.dismissedUploading || 0;
         const seaweedCount = dismissedValue > 0 ? Math.min(Math.max(Math.floor(dismissedValue / 500), 2), 6) : 0;
 
-        for (let j = 0; j < seaweedCount; j++) {
-            const offsetWidth = (j - (seaweedCount / 2)) * (x.bandwidth() / (seaweedCount + 1));
+        for (let i = 0; i < seaweedCount; i++) {
+            const offsetWidth = (i - (seaweedCount / 2)) * (x.bandwidth() / (seaweedCount + 1));
             const bladeX = colX + offsetWidth;
-            const dynamicTopY = groundY - (seaweedHeight * (0.8 + (j % 3) * 0.1));
+            const dynamicTopY = groundY - (seaweedHeight * (0.8 + (i % 3) * 0.1));
 
             const seaweedPoints = [
                 [bladeX, groundY + 100],
-                [bladeX - (10 - j * 2), groundY - (seaweedHeight * 0.35)],
-                [bladeX + (10 - j * 2), groundY - (seaweedHeight * 0.65)],
-                [bladeX + (Math.sin(hourIdx + j) * 4), dynamicTopY]
+                [bladeX - (10 - i * 2), groundY - (seaweedHeight * 0.35)],
+                [bladeX + (10 - i * 2), groundY - (seaweedHeight * 0.65)],
+                [bladeX + (Math.sin(hourIdx + i) * 4), dynamicTopY]
             ];
 
             const lineGenerator = d3.line().curve(d3.curveBasis);
@@ -154,7 +161,7 @@ export function drawD3Graph(graphData, eventKeys) {
                 "var(--color-purple)",
                 "var(--color-pink)"
             ];
-            const bladeColor = colorVariants[j % colorVariants.length];
+            const bladeColor = colorVariants[i % colorVariants.length];
 
             seaweedContainer.append("path")
                 .attr("d", lineGenerator(seaweedPoints))
@@ -185,9 +192,9 @@ export function drawD3Graph(graphData, eventKeys) {
         `);
 
     const bottomAreaGenerator = d3.area()
-        .x(d => d.edgeX)
+        .x(data => data.edgeX)
         .y0(height + 20)
-        .y1(d => y(d.uploadedFish || 0))
+        .y1(data => y(data.uploadedFish || 0))
         .curve(d3.curveBasis);
 
     svg.append("path")
@@ -197,8 +204,8 @@ export function drawD3Graph(graphData, eventKeys) {
         .attr("clip-path", "url(#round-bottom-clip)");
 
     const dataLineGenerator = d3.line()
-        .x(d => d.edgeX)
-        .y(d => y(d.total || 0))
+        .x(data => data.edgeX)
+        .y(data => y(data.total || 0))
         .curve(d3.curveCatmullRom.alpha(0.5));
 
     svg.append("path")
@@ -213,12 +220,12 @@ export function drawD3Graph(graphData, eventKeys) {
     initFishAnimation(svg, width, height, isMobile);
     initBubbleAnimation(svg, width, height, isMobile)
 
-    visibleHours.forEach((d, i) => {
+    visibleHours.forEach((data, i) => {
         defs.append("clipPath")
             .attr("id", `clip-${i}`)
             .append("rect")
             .attr("class", `clip-rect-${i}`)
-            .attr("x", x(d.hour))
+            .attr("x", x(data.hour))
             .attr("y", 0)
             .attr("width", x.bandwidth())
             .attr("height", height)
@@ -229,11 +236,11 @@ export function drawD3Graph(graphData, eventKeys) {
 
     const bubbleGroup = svg.append("g").attr("class", "bubbles-layer");
 
-    visibleHours.forEach((d, i) => {
+    visibleHours.forEach((data, i) => {
         bubbleGroup.append("circle")
             .attr("class", `circle-${i}`)
-            .attr("cx", x(d.hour) + x.bandwidth() / 2)
-            .attr("cy", y(d.total) - 20)
+            .attr("cx", x(data.hour) + x.bandwidth() / 2)
+            .attr("cy", y(data.total) - 20)
             .attr("r", 8)
             .attr("fill", "rgba(255, 255, 255, 0.75)")
             .attr("stroke", "#fff")
@@ -247,12 +254,12 @@ export function drawD3Graph(graphData, eventKeys) {
         .selectAll("text")
         .data(visibleHours)
         .join("text")
-        .attr("x", d => x(d.hour) + x.bandwidth() / 2)
+        .attr("x", data => x(data.hour) + x.bandwidth() / 2)
         .attr("text-anchor", "middle")
         .attr("class", "axis-text")
-        .text((d, i) => {
+        .text((data, i) => {
             if (isMobile && i % 2 !== 0) return "";
-            return d.hour;
+            return data.hour;
         });
 
     const tickStep = yMaxCalculated / 8;
@@ -275,10 +282,17 @@ export function drawD3Graph(graphData, eventKeys) {
     svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", -margin.left + 10)
-        .attr("x", -height + 40)
+        .attr("x", -height + 80)
         .attr("class", "axis-text")
         .attr("text-anchor", "middle")
         .text("Deurbellers -->");
+    
+    svg.append("text")
+        .attr("y", height + margin.bottom - 10)
+        .attr("x", width / 15)
+        .attr("class", "axis-text")
+        .attr("text-anchor", "middle")
+        .text("Tijd (Uren) -->");
 
     svg.append("g")
         .selectAll(".interaction-rect")
@@ -291,28 +305,28 @@ export function drawD3Graph(graphData, eventKeys) {
         .attr("class", "visible-hours")
         .attr("tabindex", "0")
         .style("outline", "none")
-        .on("mouseenter", function (event, d) {
-            const i = visibleHours.indexOf(d);
+        .on("mouseenter", function (event, data) {
+            const i = visibleHours.indexOf(data);
             const standardWidth = x.bandwidth();
             const newWidth = standardWidth * 1.25;
             const shiftX = (newWidth - standardWidth) / 2;
 
             d3.selectAll(`.clip-rect-${i}`)
-                .attr("x", x(d.hour) - shiftX)
+                .attr("x", x(data.hour) - shiftX)
                 .attr("width", newWidth);
 
             d3.select(`.circle-${i}`)
-                .style("opacity", d.total > 0 ? 1 : 0);
+                .style("opacity", data.total > 0 ? 1 : 0);
 
             let tooltipContent = `
-                <h3>${d.hour}</h3>
-                <p>Total: ${d.total} events</p>
+                <h3>${data.hour}</h3>
+                <p>Total: ${data.total} events</p>
                 <div id="line"></div>
             `;
 
             eventKeys.forEach(key => {
-                if (d[key] > 0) {
-                    tooltipContent += `<small>${key}: <strong>${d[key]}</strong></small>`;
+                if (data[key] > 0) {
+                    tooltipContent += `<small>${key}: <strong>${data[key]}</strong></small>`;
                 }
             });
 
@@ -335,43 +349,43 @@ export function drawD3Graph(graphData, eventKeys) {
                 .style("left", leftPosition + "px")
                 .style("top", (event.pageY - 40) + "px");
         })
-        .on("mouseleave", function (event, d) {
-            handleDeactivate(event, d, visibleHours, x);
+        .on("mouseleave", function (event, data) {
+            handleDeactivate(event, data, visibleHours, x);
         })
-        .on("focus", function (event, d) {
-            handleActivate(event, d, visibleHours, x, y, eventKeys);
+        .on("focus", function (event, data) {
+            handleActivate(event, data, visibleHours, x, y, eventKeys);
         })
-        .on("blur", function (event, d) {
+        .on("blur", function (event, data) {
             d3.select(this)
                 .attr("stroke", "none")
                 .attr("fill", "rgba(255, 255, 255, 0)");
 
-            handleDeactivate(event, d, visibleHours, x);
+            handleDeactivate(event, data, visibleHours, x);
         });
 }
 
-function handleActivate(event, d, visibleHours, x, y, eventKeys) {
-    const i = visibleHours.indexOf(d);
+function handleActivate(event, data, visibleHours, x, y, eventKeys) {
+    const i = visibleHours.indexOf(data);
     const standardWidth = x.bandwidth();
     const newWidth = standardWidth * 1.25;
     const shiftX = (newWidth - standardWidth) / 2;
 
     d3.selectAll(`.clip-rect-${i}`)
-        .attr("x", x(d.hour) - shiftX)
+        .attr("x", x(data.hour) - shiftX)
         .attr("width", newWidth);
 
     d3.select(`.circle-${i}`)
-        .style("opacity", d.total > 0 ? 1 : 0);
+        .style("opacity", data.total > 0 ? 1 : 0);
 
     let tooltipContent = `
-        <h3>${d.hour}</h3>
-        <p>Total: ${d.total} events</p>
+        <h3>${data.hour}</h3>
+        <p>Total: ${data.total} events</p>
         <div id="line"></div>
     `;
 
     eventKeys.forEach(key => {
-        if (d[key] > 0) {
-            tooltipContent += `<small>${key}: <strong>${d[key]}</strong></small>`;
+        if (data[key] > 0) {
+            tooltipContent += `<small>${key}: <strong>${data[key]}</strong></small>`;
         }
     });
 
@@ -387,11 +401,11 @@ function handleActivate(event, d, visibleHours, x, y, eventKeys) {
     }
 }
 
-function handleDeactivate(event, d, visibleHours, x) {
-    const i = visibleHours.indexOf(d);
+function handleDeactivate(event, data, visibleHours, x) {
+    const i = visibleHours.indexOf(data);
 
     d3.selectAll(`.clip-rect-${i}`)
-        .attr("x", x(d.hour))
+        .attr("x", x(data.hour))
         .attr("width", x.bandwidth());
 
     d3.select(`.circle-${i}`)
