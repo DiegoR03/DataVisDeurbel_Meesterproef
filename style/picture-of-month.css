@@ -17,21 +17,25 @@
 }
 
 /* img container */
-#fish-picture-list {
+.fish-picture-list {
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit,  minmax(400px , 1fr));
     place-items: center;
     gap: 1.5rem;
 }
 
 /* random img */
-#fish-image {
+.fish-image {
     width: 60%;
     object-fit: cover;
     display: block;
     border-radius: 8px;
+}
+
+/* feedback guess */
+.guess-fish-feedback, .guess-fish-feedback-popover {
+    height: 2rem;
 }
 
 /* icons of all fishes */
@@ -59,46 +63,62 @@
 }
 
 /* the popup */
-.fish-picture-popup {
+.popover-container {
     display: none;
     position: fixed;
-    top: 5%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
     z-index: 999;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    background-color: transparent;
-    border: none;
+    background-color: var(--color-dark-green);
+    border: solid 5px var(--color-light-gold);
     width: clamp(50vw, 75vw, 100vw);
 
-    div {
-        background-color: var(--color-off-white);
+    ul {
         width: 100%;
-        display: flex;
-        flex-direction: column;
+        height: 70%;
+        overflow-x: scroll;
+        scroll-snap-type: mandatory;
+        scrollbar-width: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         align-items: center;
         justify-content: center;
-        padding: 1rem 0rem 1rem 0rem;
-
-        h3 {
-            color: var(--color-dark-green);
-            margin: 0;
-        }
-    }
-
-    img {
-        width: 100%;
-        border-radius: 0px 0px 10px 10px;
     }
 }
 
 /* popup button */
-.fish-popup-button {
+.popover-button {
     display: none;
+    justify-self: center;
+    background-color: var(--color-dark-green);
+    color: var(--color-off-white);
+    border: none;
+    border-radius: 99px;
+    padding: .5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &:hover {
+        background-color: var(--color-off-white);
+        color: var(--color-dark-green);
+        cursor: pointer
+    }
+}
+
+.close-popover {
     position: fixed;
     top: 3rem;
     right: 1rem;
-    background-color: var(--color-off-white);
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-dark-green);
     border-radius: 99px;
     border: none;
     padding: .8rem;
@@ -107,28 +127,42 @@
     &:hover {
         cursor: pointer;
         background-color: var(--color-dark-green);
-
-        .close-popup-svg {
-            color: var(--color-off-white);
-        }  
-    }
-
-    .close-popup-svg {
-        color: var(--color-dark-green)
     }
 }
 
-.popover-container {
-    display: none;
-}
+@media screen and (max-width: 765px) {
+    .picture-of-month-container {
+        height: 50vh;
 
-@media screen and (max-width: 600px) {
+        h3 {
+            display: none;
+        }
+    }
+
+    .popover-container {
+
+        p {
+            color: var(--color-off-white)
+        }
+
+        div {
+            img {
+                width: 100%;
+                border-radius: 0px 0px 20px 20px;
+            }
+        }
+    }
+   
     .fish-icons-list {
         display: none;
     }
 
-    .popover-container {
-        display: grid;
+    .popover-button {
+        display: flex;
+    }
+
+    .guess-fish-feedback {
+        height: 0;
     }
 
 }

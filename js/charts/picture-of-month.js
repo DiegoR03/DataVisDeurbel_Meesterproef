@@ -3,6 +3,23 @@ import { loadCsvData } from "../data/data-fetch.js";
 export async function fetchSnapshot() {
     const data = await loadCsvData("assets/data/website_event-week.csv");
 
+    const fishSnapshots = data
+    .filter(item => item.snapshot_url &&
+                    item.fish_name &&
+                    item.fish_name !== "Unknown" &&
+                    item.fish_name !== "unknown" &&
+                    item.fish_name !== "onbekend" &&
+                    item.fish_name !== "Geen vis-event" &&
+                    item.fish_name !== ",")
+    .filter(item => {
+        const searchParams = new URLSearchParams(item.referrer_query);
+        const likelyhoodOfFish = searchParams.get('likelyhoodOfFish');
+
+        return parseFloat(likelyhoodOfFish) > 0.34;
+    })
+    .slice(0, 100);
+    console.log("SNAPSHOTS:", fishSnapshots);
+
     const fishOptions = [
         {name: "Kolblei", img: "./assets/img/fish-1.png"},
         {name: "Snoek", img: "./assets/img/fish-2.png"},
@@ -22,6 +39,7 @@ export async function fetchSnapshot() {
 
         fishOptions.forEach((fish) => {
             const li = document.createElement('li');
+            li.classList.add('fish-item')
             li.dataset.set = fish.name;
             li.tabIndex = 0;
 
@@ -38,24 +56,12 @@ export async function fetchSnapshot() {
     renderFishList(fishList);
     renderFishList(fishListMobile);
 
-    const snapshot = data
-    .map(item =>item.snapshot_url)
-    .filter(Boolean)
-    .slice(0, 40)
-    console.log("SNAPSHOTS:", snapshot);
-
-    const fishSnapshots = data
-    .filter(item => item.snapshot_url &&
-                    item.fish_name &&
-                    item.fish_name !== "Unknown" &&
-                    item.fish_name !== "unknown" &&
-                    item.fish_name !== "onbekend" &&
-                    item.fish_name !== "Geen vis-event")
-    .slice(0, 100);
-
-    const fishImg = document.getElementById('fish-image');
-    const fishFeedback = document.querySelector('.guess-fish-feedback')
-    const fishButtons = document.querySelectorAll('.fish-icons-list li');
+    const fishImages = document.querySelectorAll('.fish-image');
+    const fishFeedbacks = [
+        document.querySelector('.guess-fish-feedback'),
+        document.querySelector('.guess-fish-feedback-popover')
+    ];
+    const fishButtons = document.querySelectorAll('.fish-icons-list li, .fish-icons-list-popover');
 
     let currentFish = null
 
@@ -64,10 +70,14 @@ export async function fetchSnapshot() {
 
         currentFish = fishSnapshots[randomFish];
 
-        fishImg.src = currentFish.snapshot_url;
-        fishImg.alt = currentFish.fish_alt;
+        fishImages.forEach(img => {
+            img.src = currentFish.snapshot_url;
+            img.alt = currentFish.fish_alt;
+        });
 
-        fishFeedback.innerHTML = "";
+        fishFeedbacks.forEach(feedback => {
+            feedback.innerHTML = "";
+        })
     }
     getRandomFish();
 
@@ -78,13 +88,16 @@ export async function fetchSnapshot() {
             const guessedFish = button.dataset.set;
             const actualFish = currentFish.fish_name;
 
-            const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
+            const isCorrect = guessedFish === actualFish;
 
-            if(isCorrect) {
-                fishFeedback.innerHTML = `Wat goed! het was inderdaad een ${actualFish}`;
-            } else {
-                fishFeedback.innerHTML = `Jammer, het juiste antwoord was ${actualFish}`;
-            }
+            const message = isCorrect
+                ? `Wat goed! Het was inderdaad een ${actualFish}`
+                : `Helaas, het juiste antwoord was ${actualFish}`;
+
+            fishFeedbacks.forEach(feedback => {
+                feedback.innerHTML = message;
+            });
+            console.log(currentFish);
 
             setTimeout(() => {
                 getRandomFish();
@@ -124,16 +137,19 @@ export async function fetchSnapshot() {
     })
 
     // popover
-
     const popOverContainer = document.querySelector('.popover-container');
     const popOverButton = document.querySelector('.popover-button');
+    const closePopover = document.querySelector('.close-popover');
 
     popOverContainer.style.display = "none";
 
     popOverButton.addEventListener('click', () => {
         popOverContainer.style.display = "flex";
     })
-    
+
+    closePopover.addEventListener("click", () => {
+        popOverContainer.style.display = "none"
+    })
 }
 
 fetchSnapshot();
