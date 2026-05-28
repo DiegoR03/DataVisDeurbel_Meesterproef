@@ -1,87 +1,124 @@
 .picture-of-month-container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    ul {
-        margin: 0;
-        padding: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fit,  minmax(400px , 1fr));
-        gap: 1.5rem;
+    background-color: var(--color-light-gold);
+    
+    h2 {
+        font-size: var(--font-size-h2);
+        text-align: center;
+        color: var(--color-dark-green);
+    }
 
-        li {
-            list-style-type: none;
+    h3 {
+        text-align: center;
+    }
 
-            figure {
-                margin: 0;
-                padding: 0;
-                border-radius: 8px;
-                position: relative;
-            }
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
-                border-radius: 8px;;
-
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-        }
+    p {
+        text-align: center;
     }
 }
 
-.fish-tip {
-    position: absolute;
-    display: none;
-    pointer-events: none;
-    background-color: var(--color-white);
-    padding: 1rem 2rem 1rem 2rem;
-    z-index: 1000;
+/* img container */
+.fish-picture-list {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    gap: 1.5rem;
+}
+
+/* random img */
+.fish-image {
+    width: 60%;
+    object-fit: cover;
+    display: block;
     border-radius: 8px;
 }
 
-.fish-picture-popup {
-    display: none;
-    position: fixed;
-    top: 5%;
-    z-index: 999;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border: none;
-    width: clamp(50vw, 75vw, 100vw);
+/* feedback guess */
+.guess-fish-feedback, .guess-fish-feedback-popover {
+    height: 2rem;
+}
 
-    div {
-        background-color: var(--color-off-white);
-        width: 100%;
+/* icons of all fishes */
+.fish-icons-list, .fish-icons-list-popover {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    padding: 0;
+    margin: 0;
+
+    li {
+        list-style-type: none;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        padding: 1rem 0rem 1rem 0rem;
+        align-items: center;
 
-        h3 {
-            color: var(--color-dark-green);
-            margin: 0;
+        &:hover {
+            cursor: pointer;
         }
-    }
 
-    img {
-        width: 100%;
-        border-radius: 0px 0px 10px 10px;
+        img {
+            width: 65%;
+        }
     }
 }
 
-.fish-popup-button {
+/* the popup */
+.popover-container {
     display: none;
+    position: fixed;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    z-index: 999;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-dark-green);
+    border: solid 5px var(--color-light-gold);
+    width: clamp(50vw, 75vw, 100vw);
+
+    ul {
+        width: 100%;
+        height: 70%;
+        overflow-x: scroll;
+        scroll-snap-type: mandatory;
+        scrollbar-width: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* popup button */
+.popover-button {
+    display: none;
+    justify-self: center;
+    background-color: var(--color-dark-green);
+    color: var(--color-off-white);
+    border: none;
+    border-radius: 99px;
+    padding: .5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &:hover {
+        background-color: var(--color-off-white);
+        color: var(--color-dark-green);
+        cursor: pointer
+    }
+}
+
+.close-popover {
     position: fixed;
     top: 3rem;
     right: 1rem;
-    background-color: var(--color-off-white);
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-dark-green);
     border-radius: 99px;
     border: none;
     padding: .8rem;
@@ -90,27 +127,42 @@
     &:hover {
         cursor: pointer;
         background-color: var(--color-dark-green);
-
-        .close-popup-svg {
-            color: var(--color-off-white);
-        }  
-    }
-
-    .close-popup-svg {
-        color: var(--color-dark-green)
     }
 }
 
-.fish-picture-slide-popup {
-    animation: popup-slide .1s ease-in;
-}
+@media screen and (max-width: 765px) {
+    .picture-of-month-container {
+        height: 50vh;
 
-@keyframes popup-slide {
-    from {
-        transform: translateY(-5rem);
+        h3 {
+            display: none;
+        }
     }
 
-    to {
-        transform: translateY(0rem);
+    .popover-container {
+
+        p {
+            color: var(--color-off-white)
+        }
+
+        div {
+            img {
+                width: 100%;
+                border-radius: 0px 0px 20px 20px;
+            }
+        }
     }
+   
+    .fish-icons-list {
+        display: none;
+    }
+
+    .popover-button {
+        display: flex;
+    }
+
+    .guess-fish-feedback {
+        height: 0;
+    }
+
 }
