@@ -34,7 +34,7 @@
 }
 
 .wave-path {
-  fill: var(--color-white);
+  fill: var(--color-off-white);
 
   stroke: none;
   stroke-width: 0;
