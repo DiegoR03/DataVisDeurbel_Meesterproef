@@ -5,6 +5,7 @@ import countries from "i18n-iso-countries";
 
 export function renderWorldMap(data) {
   const svg = d3.select("#world-map");
+  const tooltip = d3.select("#world-map-tooltip");
 
   const width = 900;
   const height = 500;
@@ -27,15 +28,33 @@ export function renderWorldMap(data) {
     .domain([1, maxCount])
     .range(["#dfffee", "#01463C"]);
 
-  const tooltip = d3.select("#world-map-tooltip");
   svg
     .selectAll(".world-map-country")
     .data(countryFeatures)
     .join("path")
     .attr("class", "world-map-country")
     .attr("d", path)
+    .attr("tabindex", (country) => {
+      const count = getCountryCount(country, countryCounts);
+
+      // Only allow keyboard focus on countries with visitors
+      return count > 0 ? 0 : -1;
+    })
+    .sort((a, b) => {
+      const countA = getCountryCount(a, countryCounts);
+      const countB = getCountryCount(b, countryCounts);
+
+      return countB - countA;
+    })
+    .attr("aria-label", (country) => {
+      const count = getCountryCount(country, countryCounts);
+
+      return `${country.properties.name}: ${count.toLocaleString(
+        "nl-NL",
+      )} bezoekers`;
+    })
     .style("fill", (country) => {
-      const count = countryCounts.get(String(country.id)) || 0;
+      const count = getCountryCount(country, countryCounts);
 
       if (count === 0) {
         return "var(--color-white)";
@@ -44,45 +63,77 @@ export function renderWorldMap(data) {
       return colorScale(count);
     })
     .on("mouseenter", (event, country) => {
-      const count = countryCounts.get(String(country.id)) || 0;
-
-      tooltip.style("display", "block").html(`
-        <strong>${country.properties.name}</strong><br>
-        ${count.toLocaleString("nl-NL")} bezoekers
-      `);
+      showTooltip(tooltip, country, countryCounts);
+      moveTooltipToMouse(tooltip, event);
     })
     .on("mousemove", (event) => {
-      tooltip
-        .style("left", `${event.clientX + 12}px`)
-        .style("top", `${event.clientY + 12}px`);
+      moveTooltipToMouse(tooltip, event);
     })
     .on("mouseleave", () => {
-      tooltip.style("display", "none");
+      hideTooltip(tooltip);
+    })
+    .on("focus", (event, country) => {
+      showTooltip(tooltip, country, countryCounts);
+      moveTooltipToCountry(tooltip, event);
+    })
+    .on("blur", () => {
+      hideTooltip(tooltip);
     });
+}
 
-  function getCountryCounts(data) {
-    const countrySessions = new Map();
+function getCountryCounts(data) {
+  const countrySessions = new Map();
 
-    data.forEach((item) => {
-      if (!item.country || !item.session_id) return;
+  data.forEach((item) => {
+    if (!item.country || !item.session_id) return;
 
-      const numericCountryCode = countries.alpha2ToNumeric(item.country);
+    const numericCountryCode = countries.alpha2ToNumeric(item.country);
 
-      if (!numericCountryCode) return;
+    if (!numericCountryCode) return;
 
-      if (!countrySessions.has(numericCountryCode)) {
-        countrySessions.set(numericCountryCode, new Set());
-      }
+    if (!countrySessions.has(numericCountryCode)) {
+      countrySessions.set(numericCountryCode, new Set());
+    }
 
-      countrySessions.get(numericCountryCode).add(item.session_id);
-    });
+    countrySessions.get(numericCountryCode).add(item.session_id);
+  });
 
-    const countryCounts = new Map();
+  const countryCounts = new Map();
 
-    countrySessions.forEach((sessions, countryCode) => {
-      countryCounts.set(countryCode, sessions.size);
-    });
+  countrySessions.forEach((sessions, countryCode) => {
+    countryCounts.set(countryCode, sessions.size);
+  });
 
-    return countryCounts;
-  }
+  return countryCounts;
+}
+
+function getCountryCount(country, countryCounts) {
+  return countryCounts.get(String(country.id)) || 0;
+}
+
+function showTooltip(tooltip, country, countryCounts) {
+  const count = getCountryCount(country, countryCounts);
+
+  tooltip.style("display", "block").html(`
+    <strong>${country.properties.name}</strong><br>
+    ${count.toLocaleString("nl-NL")} bezoekers
+  `);
+}
+
+function moveTooltipToMouse(tooltip, event) {
+  tooltip
+    .style("left", `${event.clientX + 12}px`)
+    .style("top", `${event.clientY + 12}px`);
+}
+
+function moveTooltipToCountry(tooltip, event) {
+  const bounds = event.target.getBoundingClientRect();
+
+  tooltip
+    .style("left", `${bounds.left + bounds.width / 2}px`)
+    .style("top", `${bounds.top - 12}px`);
+}
+
+function hideTooltip(tooltip) {
+  tooltip.style("display", "none");
 }

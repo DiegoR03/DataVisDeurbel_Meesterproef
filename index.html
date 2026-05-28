@@ -17,6 +17,12 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -47,17 +53,41 @@
         </div>
       </section>
 
-      <section class="world-map-section">
-        <h2>Waar kwamen de Visdeurbellers vandaan?</h2>
-        <svg id="world-map" class="world-map"></svg>
-        <div class="world-map-legend">
+      <section class="world-map-section" aria-labelledby="world-map-title">
+        <h2 id="world-map-title" class="world-map-title">
+          Waar kwamen de Visdeurbellers vandaan?
+        </h2>
+        <a href="#after-world-map" class="skip-link"> Sla wereld kaart over</a>
+
+        <p id="world-map-description" class="world-map-description">
+          Deze kaart laat zien uit welke landen bezoekers de Visdeurbel hebben
+          gebruikt. Donkergroene landen hadden meer bezoekers dan lichtgroene
+          landen.
+        </p>
+
+        <svg
+          id="world-map"
+          class="world-map"
+          role="img"
+          aria-labelledby="world-map-title world-map-description"
+        ></svg>
+        <p class="world-map-summary">
+          De meeste bezoekers kwamen uit de Verenigde Staten, gevolgd door
+          Nederland en België.
+        </p>
+        <div id="world-map-tooltip" class="world-map-tooltip"></div>
+        <div class="world-map-legend" aria-hidden="true">
           <span>Minder bezoekers</span>
-
           <div class="world-map-legend-gradient"></div>
-
           <span>Meer bezoekers</span>
         </div>
-        <div id="world-map-tooltip" class="world-map-tooltip"></div>
+      </section>
+
+      <section id="after-world-map">
+        <h2>
+          Gemiddeld duurde het ⏱️.. voordat je een 🐟 vis zag. De ... was als
+          laatst gespot.
+        </h2>
       </section>
 
       <!-- grafiek 2 -->
