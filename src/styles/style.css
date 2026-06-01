@@ -55,6 +55,12 @@
 
   /* Styling */
   --border-radius: 16px;
+
+  /* Spacing */
+  --spacing-top: clamp(5.625rem, 11.1111111111vw, 13.3333333333rem);
+  --padding-top: clamp(3rem, 5.5555555556vw, 6.6666666667rem);
+  --padding-side: 1.5rem;
+  --padding: 1.5rem;
 }
 
 /***********************/
@@ -75,17 +81,38 @@ body {
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1,
+h2,
+h3 {
+  font-variation-settings:
+    "opsz" 96,
+    "wght" 800,
+    "wdth" 100;
 }
 
 h2 {
-    color: var(--color-dark-green);
-    margin-top: 0;
+  color: var(--color-dark-green);
+  margin-top: 0;
+  font-size: clamp(2rem, 3.75vw, 4.5rem);
+}
+
+h3 {
+  display: block;
+  font-size: clamp(1.25rem, 1.8055555556vw, 2.1666666667rem);
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: var(--font-weight-body);
+  unicode-bidi: isolate;
 }
 
 p {
@@ -95,29 +122,30 @@ p {
 }
 
 .status-message {
-    font-style: italic;
-    color: #666;
+  font-style: italic;
+  color: #666;
 }
 
 table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 20px;
-    /* Wordt door JS aangepast naar 'table' als de data er is */
-    display: none; 
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+  /* Wordt door JS aangepast naar 'table' als de data er is */
+  display: none;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px 8px;
-    text-align: left;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 12px 8px;
+  text-align: left;
 }
 
 th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 
 tr:nth-child(even) {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }

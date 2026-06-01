@@ -1,15 +1,3 @@
-.world-map-section {
-  background: var(--color-off-white);
-}
-
-.world-map {
-  width: 80%;
-  height: auto;
-  display: block;
-  margin: auto;
-  border-radius: 1.5rem;
-}
-
 .world-map-country {
   stroke: var(--color-dark-green);
   stroke-width: 1;
@@ -48,20 +36,19 @@
   border-radius: 0.75rem;
 
   font-size: 0.875rem;
+
   pointer-events: none;
 }
 
-.world-map-section {
-  padding: 2rem;
-}
-
 .world-map-legend {
-  font-family: "PT Sans", sans-serif;
   display: flex;
   align-items: center;
   gap: 1rem;
+
   margin-top: 1.5rem;
+
   color: var(--color-dark-green);
+  font-family: "PT Sans", sans-serif;
 }
 
 .world-map-legend-gradient {
@@ -72,25 +59,140 @@
   border: 1px solid #000000;
 }
 
-.world-map-title,
-.world-map-description,
-.world-map-summary {
-  text-align: center;
+.world-map-section {
+  background: var(--color-off-white);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3rem var(--padding);
+  padding: var(--spacing-top) var(--padding-side) 0;
+  align-items: start;
+}
+
+.world-map-section-header {
+  grid-column: 1 / span 8;
+
+  margin-bottom: 1rem;
+}
+
+.world-map-title {
+  margin: 0;
+
+  text-align: left;
+}
+
+.world-map-section-layout {
+  display: contents;
+}
+
+.world-map-section-visual {
+  grid-column: 4 / span 9;
+
+  position: relative;
+}
+
+.world-map-section-countries {
+  grid-column: 1 / span 3;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.world-map {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 1rem;
+}
+
+.world-map-legend {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-bottom: 1rem;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 1.5rem;
+
+  font-family: "PT Sans", sans-serif;
+  color: var(--color-dark-green);
+}
+
+.world-map-legend-gradient {
+  width: 200px;
+  height: 16px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(to right, #ffffff, var(--color-dark-green));
+  border: 1px solid #000000;
+}
+
+.top-countries-title {
+  margin: 0 0 1.5rem;
+  max-width: none;
+}
+
+.top-countries-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.top-countries-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 0.75rem 0;
+
+  border-bottom: 1px solid rgba(1, 70, 60, 0.2);
+  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+  font-weight: 800;
+  line-height: var(--line-height-headers);
+}
+
+.top-countries-list-country {
+  text-align: left;
+}
+
+.top-countries-list-count {
+  margin-left: auto;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.top-countries-list-item:first-child {
+  color: #ffd700;
+}
+
+.top-countries-list-item:nth-child(2) {
+  color: #c0c0c0;
+}
+
+.top-countries-list-item:nth-child(3) {
+  color: #cd7f32;
 }
 
 .skip-link {
-  position: fixed;
-  top: -100px;
-  left: 50%;
-  padding: 1rem 1.5rem;
-  background: var(--color-dark-green);
-  color: var(--color-white);
-  border-radius: 0.75rem;
-  z-index: 1000;
-  transition: top 0.3s ease;
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
-.skip-link:focus {
-  left: 1rem;
-  top: 1rem;
+@media (max-width: 768px) {
+  .world-map-section-header,
+  .world-map-section-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .world-map-title,
+  .world-map-section-countries,
+  .world-map-section-visual {
+    grid-column: 1;
+  }
 }
