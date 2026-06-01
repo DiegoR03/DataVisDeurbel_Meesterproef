@@ -1,4 +1,5 @@
----
+--- 
+// @ts-nocheck
 import "../styles/style.css";
 import "../styles/intro-text.css";
 import "../styles/picture-of-month.css";
@@ -118,39 +119,47 @@ const visData = await loadCsvData(CSV_URL);
       </section>
 
       <section class="world-map-section" aria-labelledby="world-map-title">
-        <h2 id="world-map-title" class="world-map-title">
-          Waar kwamen de Visdeurbellers vandaan?
-        </h2>
+  <a href="#after-world-map" class="skip-link"> Sla wereldkaart over </a>
+  <div class="world-map-section-header">
+    <h2 id="world-map-title" class="world-map-title">
+      Visdeurbellers over de hele wereld
+    </h2>
+  </div>
 
-        <a href="#after-world-map" class="skip-link"> Sla wereld kaart over</a>
+  <div class="world-map-section-layout">
+    <aside
+      class="world-map-section-countries"
+      aria-labelledby="top-countries-title"
+    >
+      <h3 id="top-countries-title" class="top-countries-title">
+        De meeste visdeurbellers in 2026 kwamen uit:
+      </h3>
 
-        <p id="world-map-description" class="world-map-description">
-          Deze kaart laat zien uit welke landen bezoekers de Visdeurbel hebben
-          gebruikt. Donkergroene landen hadden meer bezoekers dan lichtgroene
-          landen.
-        </p>
+      <ol id="top-countries-list" class="top-countries-list"></ol>
+    </aside>
 
-        <svg
-          id="world-map"
-          class="world-map"
-          role="img"
-          aria-labelledby="world-map-title world-map-description"></svg>
+    <div class="world-map-section-visual">
+      <div class="world-map-legend" aria-hidden="true">
+        <span>Minder bezoekers</span>
+        <div class="world-map-legend-gradient"></div>
+        <span>Meer bezoekers</span>
+      </div>
+      <svg
+        id="world-map"
+        class="world-map"
+        role="img"
+        aria-labelledby="world-map-title world-map-description"
+      ></svg>
 
-        <p class="world-map-summary">
-          De meeste bezoekers kwamen uit de Verenigde Staten, gevolgd door
-          Nederland en België.
-        </p>
-
-        <div id="world-map-tooltip" class="world-map-tooltip"></div>
-
-        <div class="world-map-legend" aria-hidden="true">
-          <span>Minder bezoekers</span>
-
-          <div class="world-map-legend-gradient"></div>
-
-          <span>Meer bezoekers</span>
-        </div>
-      </section>
+      <div
+        id="world-map-tooltip"
+        class="world-map-tooltip"
+        role="status"
+        aria-live="polite"
+      ></div>
+    </div>
+  </div>
+</section>
 
       <section id="after-world-map">
         <h2>

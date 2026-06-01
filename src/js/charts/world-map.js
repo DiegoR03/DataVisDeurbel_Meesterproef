@@ -28,6 +28,25 @@ export function renderWorldMap(data) {
     .domain([1, maxCount])
     .range(["#dfffee", "#01463C"]);
 
+  renderCountries(
+    svg,
+    countryFeatures,
+    path,
+    countryCounts,
+    colorScale,
+    tooltip,
+  );
+  renderTopCountriesList(countryCounts);
+}
+
+function renderCountries(
+  svg,
+  countryFeatures,
+  path,
+  countryCounts,
+  colorScale,
+  tooltip,
+) {
   svg
     .selectAll(".world-map-country")
     .data(countryFeatures)
@@ -37,7 +56,6 @@ export function renderWorldMap(data) {
     .attr("tabindex", (country) => {
       const count = getCountryCount(country, countryCounts);
 
-      // Only allow keyboard focus on countries with visitors
       return count > 0 ? 0 : -1;
     })
     .sort((a, b) => {
@@ -81,6 +99,47 @@ export function renderWorldMap(data) {
     });
 }
 
+function renderTopCountriesList(countryCounts) {
+  const topCountriesList = document.getElementById("top-countries-list");
+
+  if (!topCountriesList) return;
+
+  const totalVisitors = [...countryCounts.values()].reduce(
+    (total, count) => total + count,
+    0,
+  );
+
+  const topCountries = [...countryCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+
+  topCountriesList.innerHTML = "";
+
+  topCountries.forEach(([numericCountryCode, count]) => {
+    const countryCode = countries.numericToAlpha2(numericCountryCode);
+    const countryName = countries.getName(countryCode, "nl") || countryCode;
+    const flagEmoji = getFlagEmoji(countryCode);
+
+    const percentage = ((count / totalVisitors) * 100).toFixed(1);
+
+    const listItem = document.createElement("li");
+
+    listItem.classList.add("top-countries-list-item");
+
+    listItem.innerHTML = `
+      <span class="top-countries-list-country">
+        ${flagEmoji} ${countryName}
+      </span>
+
+      <span class="top-countries-list-count">
+        ${percentage}%
+      </span>
+    `;
+
+    topCountriesList.appendChild(listItem);
+  });
+}
+
 function getCountryCounts(data) {
   const countrySessions = new Map();
 
@@ -109,6 +168,16 @@ function getCountryCounts(data) {
 
 function getCountryCount(country, countryCounts) {
   return countryCounts.get(String(country.id)) || 0;
+}
+
+function getFlagEmoji(countryCode) {
+  if (!countryCode) return "";
+
+  return countryCode
+    .toUpperCase()
+    .replace(/./g, (character) =>
+      String.fromCodePoint(127397 + character.charCodeAt()),
+    );
 }
 
 function showTooltip(tooltip, country, countryCounts) {
