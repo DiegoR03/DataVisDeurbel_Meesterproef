@@ -1,8 +1,9 @@
 import { loadCsvData } from "../data/data-fetch.js";
 
 export async function fetchSnapshot() {
+    // feetch csv data and filter for snapshots
     const data = await loadCsvData("assets/data/website_event-week.csv");
-
+    console.log(data);
     const fishSnapshots = data
     .filter(item => item.snapshot_url &&
                     item.fish_name &&
@@ -10,16 +11,18 @@ export async function fetchSnapshot() {
                     item.fish_name !== "unknown" &&
                     item.fish_name !== "onbekend" &&
                     item.fish_name !== "Geen vis-event" &&
-                    item.fish_name !== ",")
+                    item.fish_name !== item.fish_name.includes(","))
+    // Filter gemaakt met hulp van Victor in zijn workshop van week 2
     .filter(item => {
         const searchParams = new URLSearchParams(item.referrer_query);
         const likelyhoodOfFish = searchParams.get('likelyhoodOfFish');
 
-        return parseFloat(likelyhoodOfFish) > 0.34;
+        return parseFloat(likelyhoodOfFish) > 0.345;
     })
     .slice(0, 100);
     console.log("SNAPSHOTS:", fishSnapshots);
 
+    // Render fishOptions to html from js
     const fishOptions = [
         {name: "Kolblei", img: "./assets/img/fish-1.png"},
         {name: "Snoek", img: "./assets/img/fish-2.png"},
