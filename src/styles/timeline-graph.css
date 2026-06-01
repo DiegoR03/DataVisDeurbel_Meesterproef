@@ -1,0 +1,135 @@
+.timeline-graph-section {
+    background-color: var(--color-white);
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+
+    h2 {
+        color: var(--color-dark-green);
+        text-align: center;
+    }
+
+    #last-update {
+        text-align: center;
+        font-style: italic;
+        color: var(--color-dark-green);
+        margin-top: 0.5rem;
+    }
+
+    #tooltip {
+        position: absolute;
+        display: none;
+        background: var(--color-white);
+        padding: 10px;
+        border: 2px solid var(--color-purple);
+        border-radius: var(--border-radius);
+        font-size: var(--font-size-small);
+        pointer-events: none;
+        font-family: var(--font-body), sans-serif;
+        color: var(--color-dark-green);
+
+        h3 {
+            margin: 0;
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-headings);
+        }
+
+        p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            font-weight: var(--font-weight-body);
+        }
+
+        #line {
+            border: none;
+            border-bottom: 1px solid var(--color-light-gold);
+            margin: 5px 0;
+            height: 0;
+        }
+
+        small {
+            display: block;
+            font-size: 12px;
+            margin-top: 2px;
+
+            strong {
+                font-weight: bold;
+            }
+        }
+    }
+
+    #chart {
+        max-width: 1000px;
+        min-width: 300px;
+        margin: 40px auto;
+        position: relative;
+        width: 100%;        
+        height: auto;
+    }
+
+    .visible-hours {
+        fill: transparent;
+        stroke: transparent;
+        stroke-width: 3px;
+
+        transition: stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out, opacity 0.1s ease-in-out;
+        border-radius: var(--border-radius);
+
+        stroke: var(--color-white);
+        opacity: 0.05;
+        stroke-width: 1px;
+
+        &:hover, &:focus {
+            stroke: var(--color-gold);
+            stroke-width: 2px;
+            opacity: 1;
+        }
+    }
+
+    .legend text {
+        fill: var(--color-white);
+        font-size: 13px;
+        font-family: sans-serif;
+        font-weight: 600;
+    }
+
+    .fish-layer {
+        pointer-events: none;
+    }
+
+    .axis-text, text {
+        font-family: var(--font-body);
+        font-weight: var(--font-weight-body);
+        fill: var(--color-dark-green);
+        font-size: var(--mobile-font-size-small);
+    }
+
+    .individual-fish{
+        z-index: -1;
+    }
+
+    .individual-bubble{
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .interaction-rect {
+        pointer-events: all;
+    }
+
+    @media screen and (max-width: 450px) {
+        overflow: hidden;
+
+        #chart {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+
+            svg {
+                min-width: 800px;
+                width: 800px;
+                display: block;
+            }
+        }
+    }
+}
