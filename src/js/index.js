@@ -3,6 +3,7 @@ import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
 import { createGraph } from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
 import { renderWorldMap } from "./charts/world-map.js";
+import { addFishToAquarium } from "./charts/swimming-fish.js";
 
 async function init() {
   const rawData = window.SERVER_VIS_DATA || [];
@@ -15,9 +16,34 @@ async function init() {
   renderIntroText(data);
 
   if (data && data.length > 0) {
-    drawRuisvoorn(data);
-    drawBaars(data);
-    drawPaling(data);
+    const aquarium = document.getElementById("main-aquarium");
+      if (aquarium) aquarium.innerHTML = "";
+
+      // Create an array with all the configurations for your 11 fish
+      const fishSpecies = [
+          { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "./assets/img/ruisvoorn.png" },
+          { name: "Baars", legendId: "legend-baars", imgPath: "./assets/img/baars.png" },
+          { name: "Paling", legendId: "legend-paling", imgPath: "./assets/img/paling.png" },
+          { name: "Alver", legendId: "legend-alver", imgPath: "./assets/img/alver.png" },
+          { name: "Blankvoorn", legendId: "legend-blankvoorn", imgPath: "./assets/img/blankvoorn.png" },
+          { name: "Brasem", legendId: "legend-brasem", imgPath: "./assets/img/brasem.png" },
+          { name: "Kolblei", legendId: "legend-kolblei", imgPath: "./assets/img/kolblei.png" },
+          { name: "Meerval", legendId: "legend-meerval", imgPath: "./assets/img/meerval.png" },
+          { name: "Snoek", legendId: "legend-snoek", imgPath: "./assets/img/snoek.png" },
+          { name: "Snoekbaars", legendId: "legend-snoekbaars", imgPath: "./assets/img/snoekbaars.png" },
+          { name: "Winde", legendId: "legend-winde", imgPath: "./assets/img/winde.png" }
+      ];
+
+      // Loop through the array and render each fish
+      fishSpecies.forEach(fish => {
+          addFishToAquarium(
+              data, 
+              fish.name, 
+              "main-aquarium", 
+              fish.legendId, 
+              fish.imgPath
+          );
+      });
   }
   
   setupScrollAnimation();

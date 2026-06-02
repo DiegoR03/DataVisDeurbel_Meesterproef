@@ -7,6 +7,7 @@ import "../styles/fish-of-season.css";
 import "../styles/timeline-graph.css";
 import "../styles/world-map.css";
 import "../styles/partial.css";
+import "../styles/fish-of-season.css";
 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
@@ -171,40 +172,24 @@ const visData = await loadCsvData(CSV_URL);
       <!-- grafiek 2 -->
 
       <section class="fish-of-season-section">
-        <h2>Vis van het seizoen</h2>
+  <h2>Vis van het seizoen</h2>
+  
+  <div class="aquarium-legend">
+    <p id="legend-ruisvoorn">Ruisvoorn: Data loading...</p>
+    <p id="legend-baars">Baars: Data loading...</p>
+    <p id="legend-paling">Paling: Data loading...</p>
+    <p id="legend-alver">Alver: Data loading...</p>
+    <p id="legend-blankvoorn">Blankvoorn: Data loading...</p>
+    <p id="legend-brasem">Brasem: Data loading...</p>
+    <p id="legend-kolblei">Kolblei: Data loading...</p>
+    <p id="legend-meerval">Meerval: Data loading...</p>
+    <p id="legend-snoek">Snoek: Data loading...</p>
+    <p id="legend-snoekbaars">Snoekbaars: Data loading...</p>
+    <p id="legend-winde">Winde: Data loading...</p>
+  </div>
 
-        <div class="card-container">
-          <div class="fish-card" id="card-ruisvoorn">
-            <div class="card-content">
-              <h2 class="card-title">Ruisvoorn</h2>
-
-              <p class="card-subtitle">Data laden...</p>
-            </div>
-
-            <div class="d3-container"></div>
-          </div>
-
-          <div class="fish-card" id="card-baars">
-            <div class="card-content">
-              <h2 class="card-title">Baars</h2>
-
-              <p class="card-subtitle">Data laden...</p>
-            </div>
-
-            <div class="d3-container"></div>
-          </div>
-
-          <div class="fish-card" id="card-paling">
-            <div class="card-content">
-              <h2 class="card-title">Paling</h2>
-
-              <p class="card-subtitle">Data laden...</p>
-            </div>
-
-            <div class="d3-container"></div>
-          </div>
-        </div>
-      </section>
+  <div class="main-aquarium" id="main-aquarium"></div>
+</section>
 
       <section>
         <h2>
