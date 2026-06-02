@@ -10,7 +10,6 @@ export async function fetchSnapshot(data) {
                     item.fish_name !== "Unknown" &&
                     item.fish_name !== "unknown" &&
                     item.fish_name !== "onbekend" &&
-                    item.fish_name !== "Geen vis-event" &&
                     item.fish_name !== item.fish_name.includes(","))
     // Filter gemaakt met hulp van Victor in zijn workshop van week 2
     .filter(item => {
@@ -21,7 +20,24 @@ export async function fetchSnapshot(data) {
         return parseFloat(likelyhoodOfFish) > 0.345;
     })
     .slice(0, 100);
-    
+
+    // get the most recent snapshot of each fish
+    // source: AI. Prompt: How do I use this data to return the most recent snapshot(s) for each fish?
+    const recentSnapshots = {};
+
+    fishSnapshots.forEach(snapshot => {
+        const fishName = snapshot.fish_name;
+
+        if(!recentSnapshots[fishName]) {
+            recentSnapshots[fishName] = [];
+        }
+        recentSnapshots[fishName].push(snapshot);
+
+        recentSnapshots[fishName].sort((a, b) => {
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+
+    })    
     console.log("SNAPSHOTS:", fishSnapshots);
 
     if (fishSnapshots.length === 0) {
@@ -29,6 +45,7 @@ export async function fetchSnapshot(data) {
         return;
     }
 
+    // render fish icons to html 
     const fishOptions = [
         {name: "Kolblei", img: "/img/fish-1.png"},
         {name: "Snoek", img: "/img/fish-2.png"},
@@ -61,6 +78,7 @@ export async function fetchSnapshot(data) {
         });
     }
 
+    // put rendered html in ul's
     const fishListGame = document.querySelector('.fish-icons-game-list');
     const fishListDetails = document.querySelector('.fish-icons-details-list')
     const fishListMobile = document.querySelector('.fish-icons-list-popover');
@@ -78,6 +96,7 @@ export async function fetchSnapshot(data) {
 
     let currentFish = null;
 
+    // generate random img
     function getRandomFish() {
         const randomFish = Math.floor(Math.random() * fishSnapshots.length);
         currentFish = fishSnapshots[randomFish];
@@ -93,6 +112,7 @@ export async function fetchSnapshot(data) {
     }
     getRandomFish();
 
+    // make fish icons interactive
     fishButtons.forEach(button => {
         button.tabIndex = 0;
 
@@ -126,6 +146,7 @@ export async function fetchSnapshot(data) {
         });
     });
 
+    // usability on keyboard for answers
     let currentIndex = 0;
     if (fishButtons.length > 0) {
         fishButtons[currentIndex].focus();
@@ -147,6 +168,7 @@ export async function fetchSnapshot(data) {
         }
     });
 
+    // popover container for guessing game
     const popOverContainer = document.querySelector('.popover-container');
     const popOverButton = document.querySelector('.popover-button');
     const closePopover = document.querySelector('.close-popover');
@@ -161,5 +183,43 @@ export async function fetchSnapshot(data) {
         closePopover.addEventListener("click", () => {
             popOverContainer.style.display = "none";
         });
+    }
+
+    // popover for fish details
+    // open and close popover
+    const fishFactsPopOver = document.querySelector('.fish-facts-popover');
+    const fishFactsButtons = document.querySelectorAll('.fish-icons-details-list li');
+    const fishFactsClose = document.querySelector('.fish-facts-close');
+    const fishFactsName = document.querySelector('.fish-facts-name');
+    const fishFactsImg = document.querySelector('.fish-facts-icon');
+    const fishFactsActivity = document.querySelector('.fish-facts-activity');
+    const fishFactsRecentPics = document.querySelector('.fish-facts-recent-pictures');
+
+    if (fishFactsPopOver && fishFactsButtons && fishFactsClose) {
+        fishFactsPopOver.style.display = "none";
+
+        fishFactsButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const fishName = button.dataset.set;
+                fishFactsName.textContent = fishName;
+                const fishImg = fishOptions.find(fish => fish.name === fishName);
+
+                fishFactsImg.src = fishImg.img;
+                fishFactsImg.alt = fishImg.name;
+
+                const recent = recentSnapshots[fishName]?.[0];
+                
+                if (recent) {
+                    fishFactsRecentPics.src = recent.snapshot_url;
+                    fishFactsRecentPics.alt = fishName;
+                }
+
+                fishFactsPopOver.style.display = "grid";
+            })
+        })
+
+        fishFactsClose.addEventListener('click', () => {
+            fishFactsPopOver.style.display = "none"
+        })
     }
 }
