@@ -2,6 +2,7 @@ export async function fetchSnapshot(data) {
     if (!data || data.length === 0) {
         return;
     }
+    console.log(data);
 
     const fishSnapshots = data
     .filter(item => item.snapshot_url &&
@@ -60,9 +61,11 @@ export async function fetchSnapshot(data) {
         });
     }
 
-    const fishList = document.querySelector('.fish-icons-list');
+    const fishListGame = document.querySelector('.fish-icons-game-list');
+    const fishListDetails = document.querySelector('.fish-icons-details-list')
     const fishListMobile = document.querySelector('.fish-icons-list-popover');
-    renderFishList(fishList);
+    renderFishList(fishListGame);
+    renderFishList(fishListDetails);
     renderFishList(fishListMobile);
 
     const fishImages = document.querySelectorAll('.fish-image');
