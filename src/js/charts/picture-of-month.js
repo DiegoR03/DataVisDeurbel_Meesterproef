@@ -4,13 +4,29 @@ export async function fetchSnapshot(data) {
     }
     console.log(data);
 
+    // Get amount of all snapshots taken for each fish
+    const fishNumber = {};
+    data.forEach(snapshot => {
+        const fishName = snapshot.fish_name;
+
+        if (fishName.includes(",")) {
+            return
+        }
+
+        if(!fishNumber[fishName]) {
+            fishNumber[fishName] = 0;
+        }
+
+        fishNumber[fishName] ++;
+    });
+    console.log(fishNumber)
     const fishSnapshots = data
     .filter(item => item.snapshot_url &&
                     item.fish_name &&
                     item.fish_name !== "Unknown" &&
                     item.fish_name !== "unknown" &&
                     item.fish_name !== "onbekend" &&
-                    item.fish_name !== item.fish_name.includes(","))
+                    !item.fish_name.includes(","))
     // Filter gemaakt met hulp van Victor in zijn workshop van week 2
     .filter(item => {
         const queryString = item.url_query || item.referrer_query;
