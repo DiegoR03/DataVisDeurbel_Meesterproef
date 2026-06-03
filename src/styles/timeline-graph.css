@@ -178,7 +178,7 @@
             align-items: center;
 
             #html-legend {
-                width: 80vw;
+                width: 95vw;
                 justify-self: center;
                 flex: 1;
             }
@@ -192,10 +192,10 @@
         #legend-items-container{
             flex-direction: row;
             flex-wrap: wrap;
-            justify-content: left;
+            justify-content: space-evenly;
 
             div{
-                width: 22vw;
+                width: 25vw;
             }
         }
     }
