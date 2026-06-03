@@ -136,6 +136,9 @@ const visData = await loadCsvData(CSV_URL);
       </h3>
 
       <ol id="top-countries-list" class="top-countries-list"></ol>
+      <div id="active-country-card" class="active-country-card">
+        Selecteer een land om details te zien.
+      </div>
     </aside>
 
     <div class="world-map-section-visual">
@@ -144,6 +147,21 @@ const visData = await loadCsvData(CSV_URL);
         <div class="world-map-legend-gradient"></div>
         <span>Meer bezoekers</span>
       </div>
+      <div class="world-map-bubbles" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <img
+        src="/assets/img/fish-1.png"
+        class="world-map-fish"
+        alt=""
+        aria-hidden="true"
+      />
+      <p id="world-map-country-total" class="world-map-country-total"></p>
       <svg
         id="world-map"
         class="world-map"

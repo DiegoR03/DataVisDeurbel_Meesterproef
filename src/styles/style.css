@@ -35,7 +35,7 @@
   --font-size-h2: 36px;
   --font-size-h3: 27px;
 
-  --font-size-normal: 20px;
+  --font-size-normal: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
   --font-size-small: 16px;
 
   --line-height-headers: 125%;

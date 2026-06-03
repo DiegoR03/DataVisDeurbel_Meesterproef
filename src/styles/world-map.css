@@ -4,39 +4,45 @@
   cursor: pointer;
 
   transition:
-    fill 0.2s ease,
-    opacity 0.2s ease;
+    filter 0.2s ease,
+    stroke 0.2s ease,
+    stroke-width 0.2s ease;
 }
 
-.world-map-country:hover {
-  opacity: 0.5;
+.world-map-country:hover,
+.world-map-country:focus-visible,
+.world-map-country.is-active {
+  opacity: 1;
+  filter: drop-shadow(0 0 0.35rem var(--color-purple)) brightness(1.08);
+  stroke: var(--color-purple);
+  stroke-width: 2.5;
 }
 
 .world-map-country:focus {
   outline: none;
-  stroke: var(--color-black);
-  stroke-width: 2;
 }
 
 .world-map-country:focus-visible {
+  stroke: var(--color-purple);
+  stroke-width: 3;
+}
+
+.world-map-country.is-active {
+  opacity: 1;
   filter: brightness(1.2);
+  stroke: var(--color-purple);
+  stroke-width: 2;
 }
 
 .world-map-tooltip {
   position: fixed;
   z-index: 1000;
-
   display: none;
-
   padding: 0.75rem 1rem;
-
   background: var(--color-purple);
   color: var(--color-dark-green);
-
   border-radius: 0.75rem;
-
   font-size: 0.875rem;
-
   pointer-events: none;
 }
 
@@ -44,9 +50,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-
   margin-top: 1.5rem;
-
   color: var(--color-dark-green);
   font-family: "PT Sans", sans-serif;
 }
@@ -70,7 +74,6 @@
 
 .world-map-section-header {
   grid-column: 1 / span 8;
-
   margin-bottom: 1rem;
 }
 
@@ -86,14 +89,17 @@
 
 .world-map-section-visual {
   grid-column: 4 / span 9;
-
   position: relative;
+  overflow: hidden;
 }
 
 .world-map-section-countries {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   grid-column: 1 / span 3;
   border-radius: 1rem;
-  padding: 2rem 1.5rem 3rem;
 }
 
 .world-map {
@@ -106,13 +112,10 @@
 .world-map-legend {
   display: flex;
   justify-content: flex-end;
-
   margin-bottom: 1rem;
   align-items: center;
   gap: 1rem;
-
   margin-top: 1.5rem;
-
   font-family: "PT Sans", sans-serif;
   color: var(--color-dark-green);
 }
@@ -120,19 +123,19 @@
 .world-map-legend-gradient {
   width: 200px;
   height: 16px;
-
   border-radius: 999px;
-
   background: linear-gradient(to right, #ffffff, var(--color-dark-green));
   border: 1px solid #000000;
 }
 
 .top-countries-title {
-  margin: 0 0 1.5rem;
+  margin: 0;
   max-width: none;
 }
 
 .top-countries-list {
+  display: grid;
+  gap: 1rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -143,13 +146,15 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-
-  padding: 0.75rem 0;
-
+  padding: 0.5rem 0.5rem;
   border-bottom: 1px solid rgba(1, 70, 60, 0.2);
-  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+  font-size: var(--font-size-normal);
   font-weight: 800;
   line-height: var(--line-height-headers);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .top-countries-list-country {
@@ -175,6 +180,32 @@
   color: #cd7f32;
 }
 
+.top-countries-list-item.is-active {
+  background: rgba(192, 168, 255, 0.3);
+  border-radius: 0.5rem;
+
+  transform: translateX(0.25rem);
+}
+
+.active-country-card {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(1, 70, 60, 0.2);
+  color: var(--color-dark-green);
+  font-size: var(--font-size-normal);
+}
+
+.active-country-card strong {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.active-country-card span {
+  display: block;
+
+  font-family: "PT Sans", sans-serif;
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -184,15 +215,233 @@
   overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .world-map-section-header,
-  .world-map-section-layout {
-    grid-template-columns: 1fr;
+.world-map-bubbles span {
+  position: absolute;
+  bottom: 1rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid var(--color-dark-green);
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: bubbleFloat 8s ease-in-out infinite;
+}
+
+.world-map-bubbles span:nth-child(1) {
+  left: 15%;
+}
+
+.world-map-bubbles span:nth-child(2) {
+  left: 45%;
+  animation-delay: 2s;
+}
+
+.world-map-bubbles span:nth-child(3) {
+  left: 75%;
+  animation-delay: 4s;
+}
+
+@keyframes bubbleFloat {
+  from {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
   }
 
-  .world-map-title,
+  40% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-18rem) scale(1.4);
+    opacity: 0;
+  }
+}
+
+.world-map-fish {
+  position: absolute;
+  left: 1rem;
+  bottom: 2rem;
+  width: 4rem;
+  opacity: 0.8;
+  animation: fishSwim 14s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fishSwim {
+  0% {
+    transform: translateX(0) rotate(0deg) rotateY(180deg);
+  }
+
+  50% {
+    transform: translateX(18rem) translateY(-2rem) rotate(6deg) rotateY(180deg);
+  }
+
+  51% {
+    transform: translateX(18rem) translateY(-2rem);
+  }
+
+  100% {
+    transform: translateX(0) rotate(0deg) rotateY(180deg);
+  }
+}
+
+.world-map-route {
+  fill: none;
+  stroke: var(--color-purple);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 8 8;
+  animation: routeMove 2s linear infinite;
+  pointer-events: none;
+}
+
+.utrecht-marker {
+  fill: var(--color-purple);
+  stroke: var(--color-white);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.utrecht-marker-pulse {
+  fill: none;
+  stroke: var(--color-purple);
+  stroke-width: 2;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: utrechtPulse 2s ease-out infinite;
+}
+
+.utrecht-marker-label {
+  fill: var(--color-dark-green);
+  font-size: 0.8rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.utrecht-marker-label-bg {
+  fill: var(--color-off-white);
+  stroke: var(--color-purple);
+  stroke-width: 2;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+.utrecht-marker-label {
+  fill: var(--color-dark-green);
+  font-weight: 800;
+  pointer-events: none;
+}
+
+@keyframes utrechtPulse {
+  from {
+    opacity: 0.8;
+    r: 6;
+  }
+
+  to {
+    opacity: 0;
+    r: 16;
+  }
+}
+
+.route-fish {
+  font-size: 1rem;
+
+  pointer-events: none;
+}
+
+@keyframes routeMove {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+.world-map-country-total {
+  color: var(--color-dark-green);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .world-map-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: var(--padding-top) var(--padding-side) 0;
+  }
+
+  .world-map-section-header,
   .world-map-section-countries,
   .world-map-section-visual {
-    grid-column: 1;
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .world-map-section-countries {
+    order: 1;
+    gap: 1.5rem;
+  }
+
+  .world-map-section-visual {
+    order: 2;
+  }
+
+  .world-map {
+    border-radius: 0.75rem;
+  }
+
+  .world-map-legend {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .world-map-legend-gradient {
+    width: 140px;
+  }
+
+  .top-countries-list {
+    gap: 0.5rem;
+  }
+
+  .top-countries-list-item {
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .active-country-card {
+    margin-top: 0;
+    padding-top: 1rem;
+  }
+
+  .world-map-country-total {
+    margin-bottom: 0.5rem;
+  }
+
+  .utrecht-marker-label {
+    font-size: 0.7rem;
+  }
+
+  .world-map-tooltip {
+    max-width: 12rem;
+    font-size: 0.75rem;
+  }
+
+  .world-map-bubbles {
+    display: none;
+  }
+
+  .world-map-fish {
+    width: 3rem;
+    bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-map-country,
+  .top-countries-list-item,
+  .world-map-route,
+  .utrecht-marker-pulse,
+  .world-map-bubbles span,
+  .world-map-fish {
+    animation: none;
+    transition: none;
   }
 }
