@@ -4,7 +4,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 const baseWidth = 1000;
 const baseHeight = 600;
 
-const margin = { top: 10, right: 20, bottom: 90, left: 70 };
+const margin = { top: 5, right: 20, bottom: 90, left: 70 };
 const width = baseWidth - margin.left - margin.right;
 const height = baseHeight - margin.top - margin.bottom;
 
@@ -141,8 +141,8 @@ export function drawD3Graph(graphData, eventKeys) {
         const isActive = currentSelectedKey === item.key;
 
         const row = legendContainer.append("div")
-            .style("background", isActive ? "rgba(234, 191, 103, 0.2)" : "transparent")
-            .style("border", isActive ? "1px solid var(--color-light-gold)" : "1px solid transparent")
+            .style("background", isActive ? "var(--color-light-gold)" : "transparent")
+            .style("transition", "background 1s")
             .on("click", () => {
                 currentSelectedKey = item.key;
                 drawD3Graph(graphData, eventKeys);
@@ -228,7 +228,6 @@ export function drawD3Graph(graphData, eventKeys) {
         .attr("class", "visible-hours")
         .attr("height", height + 60)
         .attr("fill", "rgba(255,255,255,0)")
-        .style("cursor", "pointer")
         .on("mouseenter", function (event, data) {
             const i = visibleHours.indexOf(data);
             d3.select(`.circle-${i}`).style("opacity", 1);
