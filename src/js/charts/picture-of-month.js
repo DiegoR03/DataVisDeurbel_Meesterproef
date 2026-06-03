@@ -2,24 +2,6 @@ export async function fetchSnapshot(data) {
     if (!data || data.length === 0) {
         return;
     }
-    console.log(data);
-
-    // Get amount of all snapshots taken for each fish
-    const fishNumber = {};
-    data.forEach(snapshot => {
-        const fishName = snapshot.fish_name;
-
-        if (fishName.includes(",")) {
-            return
-        }
-
-        if(!fishNumber[fishName]) {
-            fishNumber[fishName] = 0;
-        }
-
-        fishNumber[fishName] ++;
-    });
-    console.log(fishNumber)
     const fishSnapshots = data
     .filter(item => item.snapshot_url &&
                     item.fish_name &&
@@ -27,38 +9,34 @@ export async function fetchSnapshot(data) {
                     item.fish_name !== "unknown" &&
                     item.fish_name !== "onbekend" &&
                     !item.fish_name.includes(","))
-    // Filter gemaakt met hulp van Victor in zijn workshop van week 2
-    .filter(item => {
-        const queryString = item.url_query || item.referrer_query;
-        const searchParams = new URLSearchParams(queryString);
-        const likelyhoodOfFish = searchParams.get('likelyhoodOfFish');
-
-        return parseFloat(likelyhoodOfFish) > 0.345;
-    })
     .slice(0, 100);
-
-    // get the most recent snapshot of each fish
-    // source: AI. Prompt: How do I use this data to return the most recent snapshot(s) for each fish?
-    const recentSnapshots = {};
-
-    fishSnapshots.forEach(snapshot => {
-        const fishName = snapshot.fish_name;
-
-        if(!recentSnapshots[fishName]) {
-            recentSnapshots[fishName] = [];
-        }
-        recentSnapshots[fishName].push(snapshot);
-
-        recentSnapshots[fishName].sort((a, b) => {
-            return new Date(b.created_at) - new Date(a.created_at);
-        });
-
-    })    
     console.log("SNAPSHOTS:", fishSnapshots);
 
     if (fishSnapshots.length === 0) {
         console.warn("Geen geldige vis-snapshots gevonden met likelyhoodOfFish > 0.34");
         return;
+    }
+
+    const fishNumber = {};
+
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for
+    for (const snapshot of fishSnapshots) {
+        const fishName = snapshot.fish_name;
+
+        if (!fishName) continue;
+        if (fishName.includes(",")) continue;
+
+        // Filter gemaakt met hulp van Victor in zijn workshop van week 2
+        const queryString = snapshot.url_query || snapshot.referrer_query;
+        if (!queryString) continue;
+
+        const searchParams = new URLSearchParams(queryString);
+        const likelyhoodOfFish = parseFloat(searchParams.get('likelyhoodOfFish'));
+
+        // if (!likelyhoodOfFish || likelyhoodOfFish <= 0.345) continue;
+
+        // // get the total amount of snapshots taken for each fish
+        // fishNumber[fishName] = (fishNumber[fishName] || 0) + 1;
     }
 
     // render fish icons to html 
@@ -114,6 +92,7 @@ export async function fetchSnapshot(data) {
 
     // generate random img
     function getRandomFish() {
+        fishSnapshots.slice(0, 100)
         const randomFish = Math.floor(Math.random() * fishSnapshots.length);
         currentFish = fishSnapshots[randomFish];
 
@@ -219,17 +198,27 @@ export async function fetchSnapshot(data) {
                 const fishName = button.dataset.set;
                 fishFactsName.textContent = fishName;
                 const fishImg = fishOptions.find(fish => fish.name === fishName);
-
-                fishFactsImg.src = fishImg.img;
-                fishFactsImg.alt = fishImg.name;
-
-                const recent = recentSnapshots[fishName]?.[0];
+                const fishCount = fishNumber[fishName] || 0;
                 
-                if (recent) {
-                    fishFactsRecentPics.src = recent.snapshot_url;
-                    fishFactsRecentPics.alt = fishName;
-                }
+                // fishFactsImg.src = fishImg.img;
+                // fishFactsImg.alt = fishImg.name;
 
+                const fishFactAmount = document.querySelector('.fish-facts-amount');
+
+                fishFactAmount.textContent = `Er zijn in totaal ${fishCount} foto's gemaakt van de ${fishName}`;
+
+                const fishFactsList = document.querySelector('.fish-facts-recent-pictures');
+                fishFactsList.innerHTML = "";
+
+                const currentFishPics = fishSnapshots
+                .filter(snapshot => snapshot.fish_name === fishName)
+                .slice(0, 3);
+                currentFishPics.forEach(fish => {
+                    fishFactsList.innerHTML += `
+                    <li><img src="${fish.snapshot_url}" alt="${fishName}"></li>
+                    `
+                })
+                console.log("FISH:", currentFishPics)
                 fishFactsPopOver.style.display = "grid";
             })
         })
