@@ -22,7 +22,6 @@ export async function fetchSnapshot(data) {
         const fishName = snapshot.fish_name;
 
         if (!fishName) continue;
-        if (fishName.includes(",")) continue;
 
         // Filter gemaakt met hulp van Victor in zijn workshop van week 2
         const queryString = snapshot.url_query || snapshot.referrer_query;
@@ -36,6 +35,7 @@ export async function fetchSnapshot(data) {
         // // get the total amount of snapshots taken for each fish
         fishNumber[fishName] = (fishNumber[fishName] || 0) + 1;
     }
+    console.log("fish count", fishNumber)
 
     // render fish icons to html 
     const fishOptions = [
@@ -182,7 +182,7 @@ export async function fetchSnapshot(data) {
     const fishFactsPopOver = document.querySelector('.fish-facts-popover');
     const fishFactsButtons = document.querySelectorAll('.fish-icons-details-list li');
     const fishFactsClose = document.querySelector('.fish-facts-close');
-    const fishFactsList = document.querySelector('.fish-facts-recent-pictures');
+    const fishFactsList = document.querySelector('.fish-facts-pictures');
     const popUpName = document.querySelector('.fish-facts-name');
 
     if (fishFactsPopOver) {
@@ -197,23 +197,24 @@ export async function fetchSnapshot(data) {
                 const fishFactAmount = document.querySelector('.fish-facts-amount');
 
                 fishFactAmount.textContent = `Er zijn in totaal ${fishCount} foto's gemaakt van de ${fishName}`;
-               
-                fishFactsList.innerHTML = "";
 
                 const currentFishPics = fishSnapshots.filter(snapshot => snapshot.fish_name === fishName)
                 fishFactsList.innerHTML = currentFishPics
                 .map(fish => {
                     return `<li><img src="${fish.snapshot_url}" alt="${fishName}"></li>`
                 })
+                .slice(0, 4)
                 .join("")
-                
-                console.log("FISH:")
+
+                console.log("popOver of:", fishName, currentFishPics.length)
                 fishFactsPopOver.style.display = "grid";
+                document.body.style.overflow = "hidden";
             })
         })
 
         fishFactsClose.addEventListener('click', () => {
-            fishFactsPopOver.style.display = "none"
+            fishFactsPopOver.style.display = "none";
+            document.body.style.overflow = "auto";
         })
     }
 }
