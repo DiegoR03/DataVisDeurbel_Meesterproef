@@ -21,17 +21,17 @@ async function init() {
       
       // Jouw originele array met de juiste afbeeldingspaden
       const fishSpecies = [
-          { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "./assets/img/ruisvoorn.png" },
-          { name: "Baars", legendId: "legend-baars", imgPath: "./assets/img/baars.png" },
-          { name: "Paling", legendId: "legend-paling", imgPath: "./assets/img/paling.png" },
-          { name: "Alver", legendId: "legend-alver", imgPath: "./assets/img/alver.png" },
-          { name: "Blankvoorn", legendId: "legend-blankvoorn", imgPath: "./assets/img/blankvoorn.png" },
-          { name: "Brasem", legendId: "legend-brasem", imgPath: "./assets/img/brasem.png" },
-          { name: "Kolblei", legendId: "legend-kolblei", imgPath: "./assets/img/kolblei.png" },
-          { name: "Meerval", legendId: "legend-meerval", imgPath: "./assets/img/meerval.png" },
-          { name: "Snoek", legendId: "legend-snoek", imgPath: "./assets/img/snoek.png" },
-          { name: "Snoekbaars", legendId: "legend-snoekbaars", imgPath: "./assets/img/snoekbaars.png" },
-          { name: "Winde", legendId: "legend-winde", imgPath: "./assets/img/winde.png" }
+          { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "./public/img/ruisvoorn.png" },
+          { name: "Baars", legendId: "legend-baars", imgPath: "./public/img/baars.png" },
+          { name: "Paling", legendId: "legend-paling", imgPath: "./public/img/paling.png" },
+          { name: "Alver", legendId: "legend-alver", imgPath: "./public/img/alver.png" },
+          { name: "Blankvoorn", legendId: "legend-blankvoorn", imgPath: "./public/img/blankvoorn.png" },
+          { name: "Brasem", legendId: "legend-brasem", imgPath: "./public/img/brasem.png" },
+          { name: "Kolblei", legendId: "legend-kolblei", imgPath: "./public/img/kolblei.png" },
+          { name: "Meerval", legendId: "legend-meerval", imgPath: "./public/img/meerval.png" },
+          { name: "Snoek", legendId: "legend-snoek", imgPath: "./public/img/snoek.png" },
+          { name: "Snoekbaars", legendId: "legend-snoekbaars", imgPath: "./public/img/snoekbaars.png" },
+          { name: "Winde", legendId: "legend-winde", imgPath: "./public/img/winde.png" }
       ];
 
       // Calculate the top 3
@@ -47,11 +47,11 @@ async function init() {
       function renderAquarium(mode) {
           if (!aquarium) return;
           aquarium.innerHTML = `
-          <img src="./assets/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
-          <img src="./assets/img/Planten.png" alt="Waterplant" class="water-plant">
-          <img src="./assets/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
-          <img src="./assets/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
-          <img src="./assets/img/zadel.png" alt="Fietszadel" class="zadel">
+          <img src="./public/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
+          <img src="./public/img/Planten.png" alt="Waterplant" class="water-plant">
+          <img src="./public/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
+          <img src="./public/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
+          <img src="./public/img/zadel.png" alt="Fietszadel" class="zadel">
           `; 
           
           // Hide all legend items first
