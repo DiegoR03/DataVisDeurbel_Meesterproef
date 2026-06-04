@@ -31,12 +31,14 @@
   --font-heading: "Bricolage Grotesque", sans-serif;
   --font-body: "Bricolage Grotesque", sans-serif;
 
-  --font-size-h1: 54px;
-  --font-size-h2: 36px;
+  --font-size-h1: clamp(2rem, 3.75vw, 4.5rem);
+  --font-size-h2: clamp(2rem, 3.75vw, 4.5rem);
   --font-size-h3: 27px;
 
   --font-size-normal: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
   --font-size-small: 16px;
+
+  --font-size-button: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
 
   --line-height-headers: 125%;
   --line-height-normal: 150%;
@@ -70,6 +72,10 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {

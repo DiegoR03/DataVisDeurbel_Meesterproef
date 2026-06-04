@@ -79,7 +79,7 @@
 
 .world-map-title {
   margin: 0;
-
+  font-size: var(--font-size-h2);
   text-align: left;
 }
 
@@ -107,6 +107,13 @@
   height: auto;
   display: block;
   border-radius: 1rem;
+
+  touch-action: none;
+  cursor: grab;
+}
+
+.world-map:active {
+  cursor: grabbing;
 }
 
 .world-map-legend {
@@ -190,7 +197,7 @@
 .active-country-card {
   margin-top: auto;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(1, 70, 60, 0.2);
+
   color: var(--color-dark-green);
   font-size: var(--font-size-normal);
 }
@@ -220,7 +227,7 @@
   text-decoration: none;
   transition: background 0.2s ease;
 
-  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+  font-size: var(--font-size-button);
 }
 
 .world-map-skip-button:hover,
@@ -360,8 +367,6 @@
 }
 
 .route-fish {
-  font-size: 1rem;
-
   pointer-events: none;
 }
 
@@ -421,7 +426,7 @@
 
   .top-countries-list-item {
     padding: 0.75rem;
-    font-size: 1rem;
+    font-size: var(--font-size-normal);
   }
 
   .active-country-card {
@@ -434,12 +439,12 @@
   }
 
   .utrecht-marker-label {
-    font-size: 0.7rem;
+    font-size: 0.7;
   }
 
   .world-map-tooltip {
     max-width: 12rem;
-    font-size: 0.75rem;
+    font-size: var(--font-size-small);
   }
 
   .world-map-bubbles {

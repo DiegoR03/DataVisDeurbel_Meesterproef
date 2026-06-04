@@ -5,6 +5,8 @@ import countries from "i18n-iso-countries";
 
 let selectedCountryId = null;
 
+let mapZoom = null;
+
 const MAP_WIDTH = 900;
 const MAP_HEIGHT = 500;
 const UTRECHT_COORDINATES = [5.1214, 52.0907];
@@ -29,16 +31,12 @@ export function renderWorldMap(data) {
   const mapGroup = svg.append("g").attr("class", "world-map-group");
 
   const countryGroup = mapGroup
-
     .append("g")
-
     .attr("class", "world-map-countries");
 
-  const routeGroup = mapGroup
+  const routeGroup = mapGroup.append("g").attr("class", "world-map-routes");
 
-    .append("g")
-
-    .attr("class", "world-map-routes");
+  enableMapZoom(svg);
 
   renderUtrechtMarker(mapGroup, projection);
 
@@ -185,6 +183,21 @@ function renderCountries(
     });
 }
 
+function enableMapZoom(svg) {
+  mapZoom = d3
+    .zoom()
+    .scaleExtent([1, 6])
+    .translateExtent([
+      [0, 0],
+      [MAP_WIDTH, MAP_HEIGHT],
+    ])
+    .on("zoom", (event) => {
+      svg.select(".world-map-group").attr("transform", event.transform);
+    });
+
+  svg.call(mapZoom);
+}
+
 function renderTopCountriesList(countryCounts, countryFeatures) {
   const topCountriesList = document.getElementById("top-countries-list");
 
@@ -311,19 +324,19 @@ function zoomToCountry(svg, path, country) {
 
   const scale = Math.max(
     1,
-    Math.min(2.2, 0.8 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)),
+    Math.min(4, 0.8 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)),
   );
 
   const translate = [MAP_WIDTH / 2 - scale * x, MAP_HEIGHT / 2 - scale * y];
 
-  svg
-    .select(".world-map-group")
-    .transition()
-    .duration(700)
-    .attr(
-      "transform",
-      `translate(${translate[0]}, ${translate[1]}) scale(${scale})`,
-    );
+  d3.select(".utrecht-marker-label-bg").style("display", "none");
+  d3.select(".utrecht-marker-label").style("display", "none");
+
+  const transform = d3.zoomIdentity
+    .translate(translate[0], translate[1])
+    .scale(scale);
+
+  svg.transition().duration(700).call(mapZoom.transform, transform);
 }
 
 function setActiveCountryById(countryId) {
@@ -361,17 +374,14 @@ function updateActiveCountryCard(country, countryCounts) {
 
   const rank = getCountryRank(country, countryCounts);
 
+  const rankMarkup = count > 0 ? `#${rank} meest bezochte land` : "&nbsp;";
+
   card.innerHTML = `
-
-    <strong>${country.properties.name}</strong>
-
-    <span>${count.toLocaleString("nl-NL")} bezoekers</span>
-
-    <span>${percentage}% van alle bezoekers</span>
-
-    <span>#${rank} meest bezochte land</span>
-
-  `;
+  <strong>${country.properties.name}</strong>
+  <span>${count.toLocaleString("nl-NL")} bezoekers</span>
+  <span>${percentage}% van alle bezoekers</span>
+  <span class="active-country-card-rank">${rankMarkup}</span>
+`;
 }
 
 function getCountryCounts(data) {
@@ -447,13 +457,12 @@ function resetMap(svg, routeGroup) {
   d3.selectAll(".world-map-country").classed("is-active", false);
   d3.selectAll(".top-countries-list-item").classed("is-active", false);
 
+  d3.select(".utrecht-marker-label-bg").style("display", null);
+  d3.select(".utrecht-marker-label").style("display", null);
+
   routeGroup.selectAll("*").remove();
 
-  svg
-    .select(".world-map-group")
-    .transition()
-    .duration(700)
-    .attr("transform", "translate(0, 0) scale(1)");
+  svg.transition().duration(700).call(mapZoom.transform, d3.zoomIdentity);
 }
 
 function renderUtrechtMarker(mapGroup, projection) {
