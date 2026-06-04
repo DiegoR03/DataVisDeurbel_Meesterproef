@@ -1,4 +1,4 @@
---- 
+---
 // @ts-nocheck
 import "../styles/style.css";
 import "../styles/intro-text.css";
@@ -119,13 +119,11 @@ const visData = await loadCsvData(CSV_URL);
       </section>
 
       <section class="world-map-section" aria-labelledby="world-map-title">
-  
+        <a href="#after-world-map" class="skip-link"> Sla wereldkaart over </a>
         <div class="world-map-section-header">
           <h2 id="world-map-title" class="world-map-title">
             Visdeurbellers over de hele wereld
           </h2>
-
-          <a href="#after-world-map" class="world-map-skip-button">Sla wereldkaart over</a>
         </div>
 
         <div class="world-map-section-layout">
@@ -242,7 +240,17 @@ const visData = await loadCsvData(CSV_URL);
           Laatste update: <span id="latest-date">Nog geen data geladen</span>
         </p>
 
-        <div id="chart"></div>
+        <div id="chart-container">
+
+          <div id="html-legend">
+            <h3>
+              FILTER OP EVENT / VIS
+            </h3>
+            <div id="legend-items-container">
+            </div>
+          </div>
+          <div id="chart"></div>
+        </div>
 
         <div class="tooltip" id="tooltip"></div>
       </section>
