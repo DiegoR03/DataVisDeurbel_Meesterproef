@@ -1,6 +1,82 @@
+/**********************************/
+/* MARK: World map section layout */
+/**********************************/
+
+.world-map-section {
+  background: var(--color-off-white);
+
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3rem var(--padding);
+  align-items: start;
+
+  padding: var(--spacing-top) var(--padding-side) 0;
+}
+
+.world-map-section-header {
+  grid-column: 1 / span 8;
+  margin-bottom: 1rem;
+}
+
+.world-map-title {
+  margin: 0;
+
+  font-size: var(--font-size-h2);
+  text-align: left;
+}
+
+.world-map-section-layout {
+  display: contents;
+}
+
+.world-map-section-countries {
+  grid-column: 1 / span 3;
+
+  align-self: start;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  border-radius: 1rem;
+}
+
+.world-map-section-visual {
+  grid-column: 4 / span 9;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+/***********************/
+/* MARK: World map SVG */
+/***********************/
+
+.world-map {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  border-radius: 1rem;
+
+  touch-action: none;
+  cursor: grab;
+}
+
+.world-map:active {
+  cursor: grabbing;
+}
+
+/*******************/
+/* MARK: Countries */
+/*******************/
+
 .world-map-country {
   stroke: var(--color-dark-green);
   stroke-width: 1;
+
   cursor: pointer;
 
   transition:
@@ -13,7 +89,9 @@
 .world-map-country:focus-visible,
 .world-map-country.is-active {
   opacity: 1;
+
   filter: drop-shadow(0 0 0.35rem var(--color-purple)) brightness(1.08);
+
   stroke: var(--color-purple);
   stroke-width: 2.5;
 }
@@ -29,121 +107,78 @@
 
 .world-map-country.is-active {
   opacity: 1;
+
   filter: brightness(1.2);
+
   stroke: var(--color-purple);
   stroke-width: 2;
 }
 
+/*****************/
+/* MARK: Tooltip */
+/*****************/
+
 .world-map-tooltip {
   position: fixed;
   z-index: 1000;
+
   display: none;
+
   padding: 0.75rem 1rem;
+
   background: var(--color-purple);
   color: var(--color-dark-green);
+
   border-radius: 0.75rem;
+
   font-size: 0.875rem;
+
   pointer-events: none;
 }
 
-.world-map-legend {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  color: var(--color-dark-green);
-  font-family: "PT Sans", sans-serif;
-}
-
-.world-map-legend-gradient {
-  width: 200px;
-  height: 16px;
-  border-radius: 999px;
-  background: linear-gradient(to right, #ffffff, var(--color-dark-green));
-  border: 1px solid #000000;
-}
-
-.world-map-section {
-  background: var(--color-off-white);
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 3rem var(--padding);
-  padding: var(--spacing-top) var(--padding-side) 0;
-  align-items: start;
-}
-
-.world-map-section-header {
-  grid-column: 1 / span 8;
-  margin-bottom: 1rem;
-}
-
-.world-map-title {
-  margin: 0;
-  font-size: var(--font-size-h2);
-  text-align: left;
-}
-
-.world-map-section-layout {
-  display: contents;
-}
-
-.world-map-section-visual {
-  grid-column: 4 / span 9;
-  position: relative;
-  overflow: hidden;
-}
-
-.world-map-section-countries {
-  align-self: start;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  grid-column: 1 / span 3;
-  border-radius: 1rem;
-}
-
-.world-map {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 1rem;
-
-  touch-action: none;
-  cursor: grab;
-}
-
-.world-map:active {
-  cursor: grabbing;
-}
+/****************/
+/* MARK: Legend */
+/****************/
 
 .world-map-legend {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 1rem;
   align-items: center;
   gap: 1rem;
+
   margin-top: 1.5rem;
-  font-family: "PT Sans", sans-serif;
+  margin-bottom: 1rem;
+
   color: var(--color-dark-green);
+  font-family: "PT Sans", sans-serif;
 }
 
 .world-map-legend-gradient {
   width: 200px;
   height: 16px;
-  border-radius: 999px;
-  background: linear-gradient(to right, #ffffff, var(--color-dark-green));
+
   border: 1px solid #000000;
+  border-radius: 999px;
+
+  background: linear-gradient(to right, #ffffff, var(--color-dark-green));
 }
+
+/****************************/
+/* MARK: Top countries list */
+/****************************/
 
 .top-countries-title {
   margin: 0;
+
   max-width: none;
 }
 
 .top-countries-list {
   display: grid;
   gap: 1rem;
+
   list-style: none;
+
   padding: 0;
   margin: 0;
 }
@@ -153,8 +188,11 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 0.5rem 0.5rem;
+
+  padding: 0.5rem;
+
   border-bottom: 1px solid rgba(1, 70, 60, 0.2);
+
   font-size: var(--font-size-normal);
   font-weight: 800;
   line-height: var(--line-height-headers);
@@ -170,6 +208,7 @@
 
 .top-countries-list-count {
   margin-left: auto;
+
   text-align: right;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -189,21 +228,28 @@
 
 .top-countries-list-item.is-active {
   background: rgba(192, 168, 255, 0.3);
+
   border-radius: 0.5rem;
 
   transform: translateX(0.25rem);
 }
+
+/*****************************/
+/* MARK: Active country card */
+/*****************************/
 
 .active-country-card {
   margin-top: auto;
   padding-top: 1.5rem;
 
   color: var(--color-dark-green);
+
   font-size: var(--font-size-normal);
 }
 
 .active-country-card strong {
   display: block;
+
   margin-bottom: 0.5rem;
 }
 
@@ -213,21 +259,35 @@
   font-family: "PT Sans", sans-serif;
 }
 
+.world-map-country-total {
+  color: var(--color-dark-green);
+
+  font-weight: 700;
+}
+
+/*********************/
+/* MARK: Skip button */
+/*********************/
+
 .world-map-skip-button {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+
   margin-top: 1rem;
   padding: 0.5em 0.8em;
+
   background: var(--color-purple);
   color: var(--color-dark-green);
+
   border: 1px solid var(--color-dark-green);
   border-radius: 1.5em;
-  font-weight: 700;
-  text-decoration: none;
-  transition: background 0.2s ease;
 
   font-size: var(--font-size-button);
+  font-weight: 700;
+  text-decoration: none;
+
+  transition: background 0.2s ease;
 }
 
 .world-map-skip-button:hover,
@@ -240,14 +300,22 @@
   outline-offset: 2px;
 }
 
+/****************************/
+/* MARK: Decorative bubbles */
+/****************************/
+
 .world-map-bubbles span {
   position: absolute;
   bottom: 1rem;
+
   width: 0.75rem;
   height: 0.75rem;
+
   border: 2px solid var(--color-dark-green);
   border-radius: 50%;
+
   opacity: 0.25;
+
   animation: bubbleFloat 8s ease-in-out infinite;
 }
 
@@ -257,17 +325,20 @@
 
 .world-map-bubbles span:nth-child(2) {
   left: 45%;
+
   animation-delay: 2s;
 }
 
 .world-map-bubbles span:nth-child(3) {
   left: 75%;
+
   animation-delay: 4s;
 }
 
 @keyframes bubbleFloat {
   from {
     transform: translateY(0) scale(0.8);
+
     opacity: 0;
   }
 
@@ -277,17 +348,26 @@
 
   to {
     transform: translateY(-18rem) scale(1.4);
+
     opacity: 0;
   }
 }
+
+/**********************************/
+/* MARK: Decorative swimming fish */
+/**********************************/
 
 .world-map-fish {
   position: absolute;
   left: 1rem;
   bottom: 2rem;
+
   width: 4rem;
+
   opacity: 0.8;
+
   animation: fishSwim 14s ease-in-out infinite;
+
   pointer-events: none;
 }
 
@@ -309,61 +389,21 @@
   }
 }
 
+/***********************************/
+/* MARK: Route line and route fish */
+/***********************************/
+
 .world-map-route {
   fill: none;
+
   stroke: var(--color-purple);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 8 8;
+
   animation: routeMove 2s linear infinite;
+
   pointer-events: none;
-}
-
-.utrecht-marker {
-  fill: var(--color-purple);
-  stroke: var(--color-white);
-  stroke-width: 2;
-  pointer-events: none;
-}
-
-.utrecht-marker-pulse {
-  fill: none;
-  stroke: var(--color-purple);
-  stroke-width: 2;
-  opacity: 0.8;
-  pointer-events: none;
-  animation: utrechtPulse 2s ease-out infinite;
-}
-
-.utrecht-marker-label {
-  fill: var(--color-dark-green);
-  font-size: 0.8rem;
-  font-weight: 700;
-  pointer-events: none;
-}
-
-.utrecht-marker-label-bg {
-  fill: var(--color-off-white);
-  stroke: var(--color-purple);
-  stroke-width: 2;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
-}
-.utrecht-marker-label {
-  fill: var(--color-dark-green);
-  font-weight: 800;
-  pointer-events: none;
-}
-
-@keyframes utrechtPulse {
-  from {
-    opacity: 0.8;
-    r: 6;
-  }
-
-  to {
-    opacity: 0;
-    r: 16;
-  }
 }
 
 .route-fish {
@@ -376,16 +416,74 @@
   }
 }
 
-.world-map-country-total {
-  color: var(--color-dark-green);
-  font-weight: 700;
+/************************/
+/* MARK: Utrecht marker */
+/************************/
+
+.utrecht-marker {
+  fill: var(--color-purple);
+
+  stroke: var(--color-white);
+  stroke-width: 2;
+
+  pointer-events: none;
 }
+
+.utrecht-marker-pulse {
+  fill: none;
+
+  stroke: var(--color-purple);
+  stroke-width: 2;
+
+  opacity: 0.8;
+
+  animation: utrechtPulse 2s ease-out infinite;
+
+  pointer-events: none;
+}
+
+.utrecht-marker-label-bg {
+  fill: var(--color-off-white);
+
+  stroke: var(--color-purple);
+  stroke-width: 2;
+
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+.utrecht-marker-label {
+  fill: var(--color-dark-green);
+
+  font-size: 0.8rem;
+  font-weight: 800;
+
+  pointer-events: none;
+}
+
+@keyframes utrechtPulse {
+  from {
+    opacity: 0.8;
+
+    r: 6;
+  }
+
+  to {
+    opacity: 0;
+
+    r: 16;
+  }
+}
+
+/****************/
+/* MARK: Mobile */
+/****************/
 
 @media (max-width: 768px) {
   .world-map-section {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+
     padding: var(--padding-top) var(--padding-side) 0;
   }
 
@@ -393,11 +491,13 @@
   .world-map-section-countries,
   .world-map-section-visual {
     grid-column: auto;
+
     width: 100%;
   }
 
   .world-map-section-countries {
     order: 1;
+
     gap: 1.5rem;
   }
 
@@ -413,6 +513,7 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.75rem;
+
     text-align: center;
   }
 
@@ -426,6 +527,7 @@
 
   .top-countries-list-item {
     padding: 0.75rem;
+
     font-size: var(--font-size-normal);
   }
 
@@ -439,11 +541,12 @@
   }
 
   .utrecht-marker-label {
-    font-size: 0.7;
+    font-size: 0.7rem;
   }
 
   .world-map-tooltip {
     max-width: 12rem;
+
     font-size: var(--font-size-small);
   }
 
@@ -452,10 +555,15 @@
   }
 
   .world-map-fish {
-    width: 3rem;
     bottom: 1rem;
+
+    width: 3rem;
   }
 }
+
+/************************/
+/* MARK: Reduced motion */
+/************************/
 
 @media (prefers-reduced-motion: reduce) {
   .world-map-country,

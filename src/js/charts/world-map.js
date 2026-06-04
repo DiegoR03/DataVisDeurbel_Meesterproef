@@ -1,29 +1,40 @@
+/*****************/
+/* MARK: Imports */
+/*****************/
+
 import * as d3 from "d3";
 import { feature } from "topojson-client";
 import world from "world-atlas/countries-110m.json";
 import countries from "i18n-iso-countries";
 
-let selectedCountryId = null;
+/***************/
+/* MARK: State */
+/***************/
 
+let selectedCountryId = null;
 let mapZoom = null;
+
+/*******************/
+/* MARK: Constants */
+/*******************/
 
 const MAP_WIDTH = 900;
 const MAP_HEIGHT = 500;
 const UTRECHT_COORDINATES = [5.1214, 52.0907];
 
+/********************/
+/* MARK: Render map */
+/********************/
+
 export function renderWorldMap(data) {
   const svg = d3.select("#world-map");
-
   const tooltip = d3.select("#world-map-tooltip");
 
   svg.attr("viewBox", `0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`);
 
   const projection = d3
-
     .geoNaturalEarth1()
-
     .scale(160)
-
     .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2]);
 
   const path = d3.geoPath(projection);
@@ -37,49 +48,36 @@ export function renderWorldMap(data) {
   const routeGroup = mapGroup.append("g").attr("class", "world-map-routes");
 
   enableMapZoom(svg);
-
   renderUtrechtMarker(mapGroup, projection);
 
   const countryFeatures = feature(
     world,
-
     world.objects.countries,
   ).features.filter((country) => String(country.id) !== "010");
 
   const countryCounts = getCountryCounts(data);
-
   const maxCount = d3.max([...countryCounts.values()]) || 1;
 
   const colorScale = d3
-
     .scaleSqrt()
-
     .domain([1, maxCount])
-
     .range(["#DCEFEA", "#01463C"]);
 
   renderCountries(
     countryGroup,
-
     routeGroup,
-
     svg,
-
     projection,
-
     path,
-
     countryFeatures,
-
     countryCounts,
-
     colorScale,
-
     tooltip,
   );
 
   renderTopCountriesList(countryCounts, countryFeatures);
 
+  // Reset the map when clicking outside a country.
   svg.on("click", (event) => {
     const clickedOnCountry =
       event.target.classList.contains("world-map-country");
@@ -89,12 +87,17 @@ export function renderWorldMap(data) {
     }
   });
 
+  // Allow keyboard users to leave the zoomed-in state.
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       resetMap(svg, routeGroup);
     }
   });
 }
+
+/*******************/
+/* MARK: Countries */
+/*******************/
 
 function renderCountries(
   countryGroup,
@@ -114,17 +117,23 @@ function renderCountries(
     .attr("class", "world-map-country")
     .attr("data-country-id", (country) => String(country.id))
     .attr("d", path)
+
+    // Only countries with visitors are reachable by keyboard.
     .attr("tabindex", (country) => {
       const count = getCountryCount(country, countryCounts);
 
       return count > 0 ? 0 : -1;
     })
+
+    // Sort countries by visitor count, so keyboard users reach the most relevant countries first.
     .sort((a, b) => {
       const countA = getCountryCount(a, countryCounts);
       const countB = getCountryCount(b, countryCounts);
 
       return countB - countA;
     })
+
+    // Give screenreaders meaningful information per country.
     .attr("aria-label", (country) => {
       const count = getCountryCount(country, countryCounts);
 
@@ -132,6 +141,8 @@ function renderCountries(
         "nl-NL",
       )} bezoekers`;
     })
+
+    // Color countries based on visitor count.
     .style("fill", (country) => {
       const count = getCountryCount(country, countryCounts);
 
@@ -141,6 +152,8 @@ function renderCountries(
 
       return colorScale(count);
     })
+
+    // Mouse interaction.
     .on("mouseenter", (event, country) => {
       setActiveCountryById(String(country.id));
       updateActiveCountryCard(country, countryCounts);
@@ -160,6 +173,8 @@ function renderCountries(
 
       hideTooltip(tooltip);
     })
+
+    // Click selects a country, draws the route, and zooms in.
     .on("click", (event, country) => {
       event.stopPropagation();
 
@@ -170,6 +185,8 @@ function renderCountries(
       drawRouteToCountry(routeGroup, projection, path, country);
       zoomToCountry(svg, path, country);
     })
+
+    // Keyboard interaction.
     .on("focus", (event, country) => {
       setActiveCountryById(String(country.id));
       updateActiveCountryCard(country, countryCounts);
@@ -182,6 +199,10 @@ function renderCountries(
       hideTooltip(tooltip);
     });
 }
+
+/**************/
+/* MARK: Zoom */
+/**************/
 
 function enableMapZoom(svg) {
   mapZoom = d3
@@ -198,15 +219,56 @@ function enableMapZoom(svg) {
   svg.call(mapZoom);
 }
 
+function zoomToCountry(svg, path, country) {
+  const [[x0, y0], [x1, y1]] = path.bounds(country);
+
+  const dx = x1 - x0;
+  const dy = y1 - y0;
+  const x = (x0 + x1) / 2;
+  const y = (y0 + y1) / 2;
+
+  const scale = Math.max(
+    1,
+    Math.min(4, 0.8 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)),
+  );
+
+  const translate = [MAP_WIDTH / 2 - scale * x, MAP_HEIGHT / 2 - scale * y];
+
+  // Hide the Utrecht label while zoomed in to prevent visual overlap.
+  d3.select(".utrecht-marker-label-bg").style("display", "none");
+  d3.select(".utrecht-marker-label").style("display", "none");
+
+  const transform = d3.zoomIdentity
+    .translate(translate[0], translate[1])
+    .scale(scale);
+
+  svg.transition().duration(700).call(mapZoom.transform, transform);
+}
+
+function resetMap(svg, routeGroup) {
+  selectedCountryId = null;
+
+  d3.selectAll(".world-map-country").classed("is-active", false);
+  d3.selectAll(".top-countries-list-item").classed("is-active", false);
+
+  d3.select(".utrecht-marker-label-bg").style("display", null);
+  d3.select(".utrecht-marker-label").style("display", null);
+
+  routeGroup.selectAll("*").remove();
+
+  svg.transition().duration(700).call(mapZoom.transform, d3.zoomIdentity);
+}
+
+/******************/
+/* MARK: Top list */
+/******************/
+
 function renderTopCountriesList(countryCounts, countryFeatures) {
   const topCountriesList = document.getElementById("top-countries-list");
 
   if (!topCountriesList) return;
 
-  const totalVisitors = [...countryCounts.values()].reduce(
-    (total, count) => total + count,
-    0,
-  );
+  const totalVisitors = getTotalVisitors(countryCounts);
 
   const topCountries = [...countryCounts.entries()]
     .sort((a, b) => b[1] - a[1])
@@ -219,6 +281,7 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
     const countryName = countries.getName(countryCode, "nl") || countryCode;
     const flagEmoji = getFlagEmoji(countryCode);
     const percentage = ((count / totalVisitors) * 100).toFixed(1);
+
     const countryFeature = countryFeatures.find(
       (country) => String(country.id) === numericCountryCode,
     );
@@ -239,16 +302,17 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
       </span>
     `;
 
-    listItem.addEventListener("mouseleave", () => {
-      clearActiveCountry();
-    });
-
+    // Highlight matching country from the list.
     listItem.addEventListener("mouseenter", () => {
       setActiveCountryById(numericCountryCode);
 
       if (countryFeature) {
         updateActiveCountryCard(countryFeature, countryCounts);
       }
+    });
+
+    listItem.addEventListener("mouseleave", () => {
+      clearActiveCountry();
     });
 
     listItem.addEventListener("focus", () => {
@@ -276,6 +340,10 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
   });
 }
 
+/***************/
+/* MARK: Route */
+/***************/
+
 function drawRouteToCountry(routeGroup, projection, path, country) {
   const utrechtPoint = projection(UTRECHT_COORDINATES);
   const countryPoint = path.centroid(country);
@@ -289,6 +357,7 @@ function drawRouteToCountry(routeGroup, projection, path, country) {
     Math.min(utrechtPoint[1], countryPoint[1]) - 80,
   ];
 
+  // Draw the path from left to right so fish emojis do not appear upside down.
   const routeStartPoint =
     utrechtPoint[0] < countryPoint[0] ? utrechtPoint : countryPoint;
 
@@ -314,30 +383,109 @@ function drawRouteToCountry(routeGroup, projection, path, country) {
     .text("🐟");
 }
 
-function zoomToCountry(svg, path, country) {
-  const [[x0, y0], [x1, y1]] = path.bounds(country);
+/*****************/
+/* MARK: Utrecht */
+/*****************/
 
-  const dx = x1 - x0;
-  const dy = y1 - y0;
-  const x = (x0 + x1) / 2;
-  const y = (y0 + y1) / 2;
+function renderUtrechtMarker(mapGroup, projection) {
+  const utrechtPoint = projection(UTRECHT_COORDINATES);
 
-  const scale = Math.max(
-    1,
-    Math.min(4, 0.8 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)),
-  );
+  if (!utrechtPoint) return;
 
-  const translate = [MAP_WIDTH / 2 - scale * x, MAP_HEIGHT / 2 - scale * y];
+  const labelX = utrechtPoint[0] + 10;
+  const labelY = utrechtPoint[1] - 8;
 
-  d3.select(".utrecht-marker-label-bg").style("display", "none");
-  d3.select(".utrecht-marker-label").style("display", "none");
+  mapGroup
+    .append("circle")
+    .attr("class", "utrecht-marker-pulse")
+    .attr("cx", utrechtPoint[0])
+    .attr("cy", utrechtPoint[1])
+    .attr("r", 9);
 
-  const transform = d3.zoomIdentity
-    .translate(translate[0], translate[1])
-    .scale(scale);
+  mapGroup
+    .append("circle")
+    .attr("class", "utrecht-marker")
+    .attr("cx", utrechtPoint[0])
+    .attr("cy", utrechtPoint[1])
+    .attr("r", 5);
 
-  svg.transition().duration(700).call(mapZoom.transform, transform);
+  // Background badge for the Utrecht label.
+  mapGroup
+    .append("rect")
+    .attr("class", "utrecht-marker-label-bg")
+    .attr("x", labelX - 6)
+    .attr("y", labelY - 14)
+    .attr("width", 58)
+    .attr("height", 20)
+    .attr("rx", 10);
+
+  mapGroup
+    .append("text")
+    .attr("class", "utrecht-marker-label")
+    .attr("x", labelX)
+    .attr("y", labelY)
+    .text("Utrecht");
 }
+
+/*********************/
+/* MARK: Active card */
+/*********************/
+
+function updateActiveCountryCard(country, countryCounts) {
+  const card = document.getElementById("active-country-card");
+
+  if (!card) return;
+
+  const count = getCountryCount(country, countryCounts);
+  const totalVisitors = getTotalVisitors(countryCounts);
+  const percentage = ((count / totalVisitors) * 100).toFixed(1);
+  const rank = getCountryRank(country, countryCounts);
+
+  // Keep an empty line for countries without visitors to prevent layout jumping.
+  const rankMarkup = count > 0 ? `#${rank} meest bezochte land` : "&nbsp;";
+
+  card.innerHTML = `
+    <strong>${country.properties.name}</strong>
+    <span>${count.toLocaleString("nl-NL")} bezoekers</span>
+    <span>${percentage}% van alle bezoekers</span>
+    <span class="active-country-card-rank">${rankMarkup}</span>
+  `;
+}
+
+/*****************/
+/* MARK: Tooltip */
+/*****************/
+
+function showTooltip(tooltip, country, countryCounts) {
+  const count = getCountryCount(country, countryCounts);
+
+  tooltip.style("display", "block").html(`
+    <strong>${country.properties.name}</strong><br>
+    ${count.toLocaleString("nl-NL")} bezoekers
+  `);
+}
+
+function moveTooltipToMouse(tooltip, event) {
+  tooltip
+    .style("left", `${event.clientX + 12}px`)
+    .style("top", `${event.clientY + 12}px`);
+}
+
+function moveTooltipToCountry(tooltip, event) {
+  const bounds = event.target.getBoundingClientRect();
+
+  tooltip
+    .style("left", `${bounds.left + bounds.width / 2}px`)
+    .style("top", `${bounds.top - 12}px`);
+}
+
+function hideTooltip(tooltip) {
+  tooltip.style("display", "none");
+}
+
+/**********************/
+/* MARK: Active state */
+/**********************/
 
 function setActiveCountryById(countryId) {
   d3.selectAll(".world-map-country").classed("is-active", false);
@@ -361,28 +509,9 @@ function clearActiveCountry() {
   d3.selectAll(".top-countries-list-item").classed("is-active", false);
 }
 
-function updateActiveCountryCard(country, countryCounts) {
-  const card = document.getElementById("active-country-card");
-
-  if (!card) return;
-
-  const count = getCountryCount(country, countryCounts);
-
-  const totalVisitors = getTotalVisitors(countryCounts);
-
-  const percentage = ((count / totalVisitors) * 100).toFixed(1);
-
-  const rank = getCountryRank(country, countryCounts);
-
-  const rankMarkup = count > 0 ? `#${rank} meest bezochte land` : "&nbsp;";
-
-  card.innerHTML = `
-  <strong>${country.properties.name}</strong>
-  <span>${count.toLocaleString("nl-NL")} bezoekers</span>
-  <span>${percentage}% van alle bezoekers</span>
-  <span class="active-country-card-rank">${rankMarkup}</span>
-`;
-}
+/**********************/
+/* MARK: Data helpers */
+/**********************/
 
 function getCountryCounts(data) {
   const countrySessions = new Map();
@@ -414,103 +543,6 @@ function getCountryCount(country, countryCounts) {
   return countryCounts.get(String(country.id)) || 0;
 }
 
-function getFlagEmoji(countryCode) {
-  if (!countryCode) return "";
-
-  return countryCode
-    .toUpperCase()
-    .replace(/./g, (character) =>
-      String.fromCodePoint(127397 + character.charCodeAt()),
-    );
-}
-
-function showTooltip(tooltip, country, countryCounts) {
-  const count = getCountryCount(country, countryCounts);
-
-  tooltip.style("display", "block").html(`
-    <strong>${country.properties.name}</strong><br>
-    ${count.toLocaleString("nl-NL")} bezoekers
-  `);
-}
-
-function moveTooltipToMouse(tooltip, event) {
-  tooltip
-    .style("left", `${event.clientX + 12}px`)
-    .style("top", `${event.clientY + 12}px`);
-}
-
-function moveTooltipToCountry(tooltip, event) {
-  const bounds = event.target.getBoundingClientRect();
-
-  tooltip
-    .style("left", `${bounds.left + bounds.width / 2}px`)
-    .style("top", `${bounds.top - 12}px`);
-}
-
-function hideTooltip(tooltip) {
-  tooltip.style("display", "none");
-}
-
-function resetMap(svg, routeGroup) {
-  selectedCountryId = null;
-
-  d3.selectAll(".world-map-country").classed("is-active", false);
-  d3.selectAll(".top-countries-list-item").classed("is-active", false);
-
-  d3.select(".utrecht-marker-label-bg").style("display", null);
-  d3.select(".utrecht-marker-label").style("display", null);
-
-  routeGroup.selectAll("*").remove();
-
-  svg.transition().duration(700).call(mapZoom.transform, d3.zoomIdentity);
-}
-
-function renderUtrechtMarker(mapGroup, projection) {
-  const utrechtPoint = projection(UTRECHT_COORDINATES);
-
-  const labelX = utrechtPoint[0] + 10;
-  const labelY = utrechtPoint[1] - 8;
-
-  if (!utrechtPoint) return;
-
-  mapGroup
-    .append("circle")
-    .attr("class", "utrecht-marker-pulse")
-    .attr("cx", utrechtPoint[0])
-    .attr("cy", utrechtPoint[1])
-    .attr("r", 9);
-
-  mapGroup
-    .append("circle")
-    .attr("class", "utrecht-marker")
-    .attr("cx", utrechtPoint[0])
-    .attr("cy", utrechtPoint[1])
-    .attr("r", 5);
-
-  mapGroup
-    .append("text")
-    .attr("class", "utrecht-marker-label")
-    .attr("x", utrechtPoint[0] + 10)
-    .attr("y", utrechtPoint[1] - 8)
-    .text("Utrecht");
-
-  mapGroup
-    .append("rect")
-    .attr("class", "utrecht-marker-label-bg")
-    .attr("x", labelX - 6)
-    .attr("y", labelY - 14)
-    .attr("width", 58)
-    .attr("height", 20)
-    .attr("rx", 10);
-
-  mapGroup
-    .append("text")
-    .attr("class", "utrecht-marker-label")
-    .attr("x", labelX)
-    .attr("y", labelY)
-    .text("Utrecht");
-}
-
 function getTotalVisitors(countryCounts) {
   return [...countryCounts.values()].reduce((total, count) => total + count, 0);
 }
@@ -519,7 +551,18 @@ function getCountryRank(country, countryCounts) {
   const sortedCountries = [...countryCounts.entries()].sort(
     (a, b) => b[1] - a[1],
   );
+
   const countryId = String(country.id);
 
   return sortedCountries.findIndex(([id]) => id === countryId) + 1;
+}
+
+function getFlagEmoji(countryCode) {
+  if (!countryCode) return "";
+
+  return countryCode
+    .toUpperCase()
+    .replace(/./g, (character) =>
+      String.fromCodePoint(127397 + character.charCodeAt()),
+    );
 }
