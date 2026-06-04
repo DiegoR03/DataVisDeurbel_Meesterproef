@@ -93,6 +93,7 @@
     animation-name: swim-across;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+    z-index: 2;
 }
 
 
@@ -113,4 +114,75 @@
         /* Swim completely out of view on the left side */
         transform: translateX(-120vw) translateY(20px);
     }
+}
+
+/* =========================================
+   Aquarium Bubbles
+   ========================================= */
+
+.bubble {
+    position: absolute;
+    bottom: -20px; /* Start just below the visual tank */
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white inside */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Crisper white edge */
+    border-radius: 50%; /* Perfect circle */
+    z-index: 3; /* Float in front of the sludge and fish */
+    
+    animation-name: float-up;
+    animation-timing-function: ease-in; /* Start slightly slower, accelerate to the surface */
+    animation-iteration-count: infinite;
+    z-index: 4;
+}
+
+/* The upward floating path with a slight left/right wobble */
+@keyframes float-up {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0; /* Fade in at the bottom */
+    }
+    10% {
+        opacity: 1; /* Fully visible */
+    }
+    50% {
+        /* Move up half the tank, wobble right slightly */
+        transform: translateY(-300px) translateX(15px) scale(1.1); 
+    }
+    100% {
+        /* Reach the top, wobble left slightly, and grow a bit */
+        transform: translateY(-650px) translateX(-15px) scale(1.2);
+        opacity: 0; /* Pop/fade out at the surface */
+    }
+}
+
+/* =========================================
+   Aquarium 3D Bottom (Overlapping Mudbanks)
+   ========================================= */
+
+/* Bodem Laag 1: De achterste modderheuvel (links) */
+.main-aquarium::before {
+    content: "";
+    position: absolute;
+    bottom: -100px;
+    left: -10%;
+    width: 70%;
+    height: 180px;
+    background: #423423; /* Iets donkerder omdat het verder naar achter ligt */
+    border-radius: 50% 50% 0 0; 
+    z-index: 1; 
+    pointer-events: none;
+}
+
+
+.main-aquarium::after {
+    content: "";
+    position: absolute;
+    bottom: -120px;
+    right: -10%;
+    width: 75%;
+    height: 220px;
+    background: linear-gradient(to bottom, #423423 0%);
+    border-radius: 50% 50% 0 0; /* Glooiende heuvel */
+    /* box-shadow: -20px 0 30px rgba(0, 0, 0, 0.5); */
+    z-index: 3; /* Helemaal voorin */
+    pointer-events: none;
 }

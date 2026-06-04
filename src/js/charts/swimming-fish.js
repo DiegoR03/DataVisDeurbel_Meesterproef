@@ -53,3 +53,33 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         container.appendChild(fishImg);
     }
 }
+
+// Function to generate random air bubbles
+export function createBubbles(containerId, amount) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    for (let i = 0; i < amount; i++) {
+        const bubble = document.createElement("div");
+        bubble.classList.add("bubble");
+
+        // Randomize the size (between 4px and 14px)
+        const size = 4 + Math.random() * 10;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+
+        // Randomize horizontal position (0% to 100% width of the tank)
+        bubble.style.left = `${Math.random() * 100}%`;
+
+        // Randomize floating speed (between 4 and 10 seconds)
+        const duration = 4 + Math.random() * 6;
+        bubble.style.animationDuration = `${duration}s`;
+        
+        // Negative delay so they are already floating when the page loads
+        const delay = (Math.random() * 10) * -1;
+        bubble.style.animationDelay = `${delay}s`;
+
+        // Add the bubble to the water
+        container.appendChild(bubble);
+    }
+}

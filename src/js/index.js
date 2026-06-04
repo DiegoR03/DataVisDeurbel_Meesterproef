@@ -3,7 +3,7 @@ import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
 import { createGraph } from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
 import { renderWorldMap } from "./charts/world-map.js";
-import { addFishToAquarium } from "./charts/swimming-fish.js";
+import { addFishToAquarium, createBubbles } from "./charts/swimming-fish.js";
 
 async function init() {
   const rawData = window.SERVER_VIS_DATA || [];
@@ -44,6 +44,8 @@ async function init() {
               fish.imgPath
           );
       });
+
+      createBubbles("main-aquarium", 25);
   }
   
   setupScrollAnimation();
