@@ -2,18 +2,53 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap; 
-    gap: 15px 30px;
-    margin-bottom: 20px;
-    font-size: 20px;
+    gap: 12px 16px;  
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+/* The individual fish tags */
+.aquarium-legend p {
+    background-color: white;
+    color: var(--color-dark-green, #1E3F20);
+    margin: 0;
+    padding: 6px 8px 6px 16px; 
+    border-radius: 50px; 
+    font-size: 15px;
+    font-weight: 600;
+    
+    
+    display: flex;
+    align-items: center;
+    gap: 12px; 
+    
+   
+    box-shadow: 0 4px 10px var(--color-purple) 0.5;
+    border: 1px solid var(--color-purple);
+    transition: transform 0.2s ease;
+}
+
+/*tag lifts up slightly when hovering */
+.aquarium-legend p:hover {
+    transform: translateY(-2px);
+    cursor: default;
+}
+
+/* The badge for the actual number */
+.aquarium-legend .fish-count {
+    background-color: var(--color-blue-green);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 30px; 
+    font-size: 13px;
     font-weight: bold;
-    color: var(--color-dark-green);
 }
 
 /* The giant fish tank */
 .main-aquarium {
     width: 100%;
     height: 600px; 
-    background: linear-gradient(180deg, #536B51 0%, #2F4435 50%, #131C15 100%);
+    background: linear-gradient(180deg, var(--color-blue-green) 0%, rgb(21, 162, 148) 40%, var(--color-dark-green) 100%);
     border-radius: 16px;
     box-shadow: inset 0 20px 50px rgba(0, 0, 0, 0.3), 0 4px 15px rgba(0, 0, 0, 0.1);
     position: relative; 

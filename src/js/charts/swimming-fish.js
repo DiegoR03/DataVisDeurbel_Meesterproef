@@ -11,7 +11,7 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     // 2. Update the text in the legend above the aquarium
     const legendText = document.getElementById(legendId);
     if(legendText) {
-        legendText.innerText = `${fishName}: ${totalSpotted}x gespot`;
+        legendText.innerHTML = `${fishName} <span class="fish-count">${totalSpotted}</span>`;
     }
 
     // 3. Calculate how many visual fish to render
