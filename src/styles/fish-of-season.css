@@ -44,6 +44,20 @@
     font-weight: bold;
 }
 
+.legend-fish-icon {
+    height: 24px; /* Keeps the image small enough to fit inside the tag */
+    width: auto;
+    object-fit: contain; /* Ensures the fish proportions stay correct */
+    
+    /* Optional: If your fish are facing right, you can flip them to face the text 
+       transform: scaleX(-1); */
+}
+
+/* Update the padding of the tag slightly so the image isn't glued to the left edge */
+.aquarium-legend p {
+    padding: 6px 8px 6px 8px; /* Changed the left padding from 16px to 8px */
+}
+
 /* The giant fish tank */
 .main-aquarium {
     width: 100%;
@@ -154,11 +168,9 @@
     }
 }
 
-/* =========================================
-   Aquarium 3D Bottom (Overlapping Mudbanks)
-   ========================================= */
 
-/* Bodem Laag 1: De achterste modderheuvel (links) */
+
+
 .main-aquarium::before {
     content: "";
     position: absolute;
@@ -166,7 +178,7 @@
     left: -10%;
     width: 70%;
     height: 180px;
-    background: #423423; /* Iets donkerder omdat het verder naar achter ligt */
+    background: linear-gradient(to bottom, #54422c 0%, #211a11 100%);
     border-radius: 50% 50% 0 0; 
     z-index: 1; 
     pointer-events: none;
@@ -180,9 +192,127 @@
     right: -10%;
     width: 75%;
     height: 220px;
-    background: linear-gradient(to bottom, #423423 0%);
-    border-radius: 50% 50% 0 0; /* Glooiende heuvel */
-    /* box-shadow: -20px 0 30px rgba(0, 0, 0, 0.5); */
-    z-index: 3; /* Helemaal voorin */
+    background: linear-gradient(to bottom, #54422c 10%, #211a11 100%);
+    border-radius: 50% 50% 0 0; 
+    z-index: 3; 
     pointer-events: none;
+}
+
+/* =========================================
+   Aquarium Filters (Accessible Radio Buttons)
+   ========================================= */
+
+/* Verwijder de standaard randen van een fieldset */
+.aquarium-filters {
+    border: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Verberg tekst alleen visueel, behoud het voor schermlezers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Verberg de standaard radio-bolletjes */
+.aquarium-filters input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* De styling van onze "neppe" knop (het label) */
+.filter-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--color-purple, #A68CFF);
+    background-color: transparent;
+    color: var(--color-purple, #A68CFF);
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* DE MAGIE: Als de onzichtbare input is aangevinkt, geef het label een kleur! */
+.aquarium-filters input[type="radio"]:checked + .filter-btn {
+    background-color: var(--color-purple, #A68CFF);
+    color: white;
+}
+
+/* Toegankelijkheid: Focus-ring als je met de Tab-toets navigeert */
+.aquarium-filters input[type="radio"]:focus-visible + .filter-btn {
+    outline: 3px solid #1E3F20;
+    outline-offset: 3px;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   Canal Decorations (Bicycle Wreck)
+   ========================================= */
+
+.bicycle-wreck {
+    position: absolute;
+    
+    /* Positie op de bodem */
+    bottom: 40px; 
+    right: 15%; /* Zet hem een beetje aan de rechterkant */
+    width: 250px; /* Pas dit aan als je fiets te groot of te klein is */
+    
+    /* De 3D Magie: 2 zorgt dat hij tússen de voorste en achterste modderheuvel in ligt */
+    z-index: 2; 
+    
+    /* Zorg dat de muis er doorheen klikt, zodat filters en vissen blijven werken */
+    pointer-events: none; 
+    
+    /* Optioneel: Maak hem een beetje scheef, alsof hij is neergegooid */
+    transform: rotate(-9deg); 
+    
+    /* Optioneel: Een filter om hem donkerder en troebeler te maken, 
+       zodat hij beter in het grachtwater blendt */
+    opacity: 0.6;
+    filter: brightness(0.6) sepia(0.3);
+}
+
+.water-plant {
+    position: absolute;
+    bottom: 25px; /* Laat de wortels iets in de modder zakken */
+    left: 10%; /* Zet hem aan de linkerkant */
+    height: 180px; /* Pas dit aan afhankelijk van hoe groot je plant moet zijn */
+    width: auto;
+    z-index: 0; /* Tussen de voorste en achterste heuvel in */
+    pointer-events: none; 
+    filter: brightness(0.6) sepia(0.3);
+}
+
+.plant-2 {
+    left: 68%;
+}
+
+.plant-3 {
+    left: 48%;
+    transform: scaleX(-1);
+    height: 140px;
+}
+
+.zadel {
+    position: absolute;
+    right: 10%;
+    bottom: 75px;
+    filter: brightness(0.6) sepia(0.3);
+    height: 40px;
 }

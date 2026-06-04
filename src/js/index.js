@@ -16,10 +16,10 @@ async function init() {
   renderIntroText(data);
 
   if (data && data.length > 0) {
-    const aquarium = document.getElementById("main-aquarium");
-      if (aquarium) aquarium.innerHTML = "";
-
-      // Create an array with all the configurations for your 11 fish
+      const aquarium = document.getElementById("main-aquarium");
+      const filterInputs = document.querySelectorAll('input[name="fish-filter"]');
+      
+      // Jouw originele array met de juiste afbeeldingspaden
       const fishSpecies = [
           { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "./assets/img/ruisvoorn.png" },
           { name: "Baars", legendId: "legend-baars", imgPath: "./assets/img/baars.png" },
@@ -34,18 +34,56 @@ async function init() {
           { name: "Winde", legendId: "legend-winde", imgPath: "./assets/img/winde.png" }
       ];
 
-      // Loop through the array and render each fish
-      fishSpecies.forEach(fish => {
-          addFishToAquarium(
-              data, 
-              fish.name, 
-              "main-aquarium", 
-              fish.legendId, 
-              fish.imgPath
-          );
+      // 1. Calculate the top 3
+      const fishWithCounts = fishSpecies.map(fish => {
+          const count = data.filter(d => d.fish_name === fish.name).length;
+          return { ...fish, count: count };
+      });
+      
+      const sortedFish = [...fishWithCounts].sort((a, b) => b.count - a.count);
+      const top3Fish = sortedFish.slice(0, 3); // Grab only the top 3
+
+      // 2. Function to draw the aquarium based on the choice
+      function renderAquarium(mode) {
+          if (!aquarium) return;
+          aquarium.innerHTML = `
+          <img src="./assets/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
+          <img src="./assets/img/Planten.png" alt="Waterplant" class="water-plant">
+          <img src="./assets/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
+          <img src="./assets/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
+          <img src="./assets/img/zadel.png" alt="Fietszadel" class="zadel">
+          `; 
+          
+          // Hide all legend items first
+          fishSpecies.forEach(fish => {
+              const legendEl = document.getElementById(fish.legendId);
+              if (legendEl) legendEl.style.display = "none";
+          });
+
+          // Decide which list to draw ("all" or "top3")
+          const activeList = mode === "top3" ? top3Fish : fishSpecies;
+
+          // Draw the selected list
+          activeList.forEach(fish => {
+              const legendEl = document.getElementById(fish.legendId);
+              if (legendEl) legendEl.style.display = "flex"; // Show legend item
+
+              addFishToAquarium(data, fish.name, "main-aquarium", fish.legendId, fish.imgPath);
+          });
+
+          // Draw the bubbles again
+          createBubbles("main-aquarium", 25);
+      }
+
+      // 3. Listen to the input changes
+      filterInputs.forEach(input => {
+          input.addEventListener('change', (e) => {
+              renderAquarium(e.target.value);
+          });
       });
 
-      createBubbles("main-aquarium", 25);
+      // 4. Draw the aquarium for the first time (All fish)
+      renderAquarium("all");
   }
   
   setupScrollAnimation();
