@@ -3,6 +3,7 @@ import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
 import { createGraph } from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
 import { renderWorldMap } from "./charts/world-map.js";
+import { drawDynamicStopwatch } from "./charts/average-time.js";
 import { addFishToAquarium, createBubbles } from "./charts/swimming-fish.js";
 
 async function init() {
@@ -90,6 +91,7 @@ async function init() {
   createGraph(data);
   renderWorldMap(data);
   fetchSnapshot(data);
+  drawDynamicStopwatch(data);
   initSmartHeader();
   initNavigation();
 }
