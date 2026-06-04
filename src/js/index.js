@@ -34,7 +34,7 @@ async function init() {
           { name: "Winde", legendId: "legend-winde", imgPath: "./assets/img/winde.png" }
       ];
 
-      // 1. Calculate the top 3
+      // Calculate the top 3
       const fishWithCounts = fishSpecies.map(fish => {
           const count = data.filter(d => d.fish_name === fish.name).length;
           return { ...fish, count: count };
@@ -60,7 +60,7 @@ async function init() {
               if (legendEl) legendEl.style.display = "none";
           });
 
-          // Decide which list to draw ("all" or "top3")
+          // Decide which list to draw
           const activeList = mode === "top3" ? top3Fish : fishSpecies;
 
           // Draw the selected list
@@ -75,14 +75,14 @@ async function init() {
           createBubbles("main-aquarium", 25);
       }
 
-      // 3. Listen to the input changes
+      // Listen to the input changes
       filterInputs.forEach(input => {
           input.addEventListener('change', (e) => {
               renderAquarium(e.target.value);
           });
       });
 
-      // 4. Draw the aquarium for the first time (All fish)
+      // Draw the aquarium for the first time (All fish)
       renderAquarium("all");
   }
   
