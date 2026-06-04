@@ -39,35 +39,34 @@ export async function fetchSnapshot(data) {
 
     // render fish icons to html 
     const fishOptions = [
-        {name: "Kolblei", img: "/img/fish-1.png"},
-        {name: "Snoek", img: "/img/fish-2.png"},
-        {name: "Alver", img: "/img/fish-3.png"},
-        {name: "Baars", img: "/img/fish-4.png"},
-        {name: "Blankvorn", img: "/img/fish-5.png"},
-        {name: "Snoekbaars", img: "/img/fish-6.png"},
-        {name: "Meerval", img: "/img/fish-7.png"},
-        {name: "Winde", img: "/img/fish-8.png"},
-        {name: "Brasem", img: "/img/fish-9.png"},
-        {name: "Paling", img: "/img/fish-10.png"},
-        {name: "Ruisvoorn", img: "/img/fish-11.png"}
+        { name: "Kolblei", img: "/img/fish-1.png" },
+        { name: "Snoek", img: "/img/fish-2.png" },
+        { name: "Alver", img: "/img/fish-3.png" },
+        { name: "Baars", img: "/img/fish-4.png" },
+        { name: "Blankvorn", img: "/img/fish-5.png" },
+        { name: "Snoekbaars", img: "/img/fish-6.png" },
+        { name: "Meerval", img: "/img/fish-7.png" },
+        { name: "Winde", img: "/img/fish-8.png" },
+        { name: "Brasem", img: "/img/fish-9.png" },
+        { name: "Paling", img: "/img/fish-10.png" },
+        { name: "Ruisvoorn", img: "/img/fish-11.png" },
     ];
 
     function renderFishList(container) {
-        if (!container) return;
-        container.innerHTML = "";
+    if (!container) return;
+    container.innerHTML = "";
 
-        fishOptions.forEach((fish) => {
-            const li = document.createElement('li');
-            li.classList.add('fish-item');
-            li.dataset.set = fish.name;
-            li.tabIndex = 0;
+    fishOptions.forEach((fish) => {
+        const li = document.createElement("li");
+        li.classList.add("fish-item");
+        li.dataset.set = fish.name;
+        li.tabIndex = 0;
 
-            li.innerHTML =
-            `<img src="${fish.img}" alt="picture of ${fish.name}">
+        li.innerHTML = `<img src="${fish.img}" alt="picture of ${fish.name}">
             <p>${fish.name}</p>`;
 
-            container.appendChild(li);
-        });
+        container.appendChild(li);
+    });
     }
 
     // put rendered html in ul's
@@ -78,103 +77,67 @@ export async function fetchSnapshot(data) {
     renderFishList(fishListDetails);
     renderFishList(fishListMobile);
 
-    const fishImages = document.querySelectorAll('.fish-image');
-    const fishFeedbacks = [
-        document.querySelector('.guess-fish-feedback'),
-        document.querySelector('.guess-fish-feedback-popover')
-    ].filter(Boolean); 
+  const fishImages = document.querySelectorAll(".fish-image");
+  const fishFeedbacks = [
+    document.querySelector(".guess-fish-feedback"),
+    document.querySelector(".guess-fish-feedback-popover"),
+  ].filter(Boolean);
 
-    let currentFish = null;
+  const fishButtons = document.querySelectorAll(
+    ".fish-icons-list li, .fish-icons-list-popover li",
+  );
 
-    // generate random img
-    function getRandomFish() {
-        fishSnapshots.slice(0, 100)
-        const randomFish = Math.floor(Math.random() * fishSnapshots.length);
-        currentFish = fishSnapshots[randomFish];
+  let currentFish = null;
 
-        fishImages.forEach(img => {
-            img.src = currentFish.snapshot_url;
-            img.alt = currentFish.fish_alt || "Raad de vis";
-        });
+  function getRandomFish() {
+    const randomFish = Math.floor(Math.random() * fishSnapshots.length);
+    currentFish = fishSnapshots[randomFish];
 
-        fishFeedbacks.forEach(feedback => {
-            feedback.innerHTML = "";
-        });
-    }
-    getRandomFish();
-
-    // make fish icons interactive
-    const fishButtons = document.querySelectorAll('.fish-icons-list li, .fish-icons-list-popover li');
-    fishButtons.forEach(button => {
-        button.tabIndex = 0;
-
-        function guessingFish() {
-            const guessedFish = button.dataset.set;
-            const actualFish = currentFish.fish_name;
-            const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
-
-            const message = isCorrect
-                ? `Wat goed! Het was inderdaad een ${actualFish}`
-                : `Helaas, het juiste antwoord was ${actualFish}`;
-
-            fishFeedbacks.forEach(feedback => {
-                feedback.innerHTML = message;
-            });
-
-            setTimeout(() => {
-                getRandomFish();
-            }, 1200);
-        }
-
-        button.addEventListener("click", () => {
-            guessingFish();
-        });
-
-        button.addEventListener('keydown', (event) => {
-            if(event.key === "Enter") {
-                event.preventDefault();
-                guessingFish();
-            }
-        });
+    fishImages.forEach((img) => {
+      img.src = currentFish.snapshot_url;
+      img.alt = currentFish.fish_alt || "Raad de vis";
     });
 
-    // usability on keyboard for answers
-    let currentIndex = 0;
-    if (fishButtons.length > 0) {
-        fishButtons[currentIndex].focus();
-    }
+    fishFeedbacks.forEach((feedback) => {
+      feedback.innerHTML = "";
+    });
+  }
+  getRandomFish();
 
-    document.addEventListener("keydown", (event) => {
-        if(!fishButtons.length) return;
+  fishButtons.forEach((button) => {
+    button.tabIndex = 0;
 
-        if(event.key === "ArrowRight" || event.key === "ArrowUp") {
-            event.preventDefault();
-            currentIndex = (currentIndex + 1) % fishButtons.length;
-            fishButtons[currentIndex].focus();
-        }
+    function guessingFish() {
+      const guessedFish = button.dataset.set;
+      const actualFish = currentFish.fish_name;
+      const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
 
-        if(event.key === "ArrowLeft" || event.key === "ArrowDown") {
-            event.preventDefault();
-            currentIndex = (currentIndex - 1 + fishButtons.length) % fishButtons.length;
-            fishButtons[currentIndex].focus();
-        }
+      const message = isCorrect
+        ? `Wat goed! Het was inderdaad een ${actualFish}`
+        : `Helaas, het juiste antwoord was ${actualFish}`;
+
+      fishFeedbacks.forEach((feedback) => {
+        feedback.innerHTML = message;
+      });
+
+      setTimeout(() => {
+        getRandomFish();
+      }, 1200);
+    }})
+    button.addEventListener("click", () => {
+      guessingFish();
     });
 
-    // popover container for guessing game
-    const popOverContainer = document.querySelector('.popover-container');
-    const popOverButton = document.querySelector('.popover-button');
-    const closePopover = document.querySelector('.close-popover');
 
-    if (popOverContainer && popOverButton && closePopover) {
-        popOverContainer.style.display = "none";
+  let currentIndex = 0;
 
-        popOverButton.addEventListener('click', () => {
-            popOverContainer.style.display = "flex";
-        });
+  document.addEventListener("keydown", (event) => {
+    if (!fishButtons.length) return;
 
-        closePopover.addEventListener("click", () => {
-            popOverContainer.style.display = "none";
-        });
+    if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+      event.preventDefault();
+      currentIndex = (currentIndex + 1) % fishButtons.length;
+      fishButtons[currentIndex].focus();
     }
 
     // popover for fish details
@@ -217,4 +180,4 @@ export async function fetchSnapshot(data) {
             document.body.style.overflow = "auto";
         })
     }
-}
+})}

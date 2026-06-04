@@ -16,13 +16,12 @@
 }
 
 #intro-text {
-  font-size: clamp(2rem, 3.75vw, 4.5rem);
+  font-size: var(--font-size-h1);
   text-align: center;
   font-weight: var(--font-weight-headings);
   color: var(--color-dark-green);
   line-height: var(--line-height-headers);
-  padding-left: 9rem;
-  padding-right: 9rem;
+  max-width: 80%;
 }
 
 .hero-wave {
