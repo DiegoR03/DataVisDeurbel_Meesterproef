@@ -206,13 +206,31 @@
   font-family: "PT Sans", sans-serif;
 }
 
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
+.world-map-skip-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5em 0.8em;
+  background: var(--color-purple);
+  color: var(--color-dark-green);
+  border: 1px solid var(--color-dark-green);
+  border-radius: 1.5em;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease;
+
+  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+}
+
+.world-map-skip-button:hover,
+.world-map-skip-button:focus-visible {
+  background: var(--color-off-white);
+}
+
+.world-map-skip-button:focus {
+  outline: 2px dashed #01463c;
+  outline-offset: 2px;
 }
 
 .world-map-bubbles span {
