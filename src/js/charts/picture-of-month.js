@@ -39,17 +39,17 @@ export async function fetchSnapshot(data) {
 
     // render fish icons to html 
     const fishOptions = [
-        { name: "Kolblei", img: "/img/fish-1.png" },
-        { name: "Snoek", img: "/img/fish-2.png" },
-        { name: "Alver", img: "/img/fish-3.png" },
-        { name: "Baars", img: "/img/fish-4.png" },
-        { name: "Blankvorn", img: "/img/fish-5.png" },
-        { name: "Snoekbaars", img: "/img/fish-6.png" },
-        { name: "Meerval", img: "/img/fish-7.png" },
-        { name: "Winde", img: "/img/fish-8.png" },
-        { name: "Brasem", img: "/img/fish-9.png" },
-        { name: "Paling", img: "/img/fish-10.png" },
-        { name: "Ruisvoorn", img: "/img/fish-11.png" },
+        { name: "Kolblei", img: "/img/kolblei.png" },
+        { name: "Snoek", img: "/img/snoek.png" },
+        { name: "Alver", img: "/img/alver.png" },
+        { name: "Baars", img: "/img/baars.png" },
+        { name: "Blankvorn", img: "/img/blankvoorn.png" },
+        { name: "Snoekbaars", img: "/img/snoekbaars.png" },
+        { name: "Meerval", img: "/img/meerval.png" },
+        { name: "Winde", img: "/img/winde.png" },
+        { name: "Brasem", img: "/img/brasem.png" },
+        { name: "Paling", img: "/img/paling.png" },
+        { name: "Ruisvoorn", img: "/img/ruisvoorn.png" }
     ];
 
     function renderFishList(container) {
@@ -77,57 +77,55 @@ export async function fetchSnapshot(data) {
     renderFishList(fishListDetails);
     renderFishList(fishListMobile);
 
-  const fishImages = document.querySelectorAll(".fish-image");
-  const fishFeedbacks = [
-    document.querySelector(".guess-fish-feedback"),
-    document.querySelector(".guess-fish-feedback-popover"),
-  ].filter(Boolean);
+    const fishImages = document.querySelectorAll(".fish-image");
+    const fishFeedbacks = [
+        document.querySelector(".guess-fish-feedback"),
+        document.querySelector(".guess-fish-feedback-popover"),
+    ].filter(Boolean);
 
-  const fishButtons = document.querySelectorAll(
-    ".fish-icons-list li, .fish-icons-list-popover li",
-  );
+    let currentFish = null;
 
-  let currentFish = null;
+    function getRandomFish() {
+        const randomFish = Math.floor(Math.random() * fishSnapshots.length);
+        currentFish = fishSnapshots[randomFish];
 
-  function getRandomFish() {
-    const randomFish = Math.floor(Math.random() * fishSnapshots.length);
-    currentFish = fishSnapshots[randomFish];
+        fishImages.forEach((img) => {
+        img.src = currentFish.snapshot_url;
+        img.alt = currentFish.fish_alt || "Raad de vis";
+        });
 
-    fishImages.forEach((img) => {
-      img.src = currentFish.snapshot_url;
-      img.alt = currentFish.fish_alt || "Raad de vis";
-    });
+        fishFeedbacks.forEach((feedback) => {
+        feedback.innerHTML = "";
+        });
+    }
+    getRandomFish();
 
-    fishFeedbacks.forEach((feedback) => {
-      feedback.innerHTML = "";
-    });
-  }
-  getRandomFish();
+    const fishButtons = document.querySelectorAll(".fish-icons-list li, .fish-icons-list-popover li",);
 
-  fishButtons.forEach((button) => {
+    fishButtons.forEach((button) => {
     button.tabIndex = 0;
 
     function guessingFish() {
-      const guessedFish = button.dataset.set;
-      const actualFish = currentFish.fish_name;
-      const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
+        const guessedFish = button.dataset.set;
+        const actualFish = currentFish.fish_name;
+        const isCorrect =
+        guessedFish.toLowerCase() === actualFish.toLowerCase();
 
-      const message = isCorrect
+        const message = isCorrect
         ? `Wat goed! Het was inderdaad een ${actualFish}`
         : `Helaas, het juiste antwoord was ${actualFish}`;
 
-      fishFeedbacks.forEach((feedback) => {
+        fishFeedbacks.forEach((feedback) => {
         feedback.innerHTML = message;
-      });
+        });
 
-      setTimeout(() => {
+        setTimeout(() => {
         getRandomFish();
-      }, 1200);
-    }})
-    button.addEventListener("click", () => {
-      guessingFish();
-    });
+        }, 1200);
+    }
 
+    button.addEventListener("click", guessingFish);
+    });
 
   let currentIndex = 0;
 
@@ -135,10 +133,11 @@ export async function fetchSnapshot(data) {
     if (!fishButtons.length) return;
 
     if (event.key === "ArrowRight" || event.key === "ArrowUp") {
-      event.preventDefault();
-      currentIndex = (currentIndex + 1) % fishButtons.length;
-      fishButtons[currentIndex].focus();
-    }
+        event.preventDefault();
+        currentIndex = (currentIndex + 1) % fishButtons.length;
+        fishButtons[currentIndex].focus();
+        }
+    })
 
     // popover for fish details
     // open and close popover
@@ -180,4 +179,4 @@ export async function fetchSnapshot(data) {
             document.body.style.overflow = "auto";
         })
     }
-})}
+}
