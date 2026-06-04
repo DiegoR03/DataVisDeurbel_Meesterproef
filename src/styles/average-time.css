@@ -1,0 +1,174 @@
+.stopwatch-slider-window {
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--color-light-gold);
+}
+
+#stopwatch-container {
+    display: flex;
+    width: 200%;
+    font-size: clamp(2rem, 3.75vw, 4.5rem);
+    font-weight: bold;
+    color: var(--color-dark-green);
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+
+    .stopwatch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+
+        padding-top: 24px;
+        padding-bottom: 24px;
+        padding-left: 8rem;
+        padding-right: 8rem;
+
+        width: 50%;
+        box-sizing: border-box;
+        margin: 0;
+
+        .stopwatch-svg {
+            display: block;
+            width: 15vw;
+            height: auto;
+            flex-shrink: 0;
+        }
+    }
+
+    #stopwatch-text {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-weight: 800;
+        color: var(--color-dark-green);
+        line-height: 1.4;
+    }
+
+    .stopwatch-text-highlight {
+        color: var(--color-purple);
+    }
+}
+
+.timeline-wrapper {
+    width: 50%;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .timeline-title,
+    .timeline-explanation {
+        font-size: clamp(1.25rem, 1.8055555556vw, 2.1666666667rem);
+        color: var(--color-dark-green);
+        font-weight: bold;
+    }
+
+    .timeline-explanation {
+        font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+        font-weight: normal;
+    }
+
+    .timeline-svg {
+        width: 100%;
+        height: auto;
+    }
+
+    .timeline-axis{
+        path, line {
+            stroke: var(--color-dark-green);
+            stroke-width: 2px;
+        }
+
+        text {
+            font-family: sans-serif;
+            font-size: 11px;
+            fill: var(--color-dark-green);
+            font-weight: bold;
+        }
+    }
+
+    .fish-dot {
+        fill: var(--color-purple);
+        stroke: var(--color-light-gold);
+        stroke-width: 1.5px;
+    }
+
+    .fish-timeline-label {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-size: 7px;
+        font-weight: 800;
+        fill: var(--color-dark-green);
+    }
+}
+
+
+#stopwatch-navigation {
+    display: flex;
+    align-items: center;
+    background: var(--color-light-gold);
+    padding: 1rem;
+
+    #button-container {
+        display: flex;
+        gap: 1rem;
+
+        button {
+            background: transparent;
+            border: var(--color-dark-green) 1px solid;
+            width: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+            height: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: var(--color-purple);
+            }
+
+            svg {
+                width: clamp(.75rem, 0.9722222222vw, 1.1666666667rem);
+                height: auto;
+                overflow: visible;
+                transition: transform .2s .2s ease-out;
+                fill: var(--color-dark-green);
+            }
+        }
+
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid var(--color-dark-green);
+        height: 1px;
+        width: 82vw;
+    }
+
+    button {
+        background: var(--color-purple);
+        border: var(--color-dark-green) 1px solid;
+        width: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+        height: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+        border-radius: 3rem;
+        color: var(--color-dark-green);
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .stopwatch-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .stopwatch-svg {
+        width: 90px;
+        height: 90px;
+    }
+}
