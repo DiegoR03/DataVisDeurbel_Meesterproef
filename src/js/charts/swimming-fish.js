@@ -1,14 +1,10 @@
-/* =========================================
-   js/charts/swimming-fish.js
-   ========================================= */
-
 // Function to add fish to the main aquarium
 export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl) {
-    // 1. Filter the data for the specific fish
+    // Filter the data for the specific fish
     const fishData = data.filter(item => item.fish_name === fishName);
     const totalSpotted = fishData.length;
 
-    // 2. Update the text in the legend above the aquarium
+    // Update the text in the legend above the aquarium
     const legendText = document.getElementById(legendId);
     if(legendText) {
         legendText.innerHTML = `
@@ -16,7 +12,7 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         ${fishName} <span class="fish-count">${totalSpotted}</span>`;
     }
 
-    // 3. Calculate how many visual fish to render
+    // Calculate how many visual fish to render
     const MAX_VISUAL_FISH = 6; 
     const DATA_MAXIMUM = 800;
 
@@ -25,29 +21,29 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     if (fishToRender === 0 && totalSpotted > 0) fishToRender = 1;
     if (fishToRender > MAX_VISUAL_FISH) fishToRender = MAX_VISUAL_FISH;
 
-    // 4. Find the main aquarium container
+    // Find the main aquarium container
     const container = document.getElementById(containerId);
     if (!container) return; 
 
-    // 5. Generate and animate the fish
+    // Generate and animate the fish
     for (let i = 0; i < fishToRender; i++) {
         const fishImg = document.createElement("img");
         fishImg.src = pngUrl;
         fishImg.classList.add("swimming-fish");
         
-        // Randomize the size of the fish slightly for more realism (between 40px and 80px)
+        // Randomize the size
         const randomSize = 40 + Math.random() * 40;
         fishImg.style.width = `${randomSize}px`;
 
-        // Randomize the vertical starting position (between 5% and 85% from top)
+        // Randomize the vertical starting position
         const randomTop = 5 + Math.random() * 80;
         fishImg.style.top = `${randomTop}%`;
 
-        // Randomize swimming speed. Bigger aquarium = longer time to cross (15 to 35 seconds)
+        // Randomize swimming speed
         const randomDuration = 15 + Math.random() * 20;
         fishImg.style.animationDuration = `${randomDuration}s`;
 
-        // Randomize start delay so they don't all spawn at once
+        // Randomize start delay
         const randomDelay = (Math.random() * 20) * -1;
         fishImg.style.animationDelay = `${randomDelay}s`;
 
@@ -65,15 +61,15 @@ export function createBubbles(containerId, amount) {
         const bubble = document.createElement("div");
         bubble.classList.add("bubble");
 
-        // Randomize the size (between 4px and 14px)
+        // Randomize the size
         const size = 4 + Math.random() * 10;
         bubble.style.width = `${size}px`;
         bubble.style.height = `${size}px`;
 
-        // Randomize horizontal position (0% to 100% width of the tank)
+        // Randomize horizontal position
         bubble.style.left = `${Math.random() * 100}%`;
 
-        // Randomize floating speed (between 4 and 10 seconds)
+        // Randomize floating speed
         const duration = 4 + Math.random() * 6;
         bubble.style.animationDuration = `${duration}s`;
         
