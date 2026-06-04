@@ -9,9 +9,7 @@ export async function fetchSnapshot(data) {
                     item.fish_name !== "unknown" &&
                     item.fish_name !== "onbekend" &&
                     !item.fish_name.includes(","))
-    .slice(0, 100);
     console.log("SNAPSHOTS:", fishSnapshots);
-
     if (fishSnapshots.length === 0) {
         console.warn("Geen geldige vis-snapshots gevonden met likelyhoodOfFish > 0.34");
         return;
@@ -33,10 +31,10 @@ export async function fetchSnapshot(data) {
         const searchParams = new URLSearchParams(queryString);
         const likelyhoodOfFish = parseFloat(searchParams.get('likelyhoodOfFish'));
 
-        // if (!likelyhoodOfFish || likelyhoodOfFish <= 0.345) continue;
+        if (!likelyhoodOfFish || likelyhoodOfFish <= 0.345) continue;
 
         // // get the total amount of snapshots taken for each fish
-        // fishNumber[fishName] = (fishNumber[fishName] || 0) + 1;
+        fishNumber[fishName] = (fishNumber[fishName] || 0) + 1;
     }
 
     // render fish icons to html 
@@ -86,8 +84,6 @@ export async function fetchSnapshot(data) {
         document.querySelector('.guess-fish-feedback-popover')
     ].filter(Boolean); 
 
-    const fishButtons = document.querySelectorAll('.fish-icons-list li, .fish-icons-list-popover li');
-
     let currentFish = null;
 
     // generate random img
@@ -108,6 +104,7 @@ export async function fetchSnapshot(data) {
     getRandomFish();
 
     // make fish icons interactive
+    const fishButtons = document.querySelectorAll('.fish-icons-list li, .fish-icons-list-popover li');
     fishButtons.forEach(button => {
         button.tabIndex = 0;
 
@@ -185,40 +182,32 @@ export async function fetchSnapshot(data) {
     const fishFactsPopOver = document.querySelector('.fish-facts-popover');
     const fishFactsButtons = document.querySelectorAll('.fish-icons-details-list li');
     const fishFactsClose = document.querySelector('.fish-facts-close');
-    const fishFactsName = document.querySelector('.fish-facts-name');
-    const fishFactsImg = document.querySelector('.fish-facts-icon');
-    const fishFactsActivity = document.querySelector('.fish-facts-activity');
-    const fishFactsRecentPics = document.querySelector('.fish-facts-recent-pictures');
+    const fishFactsList = document.querySelector('.fish-facts-recent-pictures');
+    const popUpName = document.querySelector('.fish-facts-name');
 
-    if (fishFactsPopOver && fishFactsButtons && fishFactsClose) {
+    if (fishFactsPopOver) {
         fishFactsPopOver.style.display = "none";
 
         fishFactsButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const fishName = button.dataset.set;
-                fishFactsName.textContent = fishName;
+                popUpName.textContent = fishName;
                 const fishImg = fishOptions.find(fish => fish.name === fishName);
                 const fishCount = fishNumber[fishName] || 0;
-                
-                // fishFactsImg.src = fishImg.img;
-                // fishFactsImg.alt = fishImg.name;
-
                 const fishFactAmount = document.querySelector('.fish-facts-amount');
 
                 fishFactAmount.textContent = `Er zijn in totaal ${fishCount} foto's gemaakt van de ${fishName}`;
-
-                const fishFactsList = document.querySelector('.fish-facts-recent-pictures');
+               
                 fishFactsList.innerHTML = "";
 
-                const currentFishPics = fishSnapshots
-                .filter(snapshot => snapshot.fish_name === fishName)
-                .slice(0, 3);
-                currentFishPics.forEach(fish => {
-                    fishFactsList.innerHTML += `
-                    <li><img src="${fish.snapshot_url}" alt="${fishName}"></li>
-                    `
+                const currentFishPics = fishSnapshots.filter(snapshot => snapshot.fish_name === fishName)
+                fishFactsList.innerHTML = currentFishPics
+                .map(fish => {
+                    return `<li><img src="${fish.snapshot_url}" alt="${fishName}"></li>`
                 })
-                console.log("FISH:", currentFishPics)
+                .join("")
+                
+                console.log("FISH:")
                 fishFactsPopOver.style.display = "grid";
             })
         })
