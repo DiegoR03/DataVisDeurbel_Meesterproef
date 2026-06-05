@@ -1,5 +1,6 @@
 .picture-of-month-container {
     background-color: var(--color-light-gold);
+    padding-bottom: 3rem;
     
     h2 {
         font-size: var(--font-size-h2);
@@ -164,5 +165,4 @@
     .guess-fish-feedback {
         height: 0;
     }
-
 }

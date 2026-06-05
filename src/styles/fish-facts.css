@@ -1,0 +1,93 @@
+.fish-facts-container {
+    background-color: var(--color-off-white);
+
+    > ul {
+        display: grid;
+        grid-template-columns: repeat( auto-fit, minmax(300px, 1fr));
+        place-items: center;
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        text-align: center;
+    }
+
+    li:hover {
+        cursor: pointer;
+    }
+}
+
+.fish-facts-popover {
+    width: 80vw;
+    height: 80vh;
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    background-color: var(--color-dark-green);
+    display: none;
+    border-radius: 8px;
+    padding: 2rem;
+    overflow-y: scroll;
+    scrollbar-color: var(--color-dark-green) var(--color-light-gold);
+
+
+    > h2 {
+        color: var(--color-gold);
+        font-size: var(--font-size-h1)
+    }
+
+    h3 {
+        color: var(--color-off-white);
+    }
+}
+
+.fish-facts-pictures {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(500px, 1fr));
+    place-items: center;
+    gap: .5rem;
+    padding: 0;
+    margin: 0;
+
+    li {
+        width: 90%;
+        margin-bottom: .5rem;
+        border-radius: 5px;
+        overflow: hidden
+    }
+    img {
+        width: 100%;
+    }
+}
+
+.fish-facts-icon {
+    transform: scaleX(-1) rotate(30deg);
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 25rem;
+}
+
+.fish-facts-name {
+    color: var(--color-light-gold);
+}
+
+.fish-facts-close {
+    height: 3rem;
+    width: 3rem;
+    background-color: transparent;
+    border: solid 1.5px var(--color-off-white);
+    border-radius: 99px;
+    position: absolute;
+    top: 3%;
+    right: 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
