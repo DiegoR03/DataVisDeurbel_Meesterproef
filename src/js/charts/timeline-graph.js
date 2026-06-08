@@ -12,7 +12,7 @@ const radius = 18;
 
 let currentSelectedKey = "total";
 
-export function drawD3Graph(graphData, eventKeys) {
+function drawD3Graph(graphData, eventKeys) {
 
     // Transition gedaan met behulp van Gemini, ik wist niet waar ik moest beginnen....
     // Antwoord: Om de data écht te zien bewegen met transities zonder de functie te splitsen en zonder dat oude grafieken blijven staan, gaan we gebruikmaken van een slimme D3-techniek: we checken bij het aanroepen van de functie of de SVG al bestaat. Bestaat de SVG nog niet (eerste keer laden)? Dan maken we alles aan. Bestaat de SVG al (er is op de legenda geklikt)? Dan pakken we de bestaande elementen en animeren we ze met .transition() naar hun nieuwe plek.
@@ -323,7 +323,7 @@ function initFishAnimation(svg, width, height) {
     }
 }
 
-export function createGraph(data) {
+function createGraph(data) {
     const fishTypes = new Set();
 
     data.forEach(item => {
@@ -394,4 +394,20 @@ export function createGraph(data) {
     const graphDataWithBuffers = [previousHour, ...groupedHours, nextHour];
 
     drawD3Graph(graphDataWithBuffers, eventKeysForLegend);
+}
+
+if (typeof window !== "undefined") {
+    document.addEventListener("DOMContentLoaded", () => {
+        const globalWindow = window;
+        const rawData = globalWindow.SERVER_VIS_DATA || [];
+
+        const data = rawData.map((item) => ({
+            ...item,
+            created_at: item.created_at ? new Date(item.created_at) : null,
+        }));
+
+        if (data.length > 0) {
+            createGraph(data);
+        }
+    });
 }

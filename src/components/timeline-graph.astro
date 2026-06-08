@@ -22,19 +22,5 @@
 
 <script>
     import "../styles/timeline-graph.css";
-    import { createGraph } from "../js/charts/timeline-graph.js";
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const globalWindow = window as any;
-        const rawData = globalWindow.SERVER_VIS_DATA || [];
-
-        const data = rawData.map((item: any) => ({
-            ...item,
-            created_at: item.created_at ? new Date(item.created_at) : null,
-        }));
-
-        if (data.length > 0) {
-            createGraph(data);
-        }
-    });
+    import "../js/charts/timeline-graph.js";
 </script>
