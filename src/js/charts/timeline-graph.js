@@ -133,7 +133,8 @@ function drawD3Graph(graphData, eventKeys) {
     legendContainer.selectAll("*").remove();
 
     const legendItems = [
-        { key: "total", label: "Totaal Activiteit" },
+        { key: "total", label: "Totale uploads" },
+        { key: "uploadedFish", label: "Geüploade Vissen" },
         ...eventKeys.map(key => ({ key: key, label: key }))
     ];
 
@@ -349,7 +350,7 @@ function createGraph(data) {
     });
 
     const uniqueFishArray = Array.from(fishTypes).sort();
-    const eventKeysForLegend = ["uploadedFish", ...uniqueFishArray];
+    const eventKeysForLegend = [...uniqueFishArray];
 
     const groupedHours = Array.from({ length: 24 }, (_, i) => {
         const hourString = `${String(i).padStart(2, '0')}:00`;
