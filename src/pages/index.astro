@@ -1,11 +1,9 @@
 ---
 // @ts-nocheck
 import "../styles/style.css";
-import "../styles/intro-text.css";
 import "../styles/picture-of-month.css";
 import "../styles/fish-of-season.css";
 import "../styles/timeline-graph.css";
-import "../styles/world-map.css";
 import "../styles/partial.css";
 import "../styles/fish-facts.css";
 import "../styles/fish-of-season.css";
@@ -13,6 +11,8 @@ import "../styles/average-time.css";
 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
+import WorldMap from "../components/WorldMap.astro";
+import IntroText from "../components/IntroText.astro";
 
 import * as d3 from "d3";
 
@@ -107,86 +107,9 @@ console.log("chicken nugget")
     </header>
 
     <main>
-      <section class="hero">
-        <h1 id="intro-text"></h1>
+      <IntroText />
 
-        <div class="hero-wave" aria-hidden="true">
-          <svg
-            class="wave"
-            viewBox="0 0 1440 215"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              class="wave-path"
-              d="M 0,400 L 0,150 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
-            ></path>
-          </svg>
-        </div>
-      </section>
-
-      <section class="world-map-section" aria-labelledby="world-map-title">
-  
-        <div class="world-map-section-header">
-          <h2 id="world-map-title" class="world-map-title">
-            Visdeurbellers over de hele wereld
-          </h2>
-
-          <a href="#after-world-map" class="world-map-skip-button">Sla wereldkaart over</a>
-        </div>
-
-        <div class="world-map-section-layout">
-          <aside
-            class="world-map-section-countries"
-            aria-labelledby="top-countries-title"
-          >
-            <h3 id="top-countries-title" class="top-countries-title">
-              De meeste visdeurbellers in 2026 kwamen uit:
-            </h3>
-
-            <ol id="top-countries-list" class="top-countries-list"></ol>
-            <div id="active-country-card" class="active-country-card">
-              Selecteer een land om details te zien.
-            </div>
-          </aside>
-
-          <div class="world-map-section-visual">
-            <div class="world-map-legend" aria-hidden="true">
-              <span>Minder bezoekers</span>
-              <div class="world-map-legend-gradient"></div>
-              <span>Meer bezoekers</span>
-            </div>
-            <div class="world-map-bubbles" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <img
-              src="/assets/img/fish-1.png"
-              class="world-map-fish"
-              alt=""
-              aria-hidden="true"
-            />
-            <p id="world-map-country-total" class="world-map-country-total"></p>
-            <svg
-              id="world-map"
-              class="world-map"
-              role="img"
-              aria-labelledby="world-map-title world-map-description"
-            ></svg>
-
-            <div
-              id="world-map-tooltip"
-              class="world-map-tooltip"
-              role="status"
-              aria-live="polite"
-            ></div>
-          </div>
-        </div>
-      </section>
+      <WorldMap />
 
       <!-- grafiek 2 -->
 

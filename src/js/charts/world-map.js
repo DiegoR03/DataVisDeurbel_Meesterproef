@@ -26,7 +26,7 @@ const UTRECHT_COORDINATES = [5.1214, 52.0907];
 /* MARK: Render map */
 /********************/
 
-export function renderWorldMap(data) {
+function renderWorldMap(data) {
   const svg = d3.select("#world-map");
   const tooltip = d3.select("#world-map-tooltip");
 
@@ -565,4 +565,12 @@ function getFlagEmoji(countryCode) {
     .replace(/./g, (character) =>
       String.fromCodePoint(127397 + character.charCodeAt()),
     );
+}
+
+const data = window.SERVER_VIS_DATA || [];
+
+if (document.getElementById("world-map")) {
+
+  renderWorldMap(data);
+
 }
