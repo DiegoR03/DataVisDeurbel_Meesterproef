@@ -26,7 +26,7 @@ const UTRECHT_COORDINATES = [5.1214, 52.0907];
 /* MARK: Render map */
 /********************/
 
-export function renderWorldMap(data) {
+function renderWorldMap(data) {
   const svg = d3.select("#world-map");
   const tooltip = d3.select("#world-map-tooltip");
 
@@ -565,4 +565,25 @@ function getFlagEmoji(countryCode) {
     .replace(/./g, (character) =>
       String.fromCodePoint(127397 + character.charCodeAt()),
     );
+}
+
+/**************/
+/* MARK: Init */
+/**************/
+
+function initWorldMap() {
+  const rawData = window.SERVER_VIS_DATA || [];
+
+  const data = rawData.map((item) => ({
+    ...item,
+    created_at: item.created_at ? new Date(item.created_at) : null,
+  }));
+
+  if (document.getElementById("world-map") && data.length > 0) {
+    renderWorldMap(data);
+  }
+}
+
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", initWorldMap);
 }

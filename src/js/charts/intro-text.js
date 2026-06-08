@@ -1,5 +1,5 @@
 // Main function that renders the intro text
-export function renderIntroText(data) {
+function renderIntroText(data) {
   const totalFishDoorbellUsers = getUniqueSessionCount(data);
   const mostPopularCountry = getMostPopularCountry(data);
   const countryText = formatCountryName(mostPopularCountry);
@@ -81,4 +81,20 @@ function updateIntroText(totalFishDoorbellUsers, countryText) {
   introTextElement.textContent = `In 2026 waren er ${totalFishDoorbellUsers.toLocaleString(
     "nl-NL",
   )} Visdeurbellers. Waarvan de meeste uit ${countryText} kwamen.`;
+}
+
+/**************/
+/* MARK: Init */
+/**************/
+
+function initIntroText() {
+  const data = window.SERVER_VIS_DATA || [];
+
+  if (document.getElementById("intro-text") && data.length > 0) {
+    renderIntroText(data);
+  }
+}
+
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", initIntroText);
 }

@@ -1,17 +1,11 @@
-import { renderIntroText } from "./charts/intro-text.js";
-import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
-import { createGraph } from "./charts/timeline-graph.js";
-import { fetchSnapshot } from "./charts/picture-of-month.js";
-import { renderWorldMap } from "./charts/world-map.js";
-import { drawDynamicStopwatch } from "./charts/average-time.js";
-// import { addFishToAquarium, createBubbles } from "./charts/swimming-fish.js";
+import { addFishToAquarium, createBubbles } from "./charts/swimming-fish.js";
 
 async function init() {
   const rawData = window.SERVER_VIS_DATA || [];
-  
-  const data = rawData.map(item => ({
+
+  const data = rawData.map((item) => ({
     ...item,
-    created_at: item.created_at ? new Date(item.created_at) : null
+    created_at: item.created_at ? new Date(item.created_at) : null,
   }));
 
 
@@ -87,12 +81,7 @@ async function init() {
   // }
   
   setupScrollAnimation();
-  createGraph(data);
-  renderWorldMap(data);
-  fetchSnapshot(data);
-  drawDynamicStopwatch(data);
-  initSmartHeader();
-  initNavigation();
+
 }
 
 init();
@@ -108,7 +97,7 @@ function setupScrollAnimation() {
         }
       });
     },
-    { threshold: 0.6 }
+    { threshold: 0.6 },
   );
 
   const container = document.querySelector(".card-container");
@@ -118,55 +107,58 @@ function setupScrollAnimation() {
 }
 
 function initSmartHeader() {
-  const headerElement = document.querySelector('header');
+  const headerElement = document.querySelector("header");
   if (!headerElement) return;
 
   let lastScrollY = window.scrollY;
 
-  window.addEventListener('scroll', () => {
+  window.addEventListener("scroll", () => {
     const currentScrollY = window.scrollY;
     if (currentScrollY > lastScrollY && currentScrollY > 50) {
-      headerElement.classList.add('header--hidden');
+      headerElement.classList.add("header--hidden");
     } else {
-      headerElement.classList.remove('header--hidden');
+      headerElement.classList.remove("header--hidden");
     }
     lastScrollY = currentScrollY;
   });
 }
 
 function initNavigation() {
-  const menuToggle = document.getElementById('menu-toggle');
-  const navList = document.getElementById('nav-list');
+  const menuToggle = document.getElementById("menu-toggle");
+  const navList = document.getElementById("nav-list");
 
   if (!menuToggle || !navList) return;
 
-  menuToggle.addEventListener('click', () => {
-    const isCurrentlyOpen = navList.classList.contains('is-open');
+  menuToggle.addEventListener("click", () => {
+    const isCurrentlyOpen = navList.classList.contains("is-open");
 
     if (isCurrentlyOpen) {
-      navList.classList.remove('is-open');
-      navList.classList.add('is-closing');
-      menuToggle.setAttribute('aria-expanded', 'false');
+      navList.classList.remove("is-open");
+      navList.classList.add("is-closing");
+      menuToggle.setAttribute("aria-expanded", "false");
 
-      navList.addEventListener('animationend', function handler() {
-        navList.classList.remove('is-closing');
-        navList.removeEventListener('animationend', handler);
-      }, { once: true });
-
+      navList.addEventListener(
+        "animationend",
+        function handler() {
+          navList.classList.remove("is-closing");
+          navList.removeEventListener("animationend", handler);
+        },
+        { once: true },
+      );
     } else {
-      navList.classList.remove('is-closing');
-      navList.classList.add('is-open');
-      menuToggle.setAttribute('aria-expanded', 'true');
+      navList.classList.remove("is-closing");
+      navList.classList.add("is-open");
+      menuToggle.setAttribute("aria-expanded", "true");
     }
-    
-    const icon = menuToggle.querySelector('i');
+
+    const icon = menuToggle.querySelector("i");
     if (icon) {
       if (!isCurrentlyOpen) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
+        icon.classList.remove("fa-bars");
+        icon.classList.add("fa-times");
       } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
+        icon.classList.remove("fa-times");
+        icon.classList.add("fa-bars");
       }
     }
   });

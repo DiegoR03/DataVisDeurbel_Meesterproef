@@ -5,6 +5,12 @@ import MainAquarium from "../components/MainAquarium.astro";
 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
+import WorldMap from "../components/WorldMap.astro";
+import IntroText from "../components/IntroText.astro";
+import TimelineGraph from '../components/timeline-graph.astro';
+import AverageFish from '../components/average-fish.astro';
+import GuessTheFish from "../components/guess-the-fish.astro";
+import FishFacts from "../components/fish-details.astro";
 
 import * as d3 from "d3";
 
@@ -60,9 +66,6 @@ function addFishData(dataObject: Record<string, any>) {
 const CSV_URL = "/data/website_event-week.csv";
 
 const visData = await loadCsvData(CSV_URL);
-
-console.log((JSON.stringify(visData).length / 1024 / 1024).toFixed(2),"MB");
-console.log("chicken nugget")
 ---
 
 <!doctype html>
@@ -99,182 +102,24 @@ console.log("chicken nugget")
     </header>
 
     <main>
-      <section class="hero">
-        <h1 id="intro-text"></h1>
+      <IntroText />
 
-        <div class="hero-wave" aria-hidden="true">
-          <svg
-            class="wave"
-            viewBox="0 0 1440 215"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              class="wave-path"
-              d="M 0,400 L 0,150 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
-            ></path>
-          </svg>
-        </div>
-      </section>
-
-      <section class="world-map-section" aria-labelledby="world-map-title">
-  
-        <div class="world-map-section-header">
-          <h2 id="world-map-title" class="world-map-title">
-            Visdeurbellers over de hele wereld
-          </h2>
-
-          <a href="#after-world-map" class="world-map-skip-button">Sla wereldkaart over</a>
-        </div>
-
-        <div class="world-map-section-layout">
-          <aside
-            class="world-map-section-countries"
-            aria-labelledby="top-countries-title"
-          >
-            <h3 id="top-countries-title" class="top-countries-title">
-              De meeste visdeurbellers in 2026 kwamen uit:
-            </h3>
-
-            <ol id="top-countries-list" class="top-countries-list"></ol>
-            <div id="active-country-card" class="active-country-card">
-              Selecteer een land om details te zien.
-            </div>
-          </aside>
-
-          <div class="world-map-section-visual">
-            <div class="world-map-legend" aria-hidden="true">
-              <span>Minder bezoekers</span>
-              <div class="world-map-legend-gradient"></div>
-              <span>Meer bezoekers</span>
-            </div>
-            <div class="world-map-bubbles" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <img
-              src="/assets/img/fish-1.png"
-              class="world-map-fish"
-              alt=""
-              aria-hidden="true"
-            />
-            <p id="world-map-country-total" class="world-map-country-total"></p>
-            <svg
-              id="world-map"
-              class="world-map"
-              role="img"
-              aria-labelledby="world-map-title world-map-description"
-            ></svg>
-
-            <div
-              id="world-map-tooltip"
-              class="world-map-tooltip"
-              role="status"
-              aria-live="polite"
-            ></div>
-          </div>
-        </div>
-      </section>
+      <WorldMap />
 
       <!-- grafiek 2 -->
 
       <MainAquarium />
 
-      <section>
-        <div class="stopwatch-slider-window">
-          <div id="stopwatch-container"></div>
-        </div>
-
-        <div id="stopwatch-navigation">
-          <div id="button-container">
-            <button id="btn-prev">
-              <svg viewBox="0 0 14.8279 14.8278" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <path d="M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755083,0.353555947 L1.207,6.413 L13.8279,6.4139 C14.0733599,6.4139 14.2775084,6.59077516 14.3198443,6.82402437 L14.3279,6.9139 C14.3279,7.19004237 14.1040424,7.4139 13.8279,7.4139 L1.206,7.413 L7.26755083,13.4742441 C7.44111844,13.6478091 7.46040554,13.9172334 7.3254109,14.1121025 L7.26755595,14.1813508 C7.07229521,14.3766144 6.75571272,14.3766167 6.56044917,14.1813559 L-0.353550834,7.26745595 L-0.364,7.254 L-0.382406269,7.23604364 L-0.397,7.215 L-0.411406785,7.19820848 L-0.42,7.181 L-0.431735343,7.16625957 L-0.443,7.141 L-0.454798924,7.12197126 L-0.459,7.107 L-0.468718737,7.0883662 L-0.475,7.063 L-0.483727237,7.04074132 L-0.487,7.018 L-0.491944331,7.00377563 L-0.493,6.985 L-0.498191709,6.95651572 L-0.498,6.933 L-0.5,6.9139 L-0.498,6.893 L-0.498192325,6.87129149 L-0.493,6.842 L-0.491944331,6.82402437 L-0.487,6.809 L-0.483729072,6.78706568 L-0.474,6.763 L-0.468718737,6.7394338 L-0.46,6.723 L-0.454801934,6.70583532 L-0.441,6.682 L-0.431735343,6.66154043 L-0.421,6.647 L-0.411410897,6.62959747 L-0.397,6.612 L-0.382406269,6.59175636 L-0.364,6.573 L-0.353555947,6.56034917 L6.56044917,-0.353555947 Z"></path>
-              </svg>
-            </button>
-            <button id="btn-next">
-              <svg viewBox="0 0 14.8279 14.8278" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <path d="M7.06034405,0.146449166 C7.25560479,-0.0488143917 7.57218728,-0.0488166812 7.76745083,0.146444053 L14.6814559,7.06034917 L14.692,7.073 L14.7103063,7.09175636 L14.725,7.112 L14.7393109,7.12959747 L14.749,7.147 L14.7596353,7.16154043 L14.769,7.182 L14.7827019,7.20583532 L14.788,7.223 L14.7966187,7.2394338 L14.802,7.263 L14.8116291,7.28706568 L14.815,7.309 L14.8198443,7.32402437 L14.82,7.34 L14.8260923,7.37129149 L14.826,7.402 L14.8279,7.4139 L14.826,7.424 L14.8260917,7.45651572 L14.82,7.487 L14.8198443,7.50377563 L14.815,7.518 L14.8116272,7.54074132 L14.803,7.563 L14.7966187,7.5883662 L14.787,7.607 L14.7826989,7.62197126 L14.771,7.641 L14.7596353,7.66625957 L14.748,7.681 L14.7393068,7.69820848 L14.725,7.715 L14.7103063,7.73604364 L14.692,7.754 L14.6814508,7.76745595 L7.76745083,14.6813559 C7.57218728,14.8766167 7.25560479,14.8766144 7.06034405,14.6813508 C6.86508332,14.4860873 6.86508561,14.1695048 7.06034917,13.9742441 L13.121,7.913 L0.5,7.9139 C0.254540111,7.9139 0.0503916296,7.73702484 0.00805566941,7.50377563 L-5.68434189e-14,7.4139 C-5.68434189e-14,7.13775763 0.223857625,6.9139 0.5,6.9139 L13.12,6.913 L7.06034917,0.853555947 C6.88678156,0.679990851 6.86749446,0.410566589 7.0024891,0.215697472 L7.06034405,0.146449166 Z"></path>
-              </svg>
-            </button>
-          </div>
-          <hr />
-          <button>
-            <span>?</span>
-          </button>
-        </div>
-      </section>
+      <AverageFish />
 
       <!-- grafiek 3 -->
 
-      <section class="timeline-graph-section">
-        <h2>Het beste tijdstip van het seizoen</h2>
+      <TimelineGraph />
 
-        <p id="last-update">
-          Laatste update: <span id="latest-date">Nog geen data geladen</span>
-        </p>
 
-        <div id="chart-container">
-          <div id="html-legend">
-            <h3>FILTER OP EVENT / VIS</h3>
-            <div id="legend-items-container"></div>
-          </div>
-          <div id="chart"></div>
-        </div>
+      <GuessTheFish />
 
-        <div class="tooltip" id="tooltip"></div>
-      </section>
-
-      <section class="picture-of-month-container">
-        <h2>Kun jij deze vissen raden?</h2>
-        <div class="fish-picture-list"><img class="fish-image" /></div>
-        <h3>Welke vis is het?</h3>
-        <p class="guess-fish-feedback"></p>
-        <ul class="fish-icons-game-list fish-icons-list"></ul>
-        <button class="popover-button" tabindex="0">Raadt de vis!</button>
-        <div class="popover-container">
-          <div class="fish-picture-list"><img class="fish-image" /></div>
-          <p class="guess-fish-feedback-popover"></p>
-          <ul class="fish-icons-list-popover"></ul>
-          <button class="close-popover">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path d="M14.5452 0.288872L8.0013 6.83283L1.45742 0.288872C1.29849 0.15429 1.09479 0.0843692 0.886716 0.0929826C0.678644 0.101596 0.481414 0.188114 0.334159 0.335371C0.186904 0.482627 0.100387 0.67986 0.0917733 0.887934C0.08316 1.09601 0.15308 1.29972 0.287661 1.45864L6.82895 8.00259L0.285067 14.544C0.199266 14.6186 0.129732 14.7102 0.0807813 14.8128C0.031831 14.9155 0.00450918 15.0272 0.0005125 15.1408C-0.00348418 15.2545 0.0159293 15.3678 0.0575479 15.4737C0.0991665 15.5795 0.162102 15.6757 0.242446 15.7563C0.322791 15.8368 0.41883 15.8999 0.524601 15.9418C0.630372 15.9836 0.743617 16.0033 0.857306 15.9995C0.970995 15.9958 1.0827 15.9687 1.18549 15.92C1.28828 15.8713 1.37995 15.802 1.45482 15.7163L8.0013 9.17496L14.5452 15.7189C14.7041 15.8535 14.9078 15.9234 15.1159 15.9148C15.324 15.9062 15.5212 15.8197 15.6684 15.6724C15.8157 15.5252 15.9022 15.3279 15.9108 15.1198C15.9194 14.9118 15.8495 14.7081 15.7149 14.5491L9.17105 8.00259L15.7149 1.45605C15.8007 1.38136 15.8703 1.28984 15.9192 1.18716C15.9682 1.08448 15.9955 0.972834 15.9995 0.859153C16.0035 0.745471 15.9841 0.632181 15.9425 0.526317C15.9008 0.420452 15.8379 0.324273 15.7576 0.243749C15.6772 0.163225 15.5812 0.100076 15.4754 0.0582229C15.3696 0.0163695 15.2564 -0.00329498 15.1427 0.000449949C15.029 0.00419488 14.9173 0.0312693 14.8145 0.0799926C14.7117 0.128716 14.62 0.198048 14.5452 0.283684V0.288872Z" fill="#FDF7EF"></path></svg>
-          </button>
-        </div>
-      </section>
-
-      <!-- fish details -->
-      <section class="fish-facts-container">
-        <ul class="fish-icons-details-list"></ul>
-
-        <div class="fish-facts-popover">
-          <img class="fish-facts-icon">
-              <h2 class="fish-facts-name">Titel</h2>
-              <button class="fish-facts-close">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14.5452 0.288872L8.0013 6.83283L1.45742 0.288872C1.29849 0.15429 1.09479 0.0843692 0.886716 0.0929826C0.678644 0.101596 0.481414 0.188114 0.334159 0.335371C0.186904 0.482627 0.100387 0.67986 0.0917733 0.887934C0.08316 1.09601 0.15308 1.29972 0.287661 1.45864L6.82895 8.00259L0.285067 14.544C0.199266 14.6186 0.129732 14.7102 0.0807813 14.8128C0.031831 14.9155 0.00450918 15.0272 0.0005125 15.1408C-0.00348418 15.2545 0.0159293 15.3678 0.0575479 15.4737C0.0991665 15.5795 0.162102 15.6757 0.242446 15.7563C0.322791 15.8368 0.41883 15.8999 0.524601 15.9418C0.630372 15.9836 0.743617 16.0033 0.857306 15.9995C0.970995 15.9958 1.0827 15.9687 1.18549 15.92C1.28828 15.8713 1.37995 15.802 1.45482 15.7163L8.0013 9.17496L14.5452 15.7189C14.7041 15.8535 14.9078 15.9234 15.1159 15.9148C15.324 15.9062 15.5212 15.8197 15.6684 15.6724C15.8157 15.5252 15.9022 15.3279 15.9108 15.1198C15.9194 14.9118 15.8495 14.7081 15.7149 14.5491L9.17105 8.00259L15.7149 1.45605C15.8007 1.38136 15.8703 1.28984 15.9192 1.18716C15.9682 1.08448 15.9955 0.972834 15.9995 0.859153C16.0035 0.745471 15.9841 0.632181 15.9425 0.526317C15.9008 0.420452 15.8379 0.324273 15.7576 0.243749C15.6772 0.163225 15.5812 0.100076 15.4754 0.0582229C15.3696 0.0163695 15.2564 -0.00329498 15.1427 0.000449949C15.029 0.00419488 14.9173 0.0312693 14.8145 0.0799926C14.7117 0.128716 14.62 0.198048 14.5452 0.283684V0.288872Z" fill="#FDF7EF"></path>
-                </svg>
-              </button>
-              <p class="fish-facts-activity"></p>
-
-              <h3>Foto's van de vis</h3>
-              <ul class="fish-facts-pictures"></ul>
-
-              <!-- feitjes -->
-              <h3 class="fish-facts-amount">Data..</h3>
-              <h3>Data..</h3>
-        </div>
-
-      </section>
+      <FishFacts />
 
       <section>
         <p>Wat blub jij?</p>
