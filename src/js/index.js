@@ -1,7 +1,3 @@
-import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
-import { fetchSnapshot } from "./charts/picture-of-month.js";
-
-import { drawDynamicStopwatch } from "./charts/average-time.js";
 import { addFishToAquarium, createBubbles } from "./charts/swimming-fish.js";
 
 async function init() {
@@ -134,8 +130,7 @@ async function init() {
   }
 
   setupScrollAnimation();
-  createGraph(data);
-  fetchSnapshot(data);
+
 }
 
 init();
