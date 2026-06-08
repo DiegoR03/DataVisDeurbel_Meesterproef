@@ -1,5 +1,4 @@
 import { drawRuisvoorn, drawBaars, drawPaling } from "./charts/wave-chart.js";
-import { createGraph } from "./charts/timeline-graph.js";
 import { fetchSnapshot } from "./charts/picture-of-month.js";
 
 import { drawDynamicStopwatch } from "./charts/average-time.js";
@@ -136,11 +135,7 @@ async function init() {
 
   setupScrollAnimation();
   createGraph(data);
-
   fetchSnapshot(data);
-  drawDynamicStopwatch(data);
-  initSmartHeader();
-  initNavigation();
 }
 
 init();
