@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-export function drawDynamicStopwatch(data) {
+function drawDynamicStopwatch(data) {
     if (!data || data.length === 0) return;
 
     const fishEvents = data
@@ -247,5 +247,21 @@ export function drawDynamicStopwatch(data) {
             .style("pointer-events", "none");
         nextButton.style("opacity", 1)
             .style("pointer-events", "auto");
+    });
+}
+
+if (typeof window !== "undefined") {
+    document.addEventListener("DOMContentLoaded", () => {
+        const globalWindow = window;
+        const rawData = globalWindow.SERVER_VIS_DATA || [];
+
+        const data = rawData.map((item) => ({
+            ...item,
+            created_at: item.created_at ? new Date(item.created_at) : null,
+        }));
+
+        if (data.length > 0) {
+            drawDynamicStopwatch(data);
+        }
     });
 }
