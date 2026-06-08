@@ -43,20 +43,6 @@
 
 <script>
     import "../styles/average-time.css";
-    import { drawDynamicStopwatch } from "../js/charts/average-time.js";
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const globalWindow = window as any;
-        const rawData = globalWindow.SERVER_VIS_DATA || [];
-
-        const data = rawData.map((item: any) => ({
-            ...item,
-            created_at: item.created_at ? new Date(item.created_at) : null,
-        }));
-
-        if (data.length > 0) {
-            drawDynamicStopwatch(data);
-        }
-    });
+    import "../js/charts/average-time.js";
 </script>
     
