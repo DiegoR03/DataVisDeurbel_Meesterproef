@@ -1,18 +1,14 @@
 ---
 // @ts-nocheck
 import "../styles/style.css";
-import "../styles/intro-text.css";
-import "../styles/fish-of-season.css";
-import "../styles/world-map.css";
-import "../styles/partial.css";
-import "../styles/fish-facts.css";
-import "../styles/fish-of-season.css";
+import MainAquarium from "../components/MainAquarium.astro";
 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
+import WorldMap from "../components/WorldMap.astro";
+import IntroText from "../components/IntroText.astro";
 import TimelineGraph from '../components/timeline-graph.astro';
 import AverageFish from '../components/average-fish.astro';
-
 import GuessTheFish from "../components/guess-the-fish.astro";
 import FishFacts from "../components/fish-details.astro";
 
@@ -106,118 +102,13 @@ const visData = await loadCsvData(CSV_URL);
     </header>
 
     <main>
-      <section class="hero">
-        <h1 id="intro-text"></h1>
+      <IntroText />
 
-        <div class="hero-wave" aria-hidden="true">
-          <svg
-            class="wave"
-            viewBox="0 0 1440 215"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              class="wave-path"
-              d="M 0,400 L 0,150 C 296,168 592,186 832,186 C 1072,186 1256,168 1440,150 L 1440,400 L 0,400 Z"
-            ></path>
-          </svg>
-        </div>
-      </section>
-
-      <section class="world-map-section" aria-labelledby="world-map-title">
-  
-        <div class="world-map-section-header">
-          <h2 id="world-map-title" class="world-map-title">
-            Visdeurbellers over de hele wereld
-          </h2>
-
-          <a href="#after-world-map" class="world-map-skip-button">Sla wereldkaart over</a>
-        </div>
-
-        <div class="world-map-section-layout">
-          <aside
-            class="world-map-section-countries"
-            aria-labelledby="top-countries-title"
-          >
-            <h3 id="top-countries-title" class="top-countries-title">
-              De meeste visdeurbellers in 2026 kwamen uit:
-            </h3>
-
-            <ol id="top-countries-list" class="top-countries-list"></ol>
-            <div id="active-country-card" class="active-country-card">
-              Selecteer een land om details te zien.
-            </div>
-          </aside>
-
-          <div class="world-map-section-visual">
-            <div class="world-map-legend" aria-hidden="true">
-              <span>Minder bezoekers</span>
-              <div class="world-map-legend-gradient"></div>
-              <span>Meer bezoekers</span>
-            </div>
-            <div class="world-map-bubbles" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <img
-              src="/assets/img/fish-1.png"
-              class="world-map-fish"
-              alt=""
-              aria-hidden="true"
-            />
-            <p id="world-map-country-total" class="world-map-country-total"></p>
-            <svg
-              id="world-map"
-              class="world-map"
-              role="img"
-              aria-labelledby="world-map-title world-map-description"
-            ></svg>
-
-            <div
-              id="world-map-tooltip"
-              class="world-map-tooltip"
-              role="status"
-              aria-live="polite"
-            ></div>
-          </div>
-        </div>
-      </section>
+      <WorldMap />
 
       <!-- grafiek 2 -->
 
-      <section class="fish-of-season-section" id="after-world-map">
-        <h2>Vis van het seizoen</h2>
-  
-        <fieldset class="aquarium-filters">
-          <legend class="visually-hidden">Kies welke vissen je in het aquarium wilt zien</legend>
-
-          <input type="radio" id="filter-all" name="fish-filter" value="all" checked>
-          <label for="filter-all" class="filter-btn">Alle Vissen</label>
-
-          <input type="radio" id="filter-top3" name="fish-filter" value="top3">
-          <label for="filter-top3" class="filter-btn">Top 3 Meest Gespot</label>
-        </fieldset>
-
-        <div class="aquarium-legend">
-          <p id="legend-ruisvoorn">Ruisvoorn: Data loading...</p>
-          <p id="legend-baars">Baars: Data loading...</p>
-          <p id="legend-paling">Paling: Data loading...</p>
-          <p id="legend-alver">Alver: Data loading...</p>
-          <p id="legend-blankvoorn">Blankvoorn: Data loading...</p>
-          <p id="legend-brasem">Brasem: Data loading...</p>
-          <p id="legend-kolblei">Kolblei: Data loading...</p>
-          <p id="legend-meerval">Meerval: Data loading...</p>
-          <p id="legend-snoek">Snoek: Data loading...</p>
-          <p id="legend-snoekbaars">Snoekbaars: Data loading...</p>
-          <p id="legend-winde">Winde: Data loading...</p>
-        </div>
-
-        <div class="main-aquarium" id="main-aquarium"></div>
-      </section>
+      <MainAquarium />
 
       <AverageFish />
 
