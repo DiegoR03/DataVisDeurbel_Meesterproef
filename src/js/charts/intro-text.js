@@ -83,8 +83,18 @@ function updateIntroText(totalFishDoorbellUsers, countryText) {
   )} Visdeurbellers. Waarvan de meeste uit ${countryText} kwamen.`;
 }
 
-const data = window.SERVER_VIS_DATA || [];
+/**************/
+/* MARK: Init */
+/**************/
 
-if (document.getElementById("intro-text")) {
-  renderIntroText(data);
+function initIntroText() {
+  const data = window.SERVER_VIS_DATA || [];
+
+  if (document.getElementById("intro-text") && data.length > 0) {
+    renderIntroText(data);
+  }
+}
+
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", initIntroText);
 }

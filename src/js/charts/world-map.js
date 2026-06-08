@@ -567,10 +567,23 @@ function getFlagEmoji(countryCode) {
     );
 }
 
-const data = window.SERVER_VIS_DATA || [];
+/**************/
+/* MARK: Init */
+/**************/
 
-if (document.getElementById("world-map")) {
+function initWorldMap() {
+  const rawData = window.SERVER_VIS_DATA || [];
 
-  renderWorldMap(data);
+  const data = rawData.map((item) => ({
+    ...item,
+    created_at: item.created_at ? new Date(item.created_at) : null,
+  }));
 
+  if (document.getElementById("world-map") && data.length > 0) {
+    renderWorldMap(data);
+  }
+}
+
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", initWorldMap);
 }
