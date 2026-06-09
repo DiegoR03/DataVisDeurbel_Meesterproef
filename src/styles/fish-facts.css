@@ -1,27 +1,45 @@
 .fish-facts-container {
-    background-color: var(--color-off-white);
+    background-color: var(--color-purple);
+    padding: 2rem;
 
-    > ul {
-        display: grid;
-        grid-template-columns: repeat( auto-fit, minmax(300px, 1fr));
-        place-items: center;
+    .fish-icons-details-list {
+        display: grid; 
+        grid-template-columns: 40vw 1fr;
+        place-items: start;
+        gap: 1rem;
         list-style: none;
         padding: 0;
-    }
 
-    li {
-        text-align: center;
-    }
+        li {
+            text-align: center;
+            background-color: var(--color-off-white);
+            width: 30vw;
+            height: 3rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: start;
+            align-items: center;
 
-    li:hover {
-        cursor: pointer;
+            > img {
+                width: 20%;
+                margin-right: 1rem;
+            }
+
+            p {
+                font-size: var(--font-size-normal)
+            }
+
+        }
+
+        li:hover {
+            cursor: pointer;
+        }
     }
 }
 
 .fish-facts-popover {
     width: 80vw;
     height: 80vh;
-    position: fixed;
     top: 10%;
     left: 10%;
     background-color: var(--color-dark-green);
@@ -30,7 +48,6 @@
     padding: 2rem;
     overflow-y: scroll;
     scrollbar-color: var(--color-dark-green) var(--color-light-gold);
-
 
     > h2 {
         color: var(--color-gold);
@@ -90,4 +107,8 @@
     &:hover {
         cursor: pointer;
     }
+}
+
+.active {
+    display: grid;
 }

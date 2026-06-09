@@ -13,9 +13,7 @@ function fetchSnapshot(data) {
   );
   console.log("SNAPSHOTS:", fishSnapshots);
   if (fishSnapshots.length === 0) {
-    console.warn(
-      "Geen geldige vis-snapshots gevonden met likelyhoodOfFish > 0.34",
-    );
+    console.warn("Geen geldige vis-snapshots gevonden met likelyhoodOfFish > 0.34",);
     return;
   }
 
@@ -56,6 +54,7 @@ function fetchSnapshot(data) {
     { name: "Ruisvoorn", img: "/img/ruisvoorn.png" },
   ];
 
+  // render de html voor ul's met de bovenstaande afbeeldingen
   function renderFishList(container) {
     if (!container) return;
     container.innerHTML = "";
@@ -73,12 +72,10 @@ function fetchSnapshot(data) {
     });
   }
 
-  // put rendered html in ul's
+  // render raadt de vis spel opties in html
   const fishListGame = document.querySelector(".fish-icons-game-list");
-  const fishListDetails = document.querySelector(".fish-icons-details-list");
   const fishListMobile = document.querySelector(".fish-icons-list-popover");
   renderFishList(fishListGame);
-  renderFishList(fishListDetails);
   renderFishList(fishListMobile);
 
   const fishImages = document.querySelectorAll(".fish-image");
@@ -89,6 +86,7 @@ function fetchSnapshot(data) {
 
   let currentFish = null;
 
+  // willekeurige vis ophalen functie
   function getRandomFish() {
     const randomFish = Math.floor(Math.random() * fishSnapshots.length);
     currentFish = fishSnapshots[randomFish];
@@ -104,10 +102,9 @@ function fetchSnapshot(data) {
   }
   getRandomFish();
 
-  const fishButtons = document.querySelectorAll(
-    ".fish-icons-list li, .fish-icons-list-popover li",
-  );
+  const fishButtons = document.querySelectorAll(".fish-icons-list li, .fish-icons-list-popover li");
 
+  // optie klkkken om vis te raden
   fishButtons.forEach((button) => {
     button.tabIndex = 0;
 
@@ -132,9 +129,11 @@ function fetchSnapshot(data) {
     button.addEventListener("click", guessingFish);
   });
 
+  // klein scherm popover van raadt de vis
   const popOverContainer = document.querySelector(".popover-container");
   const popOverButton = document.querySelector(".popover-button");
   const closePopover = document.querySelector(".close-popover");
+
 
   if (popOverContainer && popOverButton && closePopover) {
     popOverContainer.style.display = "none";
@@ -152,6 +151,7 @@ function fetchSnapshot(data) {
     });
   }
 
+  // raadt de vis, keuzes toegankelijk door toetsenbord navigatie
   let currentIndex = 0;
 
   document.addEventListener("keydown", (event) => {
@@ -164,18 +164,41 @@ function fetchSnapshot(data) {
     }
   });
 
+
+    // render fish-details html 
+  function renderFishDetails(container) {
+    if (!container) return;
+    container.innerHTML = "";
+
+    fishOptions.forEach((fish) => {
+      const li = document.createElement("li");
+      li.classList.add("fish-item");
+      li.dataset.set = fish.name;
+      li.tabIndex = 0;
+
+      li.innerHTML = `<img src="${fish.img}" alt="picture of ${fish.name}">
+                      <p>${fish.name}</p>
+                      <div class="fish-details"></div>`;
+
+      container.appendChild(li);
+    });
+  }
+
+  const fishListDetails = document.querySelector(".fish-icons-details-list");
+  renderFishDetails(fishListDetails);
+
+  // function renderFishFacts(container {
+  //   if(!container) return;
+  // })
+
   // popover for fish details
-  // open and close popover
   const fishFactsPopOver = document.querySelector(".fish-facts-popover");
-  const fishFactsButtons = document.querySelectorAll(
-    ".fish-icons-details-list li",
-  );
+  const fishFactsButtons = document.querySelectorAll(".fish-icons-details-list li");
   const fishFactsClose = document.querySelector(".fish-facts-close");
   const fishFactsList = document.querySelector(".fish-facts-pictures");
   const popUpName = document.querySelector(".fish-facts-name");
 
   if (fishFactsPopOver) {
-    fishFactsPopOver.style.display = "none";
 
     fishFactsButtons.forEach((button) => {
       button.addEventListener("click", () => {
@@ -198,14 +221,8 @@ function fetchSnapshot(data) {
           .join("");
 
         console.log("popOver of:", fishName, currentFishPics.length);
-        fishFactsPopOver.style.display = "grid";
-        document.body.style.overflow = "hidden";
+        fishFactsPopOver.classList.toggle("active");
       });
-    });
-
-    fishFactsClose.addEventListener("click", () => {
-      fishFactsPopOver.style.display = "none";
-      document.body.style.overflow = "auto";
     });
   }
 }
