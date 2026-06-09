@@ -61,7 +61,7 @@ function renderWorldMap(data) {
   const colorScale = d3
     .scaleSqrt()
     .domain([1, maxCount])
-    .range(["#DCEFEA", "#01463C"]);
+    .range(["#f4f0ff", "#c0a8ff"]);
 
   renderCountries(
     countryGroup,
@@ -76,6 +76,14 @@ function renderWorldMap(data) {
   );
 
   renderTopCountriesList(countryCounts, countryFeatures);
+
+  showInitialTopCountryRoute(
+    routeGroup,
+    projection,
+    path,
+    countryCounts,
+    countryFeatures,
+  );
 
   // Reset the map when clicking outside a country.
   svg.on("click", (event) => {
@@ -98,6 +106,34 @@ function renderWorldMap(data) {
 /*******************/
 /* MARK: Countries */
 /*******************/
+
+function showInitialTopCountryRoute(
+  routeGroup,
+  projection,
+  path,
+  countryCounts,
+  countryFeatures,
+) {
+  const topCountryEntry = [...countryCounts.entries()].sort(
+    (a, b) => b[1] - a[1],
+  )[0];
+
+  if (!topCountryEntry) return;
+
+  const [topCountryId] = topCountryEntry;
+
+  const topCountry = countryFeatures.find(
+    (country) => String(country.id) === topCountryId,
+  );
+
+  if (!topCountry) return;
+
+  selectedCountryId = topCountryId;
+
+  setActiveCountryById(topCountryId);
+  updateActiveCountryCard(topCountry, countryCounts);
+  drawRouteToCountry(routeGroup, projection, path, topCountry);
+}
 
 function renderCountries(
   countryGroup,
@@ -147,7 +183,7 @@ function renderCountries(
       const count = getCountryCount(country, countryCounts);
 
       if (count === 0) {
-        return "#EAF4F0";
+        return "#f4f0ff";
       }
 
       return colorScale(count);
@@ -357,30 +393,30 @@ function drawRouteToCountry(routeGroup, projection, path, country) {
     Math.min(utrechtPoint[1], countryPoint[1]) - 80,
   ];
 
-  // Draw the path from left to right so fish emojis do not appear upside down.
-  const routeStartPoint =
-    utrechtPoint[0] < countryPoint[0] ? utrechtPoint : countryPoint;
-
-  const routeEndPoint =
-    utrechtPoint[0] < countryPoint[0] ? countryPoint : utrechtPoint;
-
-  const routePath = `M ${routeStartPoint[0]} ${routeStartPoint[1]} Q ${controlPoint[0]} ${controlPoint[1]} ${routeEndPoint[0]} ${routeEndPoint[1]}`;
+  const routePath = `
+    M ${countryPoint[0]} ${countryPoint[1]}
+    Q ${controlPoint[0]} ${controlPoint[1]}
+    ${utrechtPoint[0]} ${utrechtPoint[1]}
+`;
 
   routeGroup
     .append("path")
     .attr("class", "world-map-route")
-    .attr("id", "active-route")
     .attr("d", routePath);
 
   routeGroup
-    .selectAll(".route-fish")
-    .data([0, 1, 2])
-    .join("text")
-    .attr("class", "route-fish")
-    .append("textPath")
-    .attr("href", "#active-route")
-    .attr("startOffset", (d) => `${20 + d * 18}%`)
-    .text("🐟");
+    .append("image")
+    .attr("class", "route-fish-svg")
+    .attr("href", "/img/route-fish.svg")
+    .attr("width", 24)
+    .attr("height", 24)
+    .attr("x", -12)
+    .attr("y", -12)
+    .append("animateMotion")
+    .attr("dur", "4s")
+    .attr("repeatCount", "indefinite")
+    .attr("rotate", "auto-reverse")
+    .attr("path", routePath);
 }
 
 /*****************/
@@ -403,11 +439,13 @@ function renderUtrechtMarker(mapGroup, projection) {
     .attr("r", 9);
 
   mapGroup
-    .append("circle")
-    .attr("class", "utrecht-marker")
-    .attr("cx", utrechtPoint[0])
-    .attr("cy", utrechtPoint[1])
-    .attr("r", 5);
+    .append("image")
+    .attr("class", "utrecht-marker-logo")
+    .attr("href", "/img/visdeurbel-logo.svg")
+    .attr("x", utrechtPoint[0] - 8)
+    .attr("y", utrechtPoint[1] - 8)
+    .attr("width", 16)
+    .attr("height", 16);
 
   // Background badge for the Utrecht label.
   mapGroup
