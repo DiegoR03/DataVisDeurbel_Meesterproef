@@ -164,8 +164,7 @@ function fetchSnapshot(data) {
     }
   });
 
-
-    // render fish-details html 
+  // render fish-details html 
   function renderFishDetails(container) {
     if (!container) return;
     container.innerHTML = "";
@@ -176,9 +175,19 @@ function fetchSnapshot(data) {
       li.dataset.set = fish.name;
       li.tabIndex = 0;
 
-      li.innerHTML = `<img src="${fish.img}" alt="picture of ${fish.name}">
-                      <p>${fish.name}</p>
-                      <div class="fish-details"></div>`;
+      li.innerHTML =
+      `<div class="fish-facts-tag">
+        <img src="${fish.img}" alt="picture of ${fish.name}">
+        <p>${fish.name}</p>
+      </div>
+        <div class="fish-facts-popover">
+          <h2 class="fish-facts-name"></h2>
+          <p class="fish-facts-activity"></p>
+          <h3>Foto's van de vis</h3>
+          <ul class="fish-facts-pictures"></ul>
+          <h3 class="fish-facts-amount">Data..</h3>
+          <h3>Data..</h3>
+        </div>`;
 
       container.appendChild(li);
     });
@@ -186,10 +195,6 @@ function fetchSnapshot(data) {
 
   const fishListDetails = document.querySelector(".fish-icons-details-list");
   renderFishDetails(fishListDetails);
-
-  // function renderFishFacts(container {
-  //   if(!container) return;
-  // })
 
   // popover for fish details
   const fishFactsPopOver = document.querySelector(".fish-facts-popover");
@@ -203,25 +208,58 @@ function fetchSnapshot(data) {
     fishFactsButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const fishName = button.dataset.set;
-        popUpName.textContent = fishName;
-        const fishImg = fishOptions.find((fish) => fish.name === fishName);
-        const fishCount = fishNumber[fishName] || 0;
-        const fishFactAmount = document.querySelector(".fish-facts-amount");
+        const fishCount = fishNumber[fishName] ?? 0;
+        const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
 
-        fishFactAmount.textContent = `Er zijn in totaal ${fishCount} foto's gemaakt van de ${fishName}`;
+        const fishItem = button.closest(".fish-item");
+        const popover = fishItem.querySelector(".fish-facts-popover");
 
-        const currentFishPics = fishSnapshots.filter(
-          (snapshot) => snapshot.fish_name === fishName,
-        );
-        fishFactsList.innerHTML = currentFishPics
-          .map((fish) => {
-            return `<li><img src="${fish.snapshot_url}" alt="${fishName}"></li>`;
-          })
-          .slice(0, 4)
-          .join("");
+        const isOpen = popover.classList.contains("active")
 
-        console.log("popOver of:", fishName, currentFishPics.length);
-        fishFactsPopOver.classList.toggle("active");
+        // sluit de popovers die hiervoor open waren
+        document.querySelectorAll('.fish-facts-popover').forEach(item => {
+            item.classList.remove("active");
+        });
+
+        // sluit de huidig open optie
+        if(isOpen) return;
+
+        // plaats content in de elementen
+        const title = popover.querySelector("p");
+
+        title.textContent = fishName;
+        const list = popover.querySelector(".fish-facts-list");
+
+        if (list) {
+          list.innerHTML = currentFishPics
+            .map(fish => `<li><img src="${fish.snapshot_url}" alt=""${fishName}></li>`)
+            .slice(0, 4)
+            .join("");
+        }
+
+        // feit van wikepedia:
+        // https://nl.wikipedia.org/wiki/Kolblei
+        let fishFact = ""
+        if(fishName === "Kolblei") {
+          fishFact = "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig."
+        }
+
+        const fact = document.querySelector('.fish-facts-activity');
+        if(fact) {
+          fact.textContent = fishFact;
+        }
+
+        if(!fact) {
+          fact.textContent = "Geen informatie beschikbaar over deze vis";
+        }
+
+        // Toont hoeveel foto's er van elke vis is genomen
+        const countEl = popover.querySelector(".fish-facts-amount");
+        if (countEl) {
+          countEl.textContent = `Er zijn ${fishCount} foto's van ${fishName}`;
+        }
+
+        popover.classList.toggle("active");
       });
     });
   }
