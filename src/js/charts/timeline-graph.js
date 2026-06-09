@@ -180,7 +180,6 @@ function drawD3Graph(graphData, eventKeys) {
             });
 
         row.append("span")
-            .style("font-weight", isActive ? "bold" : "normal")
             .text(item.label);
     });
 
@@ -343,7 +342,6 @@ function initBubbleAnimation(svg, width, height) {
     }
 }
 function initFishAnimation(svg, width, height, currentKey) {
-    // Verwijder eerst de oude vis-laag als die al bestaat (cruciaal voor de wissel!)
     svg.select(".fish-layer").remove();
 
     const fishGroup = svg.append("g").attr("class", "fish-layer");
@@ -352,12 +350,11 @@ function initFishAnimation(svg, width, height, currentKey) {
     for (let i = 0; i < 5; i++) {
         const fish = fishGroup.append("image")
             .attr("href", imgUrl)
-            .attr("width", 60)   // Pas de breedte van je foto hier aan
-            .attr("height", 40)  // Pas de hoogte van je foto hier aan
+            .attr("width", 60)
+            .attr("height", 40)
             .attr("opacity", 0.5);
 
         const animate = (f) => {
-            // Controleer of de laag nog bestaat (stopt oude animaties na een legandaklik)
             if (f.node() && !f.node().parentNode) return;
 
             const dir = Math.random() > 0.5 ? 1 : -1;
@@ -365,10 +362,8 @@ function initFishAnimation(svg, width, height, currentKey) {
             const eX = dir === 1 ? width + 10 : -70;
             const rY = 50 + Math.random() * (height * 0.7);
 
-            // CSS flip voor de afbeelding zodat hij de juiste kant op zwemt
             const flip = dir === -1 ? "scale(1, 1)" : "scale(-1, 1)";
 
-            // Let op: transform-origin is handig bij image scaling/flipping
             f.attr("transform", `translate(${sX}, ${rY}) ${flip}`)
                 .transition().duration(9000 + Math.random() * 3000)
                 .ease(d3.easeLinear)
