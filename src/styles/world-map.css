@@ -96,9 +96,11 @@
 .world-map-country.is-active {
   opacity: 1;
 
-  filter: drop-shadow(0 0 0.35rem var(--color-purple)) brightness(1.08);
+  fill: #7fc8a9;
 
-  stroke: var(--color-purple);
+  filter: drop-shadow(0 0 0.35rem var(--color-dark-green));
+
+  stroke: var(--color-dark-green);
   stroke-width: 2.5;
 }
 
@@ -107,7 +109,8 @@
 }
 
 .world-map-country:focus-visible {
-  stroke: var(--color-purple);
+  stroke: var(--color-dark-green);
+
   stroke-width: 3;
 }
 
@@ -116,7 +119,7 @@
 
   filter: brightness(1.2);
 
-  stroke: var(--color-purple);
+  stroke: var(--color-dark-green);
   stroke-width: 2;
 }
 
@@ -175,7 +178,7 @@
 
 .top-countries-title {
   margin: 0;
-
+  color: var(--color-dark-green);
   max-width: none;
 }
 
@@ -194,6 +197,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+
+  color: var(--color-dark-green);
 
   padding: 0.5rem;
 
@@ -220,24 +225,36 @@
   font-weight: 700;
 }
 
-.top-countries-list-item:first-child {
-  color: #ffd700;
-}
-
-.top-countries-list-item:nth-child(2) {
-  color: #c0c0c0;
-}
-
-.top-countries-list-item:nth-child(3) {
-  color: #cd7f32;
-}
-
 .top-countries-list-item.is-active {
   background: rgba(192, 168, 255, 0.3);
 
   border-radius: 0.5rem;
 
   transform: translateX(0.25rem);
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 1.75rem;
+  height: 1.75rem;
+
+  margin-right: 0.75rem;
+
+  background: var(--color-purple);
+  color: var(--color-dark-green);
+
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.top-countries-list-item:first-child .rank-badge {
+  transform: scale(1.15);
 }
 
 /*****************************/
@@ -271,6 +288,24 @@
   font-weight: 700;
 }
 
+.active-country-card-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.active-country-card-row span[aria-hidden="true"] {
+  width: 1.5rem;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.card-icon {
+  width: 1.5rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
 /*********************/
 /* MARK: Skip button */
 /*********************/
@@ -301,45 +336,9 @@
   background: var(--color-off-white);
 }
 
-.world-map-skip-button:focus {
-  outline: 2px dashed #01463c;
-  outline-offset: 2px;
-}
-
-/**********************************/
-/* MARK: Decorative swimming fish */
-/**********************************/
-
-.world-map-fish {
-  position: absolute;
-  left: 1rem;
-  bottom: 2rem;
-
-  width: 4rem;
-
-  opacity: 0.8;
-
-  animation: fishSwim 14s ease-in-out infinite;
-
-  pointer-events: none;
-}
-
-@keyframes fishSwim {
-  0% {
-    transform: translateX(0) rotate(0deg) rotateY(180deg);
-  }
-
-  50% {
-    transform: translateX(18rem) translateY(-2rem) rotate(6deg) rotateY(180deg);
-  }
-
-  51% {
-    transform: translateX(18rem) translateY(-2rem);
-  }
-
-  100% {
-    transform: translateX(0) rotate(0deg) rotateY(180deg);
-  }
+.world-map-skip-button:focus-visible {
+  outline: 3px solid var(--color-dark-green);
+  outline-offset: 4px;
 }
 
 /***********************************/

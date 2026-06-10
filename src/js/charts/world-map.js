@@ -34,6 +34,7 @@ function renderWorldMap(data) {
 
   const projection = d3
     .geoNaturalEarth1()
+    .rotate([-5, 0])
     .scale(160)
     .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2]);
 
@@ -328,15 +329,19 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
     listItem.dataset.countryId = numericCountryCode;
     listItem.tabIndex = 0;
 
-    listItem.innerHTML = `
-      <span class="top-countries-list-country">
-        ${flagEmoji} ${countryName}
-      </span>
+    const rank =
+      topCountries.findIndex(([id]) => id === numericCountryCode) + 1;
 
-      <span class="top-countries-list-count">
-        ${percentage}%
-      </span>
-    `;
+    listItem.innerHTML = `
+  <span class="top-countries-list-country">
+    <span class="rank-badge">${rank}</span>
+    ${flagEmoji} ${countryName}
+  </span>
+
+  <span class="top-countries-list-count">
+    ${percentage}%
+  </span>
+`;
 
     // Highlight matching country from the list.
     listItem.addEventListener("mouseenter", () => {
@@ -480,14 +485,26 @@ function updateActiveCountryCard(country, countryCounts) {
   const rank = getCountryRank(country, countryCounts);
 
   // Keep an empty line for countries without visitors to prevent layout jumping.
-  const rankMarkup = count > 0 ? `#${rank} meest bezochte land` : "&nbsp;";
+  const rankMarkup = count > 0 ? `${rank} meest bezochte land` : "&nbsp;";
 
   card.innerHTML = `
     <strong>${country.properties.name}</strong>
-    <span>${count.toLocaleString("nl-NL")} bezoekers</span>
-    <span>${percentage}% van alle bezoekers</span>
-    <span class="active-country-card-rank">${rankMarkup}</span>
-  `;
+
+    <div class="active-country-card-row">
+      <span class="card-icon">🔔</span>
+      <span>${count.toLocaleString("nl-NL")} bezoekers</span>
+    </div>
+
+    <div class="active-country-card-row">
+      <span class="card-icon">🌍</span>
+      <span>${percentage}% van alle bezoekers</span>
+    </div>
+
+    <div class="active-country-card-row">
+      <span class="card-icon">#️⃣</span>
+      <span>${rankMarkup}</span>
+  </div>
+`;
 }
 
 /*****************/
