@@ -179,15 +179,7 @@ function fetchSnapshot(data) {
       `<div class="fish-facts-tag">
         <img src="${fish.img}" alt="picture of ${fish.name}">
         <p>${fish.name}</p>
-      </div>
-        <div class="fish-facts-popover">
-          <h2 class="fish-facts-name"></h2>
-          <p class="fish-facts-activity"></p>
-          <h3>Foto's van de vis</h3>
-          <ul class="fish-facts-pictures"></ul>
-          <h3 class="fish-facts-amount">Data..</h3>
-          <h3>Data..</h3>
-        </div>`;
+      </div>`;
 
       container.appendChild(li);
     });
@@ -196,73 +188,83 @@ function fetchSnapshot(data) {
   const fishListDetails = document.querySelector(".fish-icons-details-list");
   renderFishDetails(fishListDetails);
 
-  // popover for fish details
-  const fishFactsPopOver = document.querySelector(".fish-facts-popover");
+  // All fish buttons in the list
   const fishFactsButtons = document.querySelectorAll(".fish-icons-details-list li");
-  const fishFactsClose = document.querySelector(".fish-facts-close");
-  const fishFactsList = document.querySelector(".fish-facts-pictures");
-  const popUpName = document.querySelector(".fish-facts-name");
 
-  if (fishFactsPopOver) {
+  // popover for fish details
 
-    fishFactsButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const fishName = button.dataset.set;
-        const fishCount = fishNumber[fishName] ?? 0;
-        const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
+  // DETAIL PANEL REFERENCES
+  // container van vis- feitjes en foto's
+  const fishFactsPopOver = document.querySelector(".fish-facts-popover");
 
-        const fishItem = button.closest(".fish-item");
-        const popover = fishItem.querySelector(".fish-facts-popover");
+  // Elements inside the detail container
+  const fishNameEl = document.querySelector(".fish-facts-name");
+  const fishActivityEl = document.querySelector(".fish-facts-activity");
+  const fishPicturesEl = document.querySelector(".fish-facts-pictures");
+  const fishAmountEl = document.querySelector(".fish-facts-amount");
 
-        const isOpen = popover.classList.contains("active")
+  // Feitjes van elke vis
+  // https://nl.wikipedia.org/wiki/Kolblei / https://nl.wikipedia.org/wiki/Snoek / https://nl.wikipedia.org/wiki/Baars / https://nl.wikipedia.org/wiki/Alver
+  const fishFacts = {
+    Kolblei: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig.",
+    Snoek: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden.[2] Snoeken kunnen vijftien jaar oud worden.",
+    Baars: "De Baars, ook wel Europese baars of rivierbaars genoemd, is een vis uit de familie echte baarzen, die van nature in de Benelux voorkomt. Verwanten van deze soort zijn onder andere de snoekbaars en de pos.",
+    Alver: "De alver is een zoetwatervis die behoort tot de eigenlijke karpers. Hij is ook bekend onder de namen: moertje, alvenaar, alfje, alft, nesteling en panharing en in Vlaanderen als schieter, spekje of ablette.",
+  };
 
-        // sluit de popovers die hiervoor open waren
-        document.querySelectorAll('.fish-facts-popover').forEach(item => {
-            item.classList.remove("active");
-        });
+  // UPDATE DETAIL PANEL
+  function showFishDetails(fishName) {
+    // Get amount of snapshots for this fish
+    const fishCount = fishNumber[fishName] ?? 0;
 
-        // sluit de huidig open optie
-        if(isOpen) return;
+    // filter snapshots naar dezelfde vis
+    const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
 
-        // plaats content in de elementen
-        const title = popover.querySelector("p");
+    const isOpen = fishFactsPopOver.classList.contains('active');
 
-        title.textContent = fishName;
-        const list = popover.querySelector(".fish-facts-list");
+    document.querySelectorAll(".fish-facts-popover").forEach(item => {
+      item.classList.remove("active");
+    })
 
-        if (list) {
-          list.innerHTML = currentFishPics
-            .map(fish => `<li><img src="${fish.snapshot_url}" alt=""${fishName}></li>`)
-            .slice(0, 4)
-            .join("");
-        }
+    // Update fish name
+    if (fishNameEl) {
+      fishNameEl.textContent = fishName;
+    }
 
-        // feit van wikepedia:
-        // https://nl.wikipedia.org/wiki/Kolblei
-        let fishFact = ""
-        if(fishName === "Kolblei") {
-          fishFact = "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig."
-        }
+    // Update fish fact
+    if (fishActivityEl) {
+      fishActivityEl.textContent = fishFacts[fishName] ?? "Geen informatie beschikbaar over deze vis.";}
 
-        const fact = document.querySelector('.fish-facts-activity');
-        if(fact) {
-          fact.textContent = fishFact;
-        }
+    // Update fish images
+    if (fishPicturesEl) {
+      fishPicturesEl.innerHTML = currentFishPics
+        .slice(0, 4)
+        .map(fish =>
+            `<li><img src="${fish.snapshot_url}" alt="${fishName}"></li>`)
+        .join("");
+    }
 
-        if(!fact) {
-          fact.textContent = "Geen informatie beschikbaar over deze vis";
-        }
-
-        // Toont hoeveel foto's er van elke vis is genomen
-        const countEl = popover.querySelector(".fish-facts-amount");
-        if (countEl) {
-          countEl.textContent = `Er zijn ${fishCount} foto's van ${fishName}`;
-        }
-
-        popover.classList.toggle("active");
-      });
-    });
+    // Update amount text
+    if (fishAmountEl) {
+      fishAmountEl.textContent = `Er zijn ${fishCount} foto's van ${fishName}`;
+    }
   }
+
+  // CLICK EVENTS
+  fishFactsButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const fishName = button.dataset.set;
+      // Update the detail panel
+      showFishDetails(fishName);
+    });
+  });
+
+  // SHOW FIRST FISH BY DEFAULT
+  if (fishOptions.length > 0) {
+    showFishDetails(fishOptions[0].name);
+  }
+
+  fishFactsPopOver.classList.add("active");
 }
 
 if (typeof window !== "undefined") {
