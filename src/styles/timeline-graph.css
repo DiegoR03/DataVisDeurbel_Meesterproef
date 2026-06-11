@@ -79,15 +79,14 @@
     #chart-container {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
-        gap: 1.5rem;
         align-items: stretch;
         margin-top: 40px;
         margin-bottom: 40px;
 
         #html-legend {
-            grid-column: span 3;
+            grid-column: span 2;
             background: var(--color-light-gold);
-            border-radius: 15px;
+            border-radius: 1rem;
             padding: 20px;
 
             display: flex;
@@ -112,7 +111,7 @@
             margin: 0 auto;
             position: relative;
             width: 100%;
-            grid-column: 4 / 13;
+            grid-column: 3 / 13;
 
             aspect-ratio: 1000 / 600;
             display: block;
@@ -136,8 +135,6 @@
 
         transition: stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out, opacity 0.1s ease-in-out;
         border-radius: var(--border-radius);
-
-        stroke: var(--color-white);
         opacity: 0.1;
         stroke-width: 1px;
 
@@ -152,8 +149,8 @@
     #legend-items-container {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-
+        justify-content: space-evenly;
+        gap: 1rem;
         align-items: stretch;
         padding: 8px 12px;
         cursor: pointer;

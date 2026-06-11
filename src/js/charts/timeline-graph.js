@@ -58,7 +58,7 @@ function drawD3Graph(graphData, eventKeys) {
     const yMaxCalculated = Math.max(stepSize, Math.ceil(rawMaxWithBuffer / stepSize) * stepSize);
 
     const y = d3.scaleLinear()
-        .domain([0, yMaxCalculated])
+        .domain([0, yMaxCalculated + stepSize]) 
         .range([height, 0]);
 
     const yTicks = [];
@@ -68,6 +68,40 @@ function drawD3Graph(graphData, eventKeys) {
 
     if (isFirstLoad) {
         const defs = svg.append("defs");
+
+        // Met behulp van Gemini een roze filter toegevoegd op de vissen
+        const filter = defs.append("filter")
+        .attr("id", "pink-tint-filter");
+
+       filter.append("feColorMatrix")
+        .attr("type", "matrix")
+        .attr("values", `
+            0.2126 0.7152 0.0722 0 0
+            0.2126 0.7152 0.0722 0 0
+            0.2126 0.7152 0.0722 0 0
+            0      0      0      1 0
+        `)
+        .attr("result", "gray");
+
+        const transfer = filter.append("feComponentTransfer")
+            .attr("in", "gray");
+        
+        transfer.append("feFuncR").attr("type", "table").attr("tableValues", "0.98 1.0");
+        transfer.append("feFuncG").attr("type", "table").attr("tableValues", "0.40 1.0");
+        transfer.append("feFuncB").attr("type", "table").attr("tableValues", "0.65 1.0");
+        transfer.append("feFuncA").attr("type", "identity");
+
+        const filterBlueGreen = defs.append("filter").attr("id", "blue-green-filter");
+        filterBlueGreen.append("feColorMatrix")
+            .attr("type", "matrix")
+            .attr("values", "0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0")
+            .attr("result", "gray");
+        const transferBlueGreen = filterBlueGreen.append("feComponentTransfer").attr("in", "gray");
+        
+        transferBlueGreen.append("feFuncR").attr("type", "table").attr("tableValues", "0.00 1.0");
+        transferBlueGreen.append("feFuncG").attr("type", "table").attr("tableValues", "0.55 1.0");
+        transferBlueGreen.append("feFuncB").attr("type", "table").attr("tableValues", "0.55 1.0");
+        transferBlueGreen.append("feFuncA").attr("type", "identity");
 
         defs.append("clipPath")
             .attr("id", "rect-clip")
@@ -92,7 +126,8 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("y", 0)
             .attr("width", x("06:00") || 0)
             .attr("height", height + 20)
-            .attr("fill", "rgba(0, 0, 50, 0.2)")
+            .attr("fill", "var(--color-dark-green)")
+            .style("opacity", 0.3)
             .style("pointer-events", "none");
 
         backgroundLayer.append("rect")
@@ -100,7 +135,8 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("y", 0)
             .attr("width", width - (x("22:00") || width))
             .attr("height", height + 20)
-            .attr("fill", "rgba(0, 0, 50, 0.15)")
+            .attr("fill", "var(--color-dark-green)")
+            .style("opacity", 0.3)
             .style("pointer-events", "none");
 
         initBubbleAnimation(backgroundLayer, width, height, false);
@@ -131,7 +167,7 @@ function drawD3Graph(graphData, eventKeys) {
             .text((data, i) => i % 2 !== 0 ? "" : data.hour);
 
         const yAxisGroup = interfaceLayer.append("g")
-            .attr("transform", `translate(${-margin.left + 10}, ${height + 10}) rotate(-90)`);
+            .attr("transform", `translate(${margin.left - 70}, ${height - 80}) rotate(-90)`);
 
         yAxisGroup.append("text")
             .attr("class", "axis-text")
@@ -145,7 +181,7 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("fill", "var(--color-dark-green)");
 
         const xAxisGroup = interfaceLayer.append("g")
-            .attr("transform", `translate(${width / 15}, ${height + margin.bottom - 10})`);
+            .attr("transform", `translate(${width / 10}, ${height + margin.bottom - 80})`);
 
         xAxisGroup.append("text")
             .attr("class", "axis-text")
@@ -266,7 +302,7 @@ function drawD3Graph(graphData, eventKeys) {
             if (currentSelectedKey === "total") {
                 tooltipContent += `<p>Totaal: <strong>${data.total}</strong> events</p><div id='line'></div>`;
                 eventKeys.forEach(key => {
-                    if (data[key] > 0) tooltipContent += `<small>${key}: <strong>${data[key]}</strong><br></small>`;
+                    if (data[key] > 0) tooltipContent += `<p>${key}: <strong>${data[key]}</strong><br></p>`;
                 });
             } else {
                 tooltipContent += `<p>${currentSelectedKey}: <strong>${data[currentSelectedKey] || 0}</strong></p>`;
@@ -294,17 +330,35 @@ function drawD3Graph(graphData, eventKeys) {
     const yAxis = d3.axisLeft(y)
         .tickValues(yTicks)
         .tickFormat(d3.format("d"))
-        .tickSize(0);
+        .tickSize(-width);
 
     yAxisGroup.transition()
         .duration(750)
         .call(yAxis)
         .on("end", () => {
-            yAxisGroup.selectAll("text").attr("dx", "-10");
-            yAxisGroup.select(".domain").remove();
+            yAxisGroup.selectAll("text")
+                .attr("dx", "8")
+                .attr("dy", "-6")
+                .style("text-anchor", "start")
+                .style("font-size", "12px");
+
+            yAxisGroup.selectAll(".tick line")
+                .attr("stroke", "rgba(0, 0, 0, 0.1)")
+                .attr("stroke-dasharray", "4,4");
+            
+            yAxisGroup.select(".domain").remove(); 
         });
 
-    yAxisGroup.selectAll("text").attr("dx", "-10");
+    yAxisGroup.selectAll("text")
+        .attr("dx", "8")
+        .attr("dy", "-6")
+        .style("text-anchor", "start")
+        .style("font-size", "12px");
+
+    yAxisGroup.selectAll(".tick line")
+        .attr("stroke", "rgba(0, 0, 0, 0.1)")
+        .attr("stroke-dasharray", "4,4");
+
     yAxisGroup.select(".domain").remove();
 
     initFishAnimation(backgroundLayer, width, height, currentSelectedKey);
@@ -322,20 +376,21 @@ function getFishImageUrl(fishKey) {
 function initBubbleAnimation(svg, width, height) {
     const floatingGroup = svg.append("g").attr("class", "bubble-layer");
     for (let i = 0; i < 20; i++) {
-        const bubble = floatingGroup.append("circle")
-            .attr("fill", "var(--color-blue-green)")
-            .attr("stroke", "var(--color-white");
+        const bubble = floatingGroup.append("image")
+            .attr("href", "./img/Bubble.png")
+            .style("filter", "url(#blue-green-filter)")
+            .attr("opacity", 0.6);
         const animate = (b) => {
-            const r = 2 + Math.random() * 6; const xPos = Math.random() * width;
-            b.attr("cx", xPos)
-                .attr("cy", height + 20)
-                .attr("r", r)
-                .attr("opacity", 0.6)
+            const r = 4 + Math.random() * 12; 
+            const xPos = Math.random() * width;
+            b.attr("width", r)
+                .attr("height", r)
+                .attr("x", xPos)
+                .attr("y", height + 20)
                 .transition().duration(4000 + Math.random() * 5000)
                 .ease(d3.easeLinear)
-                .attr("cx", xPos + (Math.random() * 40 - 20))
-                .attr("cy", -20)
-                .attr("opacity", 0)
+                .attr("x", xPos + (Math.random() * 40 - 20))
+                .attr("y", -20)
                 .on("end", () => animate(b));
         };
         animate(bubble);
@@ -352,7 +407,8 @@ function initFishAnimation(svg, width, height, currentKey) {
             .attr("href", imgUrl)
             .attr("width", 60)
             .attr("height", 40)
-            .attr("opacity", 0.5);
+            .attr("opacity", 0.8)
+            .style("filter", "url(#pink-tint-filter)");
 
         const animate = (f) => {
             if (f.node() && !f.node().parentNode) return;
@@ -381,14 +437,12 @@ function createGraph(data) {
         if (item.event_name === "uploadedFish") {
             const queryString = item.referrer_query || item.url_query || "";
 
-            // Gemini heeft mij geholpen met het filteren naar alleen vissen, ik was zelf nooit op (/[?&]fish=([^&]+)/i) gekomen
             const match = queryString.match(/[?&]fish=([^&]+)/i);
 
             if (match && match[1]) {
                 const rawFishString = decodeURIComponent(match[1]);
                 const cleanFishes = rawFishString.split(',')
                     .map(f => f.trim())
-                    // Filter the onbekende en unknown uit de cvs data, met behulp van Co-pilot autocorrect gedaan
                     .filter(f => f.length > 0 && f.toLowerCase() !== 'unknown' && f.toLowerCase() !== 'onbekend');
 
                 if (cleanFishes.length > 0) {
