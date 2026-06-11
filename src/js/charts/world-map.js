@@ -34,6 +34,7 @@ function renderWorldMap(data) {
 
   const projection = d3
     .geoNaturalEarth1()
+    .rotate([-5, 0])
     .scale(160)
     .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2]);
 
@@ -61,7 +62,7 @@ function renderWorldMap(data) {
   const colorScale = d3
     .scaleSqrt()
     .domain([1, maxCount])
-    .range(["#DCEFEA", "#01463C"]);
+    .range(["#f4f0ff", "#c0a8ff"]);
 
   renderCountries(
     countryGroup,
@@ -76,6 +77,14 @@ function renderWorldMap(data) {
   );
 
   renderTopCountriesList(countryCounts, countryFeatures);
+
+  showInitialTopCountryRoute(
+    routeGroup,
+    projection,
+    path,
+    countryCounts,
+    countryFeatures,
+  );
 
   // Reset the map when clicking outside a country.
   svg.on("click", (event) => {
@@ -98,6 +107,34 @@ function renderWorldMap(data) {
 /*******************/
 /* MARK: Countries */
 /*******************/
+
+function showInitialTopCountryRoute(
+  routeGroup,
+  projection,
+  path,
+  countryCounts,
+  countryFeatures,
+) {
+  const topCountryEntry = [...countryCounts.entries()].sort(
+    (a, b) => b[1] - a[1],
+  )[0];
+
+  if (!topCountryEntry) return;
+
+  const [topCountryId] = topCountryEntry;
+
+  const topCountry = countryFeatures.find(
+    (country) => String(country.id) === topCountryId,
+  );
+
+  if (!topCountry) return;
+
+  selectedCountryId = topCountryId;
+
+  setActiveCountryById(topCountryId);
+  updateActiveCountryCard(topCountry, countryCounts);
+  drawRouteToCountry(routeGroup, projection, path, topCountry);
+}
 
 function renderCountries(
   countryGroup,
@@ -147,7 +184,7 @@ function renderCountries(
       const count = getCountryCount(country, countryCounts);
 
       if (count === 0) {
-        return "#EAF4F0";
+        return "#f4f0ff";
       }
 
       return colorScale(count);
@@ -292,15 +329,19 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
     listItem.dataset.countryId = numericCountryCode;
     listItem.tabIndex = 0;
 
-    listItem.innerHTML = `
-      <span class="top-countries-list-country">
-        ${flagEmoji} ${countryName}
-      </span>
+    const rank =
+      topCountries.findIndex(([id]) => id === numericCountryCode) + 1;
 
-      <span class="top-countries-list-count">
-        ${percentage}%
-      </span>
-    `;
+    listItem.innerHTML = `
+  <span class="top-countries-list-country">
+    <span class="rank-badge">${rank}</span>
+    ${flagEmoji} ${countryName}
+  </span>
+
+  <span class="top-countries-list-count">
+    ${percentage}%
+  </span>
+`;
 
     // Highlight matching country from the list.
     listItem.addEventListener("mouseenter", () => {
@@ -357,30 +398,30 @@ function drawRouteToCountry(routeGroup, projection, path, country) {
     Math.min(utrechtPoint[1], countryPoint[1]) - 80,
   ];
 
-  // Draw the path from left to right so fish emojis do not appear upside down.
-  const routeStartPoint =
-    utrechtPoint[0] < countryPoint[0] ? utrechtPoint : countryPoint;
-
-  const routeEndPoint =
-    utrechtPoint[0] < countryPoint[0] ? countryPoint : utrechtPoint;
-
-  const routePath = `M ${routeStartPoint[0]} ${routeStartPoint[1]} Q ${controlPoint[0]} ${controlPoint[1]} ${routeEndPoint[0]} ${routeEndPoint[1]}`;
+  const routePath = `
+    M ${countryPoint[0]} ${countryPoint[1]}
+    Q ${controlPoint[0]} ${controlPoint[1]}
+    ${utrechtPoint[0]} ${utrechtPoint[1]}
+`;
 
   routeGroup
     .append("path")
     .attr("class", "world-map-route")
-    .attr("id", "active-route")
     .attr("d", routePath);
 
   routeGroup
-    .selectAll(".route-fish")
-    .data([0, 1, 2])
-    .join("text")
-    .attr("class", "route-fish")
-    .append("textPath")
-    .attr("href", "#active-route")
-    .attr("startOffset", (d) => `${20 + d * 18}%`)
-    .text("🐟");
+    .append("image")
+    .attr("class", "route-fish-svg")
+    .attr("href", "/img/route-fish.svg")
+    .attr("width", 24)
+    .attr("height", 24)
+    .attr("x", -12)
+    .attr("y", -12)
+    .append("animateMotion")
+    .attr("dur", "4s")
+    .attr("repeatCount", "indefinite")
+    .attr("rotate", "auto-reverse")
+    .attr("path", routePath);
 }
 
 /*****************/
@@ -403,11 +444,13 @@ function renderUtrechtMarker(mapGroup, projection) {
     .attr("r", 9);
 
   mapGroup
-    .append("circle")
-    .attr("class", "utrecht-marker")
-    .attr("cx", utrechtPoint[0])
-    .attr("cy", utrechtPoint[1])
-    .attr("r", 5);
+    .append("image")
+    .attr("class", "utrecht-marker-logo")
+    .attr("href", "/img/visdeurbel-logo.svg")
+    .attr("x", utrechtPoint[0] - 8)
+    .attr("y", utrechtPoint[1] - 8)
+    .attr("width", 16)
+    .attr("height", 16);
 
   // Background badge for the Utrecht label.
   mapGroup
@@ -437,18 +480,44 @@ function updateActiveCountryCard(country, countryCounts) {
   if (!card) return;
 
   const count = getCountryCount(country, countryCounts);
+
+  const countryCode = countries.numericToAlpha2(String(country.id));
+  const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
+
   const totalVisitors = getTotalVisitors(countryCounts);
   const percentage = ((count / totalVisitors) * 100).toFixed(1);
   const rank = getCountryRank(country, countryCounts);
 
-  // Keep an empty line for countries without visitors to prevent layout jumping.
-  const rankMarkup = count > 0 ? `#${rank} meest bezochte land` : "&nbsp;";
+  const percentageRow =
+    count > 0
+      ? `
+        <div class="active-country-card-row">
+          <span class="card-icon">🌍</span>
+          <span>${percentage}% van alle bezoekers</span>
+        </div>
+      `
+      : "";
+
+  const rankRow =
+    count > 0
+      ? `
+        <div class="active-country-card-row">
+          <span class="card-icon">#️⃣</span>
+          <span>#${rank} meest bezochte land</span>
+        </div>
+      `
+      : "";
 
   card.innerHTML = `
-    <strong>${country.properties.name}</strong>
-    <span>${count.toLocaleString("nl-NL")} bezoekers</span>
-    <span>${percentage}% van alle bezoekers</span>
-    <span class="active-country-card-rank">${rankMarkup}</span>
+    <strong>${flagEmoji} ${country.properties.name}</strong>
+
+    <div class="active-country-card-row">
+      <span class="card-icon">👥</span>
+      <span>${count.toLocaleString("nl-NL")} bezoekers</span>
+    </div>
+
+    ${percentageRow}
+    ${rankRow}
   `;
 }
 
