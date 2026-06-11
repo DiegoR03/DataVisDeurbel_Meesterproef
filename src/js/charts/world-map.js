@@ -480,31 +480,45 @@ function updateActiveCountryCard(country, countryCounts) {
   if (!card) return;
 
   const count = getCountryCount(country, countryCounts);
+
+  const countryCode = countries.numericToAlpha2(String(country.id));
+  const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
+
   const totalVisitors = getTotalVisitors(countryCounts);
   const percentage = ((count / totalVisitors) * 100).toFixed(1);
   const rank = getCountryRank(country, countryCounts);
 
-  // Keep an empty line for countries without visitors to prevent layout jumping.
-  const rankMarkup = count > 0 ? `${rank} meest bezochte land` : "&nbsp;";
+  const percentageRow =
+    count > 0
+      ? `
+        <div class="active-country-card-row">
+          <span class="card-icon">🌍</span>
+          <span>${percentage}% van alle bezoekers</span>
+        </div>
+      `
+      : "";
+
+  const rankRow =
+    count > 0
+      ? `
+        <div class="active-country-card-row">
+          <span class="card-icon">#️⃣</span>
+          <span>#${rank} meest bezochte land</span>
+        </div>
+      `
+      : "";
 
   card.innerHTML = `
-    <strong>${country.properties.name}</strong>
+    <strong>${flagEmoji} ${country.properties.name}</strong>
 
     <div class="active-country-card-row">
-      <span class="card-icon">🔔</span>
+      <span class="card-icon">👥</span>
       <span>${count.toLocaleString("nl-NL")} bezoekers</span>
     </div>
 
-    <div class="active-country-card-row">
-      <span class="card-icon">🌍</span>
-      <span>${percentage}% van alle bezoekers</span>
-    </div>
-
-    <div class="active-country-card-row">
-      <span class="card-icon">#️⃣</span>
-      <span>${rankMarkup}</span>
-  </div>
-`;
+    ${percentageRow}
+    ${rankRow}
+  `;
 }
 
 /*****************/

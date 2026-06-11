@@ -94,14 +94,12 @@
 .world-map-country:hover,
 .world-map-country:focus-visible,
 .world-map-country.is-active {
-  opacity: 1;
-
-  fill: #7fc8a9;
-
-  filter: drop-shadow(0 0 0.35rem var(--color-dark-green));
+  fill: var(--color-dark-green) !important;
 
   stroke: var(--color-dark-green);
   stroke-width: 2.5;
+
+  filter: drop-shadow(0 0 0.35rem var(--color-dark-green));
 }
 
 .world-map-country:focus {
