@@ -191,9 +191,6 @@ function fetchSnapshot(data) {
   // All fish buttons in the list
   const fishFactsButtons = document.querySelectorAll(".fish-icons-details-list li");
 
-  // popover for fish details
-
-  // DETAIL PANEL REFERENCES
   // container van vis- feitjes en foto's
   const fishFactsPopOver = document.querySelector(".fish-facts-popover");
 
@@ -202,6 +199,8 @@ function fetchSnapshot(data) {
   const fishActivityEl = document.querySelector(".fish-facts-activity");
   const fishPicturesEl = document.querySelector(".fish-facts-pictures");
   const fishAmountEl = document.querySelector(".fish-facts-amount");
+
+  const fishTag = document.querySelectorAll('.fish-facts-tag');
 
   // Feitjes van elke vis
   // https://nl.wikipedia.org/wiki/Kolblei / https://nl.wikipedia.org/wiki/Snoek / https://nl.wikipedia.org/wiki/Baars / https://nl.wikipedia.org/wiki/Alver
@@ -220,12 +219,6 @@ function fetchSnapshot(data) {
     // filter snapshots naar dezelfde vis
     const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
 
-    const isOpen = fishFactsPopOver.classList.contains('active');
-
-    document.querySelectorAll(".fish-facts-popover").forEach(item => {
-      item.classList.remove("active");
-    })
-
     // Update fish name
     if (fishNameEl) {
       fishNameEl.textContent = fishName;
@@ -243,17 +236,35 @@ function fetchSnapshot(data) {
             `<li><img src="${fish.snapshot_url}" alt="${fishName}"></li>`)
         .join("");
     }
+    if(fishName === "Kolblei") {
+      fishPicturesEl.innerHTML = `
+        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260504-083511.jpeg" alt="${fishName}"></li>
+        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260503-113552.jpeg" alt="${fishName}"></li>
+        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260502-071753.jpeg" alt="${fishName}"></li>
+        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260501-201012.jpeg" alt="${fishName}"></li>
+      `
+    }
 
     // Update amount text
     if (fishAmountEl) {
-      fishAmountEl.textContent = `Er zijn ${fishCount} foto's van ${fishName}`;
-    }
+        fishAmountEl.textContent = `Er zijn ${fishCount} foto's van ${fishName}`;
+      }
+
+    fishFactsPopOver.classList.add("active");
   }
 
   // CLICK EVENTS
   fishFactsButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const fishName = button.dataset.set;
+
+      // verander geselecteerde knop van kleur
+      document.querySelectorAll('.fish-facts-tag').forEach(item => {
+        item.classList.remove('fish-tag-green');
+      })
+
+      button.querySelector('.fish-facts-tag')?.classList.add('fish-tag-green');
+
       // Update the detail panel
       showFishDetails(fishName);
     });
@@ -263,8 +274,6 @@ function fetchSnapshot(data) {
   if (fishOptions.length > 0) {
     showFishDetails(fishOptions[0].name);
   }
-
-  fishFactsPopOver.classList.add("active");
 }
 
 if (typeof window !== "undefined") {
