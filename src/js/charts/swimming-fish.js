@@ -9,7 +9,7 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     if(legendText) {
         legendText.innerHTML = `
         <img src="${pngUrl}" alt="${fishName}" class="legend-fish-icon" />
-        ${fishName} <span class="fish-count">${totalSpotted}</span>`;
+        ${fishName} <span class="fish-count">${totalSpotted} x gespot</span>`;
     }
 
     // Calculate how many visual fish to render
@@ -80,4 +80,81 @@ export function createBubbles(containerId, amount) {
         // Add the bubble to the water
         container.appendChild(bubble);
     }
+}
+
+
+export function initAquarium(data) {
+    if (!data || data.length === 0) return;
+
+    const aquarium = document.getElementById("main-aquarium");
+    const filterInputs = document.querySelectorAll('input[name="fish-filter"]');
+    
+    const fishSpecies = [
+       { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "/img/ruisvoorn.png" },
+        { name: "Baars", legendId: "legend-baars", imgPath: "/img/baars.png" },
+        { name: "Paling", legendId: "legend-paling", imgPath: "/img/paling.png" },
+        { name: "Alver", legendId: "legend-alver", imgPath: "/img/alver.png" },
+        { name: "Blankvoorn", legendId: "legend-blankvoorn", imgPath: "/img/blankvoorn.png" },
+        { name: "Brasem", legendId: "legend-brasem", imgPath: "/img/brasem.png" },
+        { name: "Kolblei", legendId: "legend-kolblei", imgPath: "/img/kolblei.png" },
+        { name: "Meerval", legendId: "legend-meerval", imgPath: "/img/meerval.png" },
+        { name: "Snoek", legendId: "legend-snoek", imgPath: "/img/snoek.png" },
+        { name: "Snoekbaars", legendId: "legend-snoekbaars", imgPath: "/img/snoekbaars.png" },
+        { name: "Winde", legendId: "legend-winde", imgPath: "/img/winde.png" }
+    ];
+
+    // Calculate the top 3
+    const fishWithCounts = fishSpecies.map(fish => {
+        const count = data.filter(d => d.fish_name === fish.name).length;
+        return { ...fish, count: count };
+    });
+    
+    const sortedFish = [...fishWithCounts].sort((a, b) => b.count - a.count);
+    const top3Fish = sortedFish.slice(0, 3); // Grab only the top 3
+
+    // Function to draw the aquarium based on the choice
+    function renderAquarium(mode) {
+        if (!aquarium) return;
+        
+        // Add decorations
+        aquarium.innerHTML = `
+        <img src="/img/Stone_Wall_Background-2.jpg" alt="Canal wall" class="canal-wall">
+        <img src="/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
+        <img src="/img/Planten.png" alt="Waterplant" class="water-plant">
+        <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
+        <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
+        <img src="/img/zadel.png" alt="Fietszadel" class="zadel">
+        `; 
+        
+        // Hide all legend items first
+        fishSpecies.forEach(fish => {
+            const legendEl = document.getElementById(fish.legendId);
+            if (legendEl) legendEl.style.display = "none";
+        });
+
+        // Decide which list to draw
+        const activeList = mode === "top3" ? top3Fish : fishSpecies;
+
+        // Draw the selected list
+        activeList.forEach(fish => {
+            const legendEl = document.getElementById(fish.legendId);
+            if (legendEl) legendEl.style.display = "flex"; // Show legend item
+
+            // Because addFishToAquarium is in the same file, we can just call it directly!
+            addFishToAquarium(data, fish.name, "main-aquarium", fish.legendId, fish.imgPath);
+        });
+
+        // Draw the bubbles again
+        createBubbles("main-aquarium", 25);
+    }
+
+    // Listen to the input changes
+    filterInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+            renderAquarium(e.target.value);
+        });
+    });
+
+    // Draw the aquarium for the first time (All fish)
+    renderAquarium("all");
 }
