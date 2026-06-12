@@ -2,7 +2,7 @@
 // @ts-nocheck
 import "../styles/style.css";
 import MainAquarium from "../components/MainAquarium.astro";
-
+ 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
 import WorldMap from "../components/WorldMap.astro";
@@ -11,43 +11,82 @@ import TimelineGraph from '../components/timeline-graph.astro';
 import AverageFish from '../components/average-fish.astro';
 import GuessTheFish from "../components/guess-the-fish.astro";
 import FishFacts from "../components/fish-details.astro";
-
-import * as d3 from "d3";
-
+ 
 const NULL_VALUE = "\\N";
-
+ 
 async function loadCsvData(csvUrl: any) {
   try {
     const baseUrl = Astro.url.origin;
     const response = await fetch(`${baseUrl}${csvUrl}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
+ 
     const csvText = await response.text();
-    const rawData = d3.csvParse(csvText);
+    const rawData = parseCsv(csvText);
     return rawData.map(formatDataObject);
   } catch (error) {
     console.error("Could not load CSV data server-side:", error);
     return [];
   }
 }
-
+ 
+function parseCsv(csvText: string) {
+  const lines = csvText.trim().split(/\r?\n/);
+  if (lines.length === 0) return [];
+ 
+  const headers = parseCsvLine(lines[0]);
+  return lines.slice(1).map((line) => {
+    const values = parseCsvLine(line);
+    return headers.reduce((obj, key, index) => {
+      obj[key] = values[index] ?? "";
+      return obj;
+    }, {} as Record<string, string>);
+  });
+}
+ 
+function parseCsvLine(line: string) {
+  const values: string[] = [];
+  let current = "";
+  let inQuotes = false;
+ 
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+ 
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      values.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+ 
+  values.push(current);
+  return values;
+}
+ 
 function formatDataObject(dataObject: Record<string, any>) {
   const formattedObject: Record<string, any> = {};
   Object.entries(dataObject).forEach(([key, value]) => {
     formattedObject[key] = cleanValue(value);
   });
-
+ 
   formattedObject.created_at = dataObject.created_at || null;
-
+ 
   addFishData(formattedObject);
   return formattedObject;
 }
-
+ 
 function cleanValue(value: string | null) {
   if (!value || value === NULL_VALUE) return null;
   return value.trim();
 }
-
+ 
 function addFishData(dataObject: Record<string, any>) {
   const queryString = dataObject.url_query || dataObject.referrer_query;
   if (!queryString) {
@@ -62,9 +101,9 @@ function addFishData(dataObject: Record<string, any>) {
     ? decodeURIComponent(rawImageUrl)
     : null;
 }
-
+ 
 const CSV_URL = "/data/website_event-week.csv";
-
+ 
 const visData = await loadCsvData(CSV_URL);
 ---
 
@@ -116,10 +155,11 @@ const visData = await loadCsvData(CSV_URL);
 
       <TimelineGraph />
 
+      <FishFacts />
 
       <GuessTheFish />
 
-      <FishFacts />
+
 
       <section>
         <p>Wat blub jij?</p>

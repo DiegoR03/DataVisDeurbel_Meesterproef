@@ -4,7 +4,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 const baseWidth = 1000;
 const baseHeight = 600;
 
-const margin = { top: 5, right: 20, bottom: 90, left: 70 };
+const margin = { top: 5, right: 0, bottom: 80, left: 60 };
 const width = baseWidth - margin.left - margin.right;
 const height = baseHeight - margin.top - margin.bottom;
 
@@ -23,10 +23,12 @@ function drawD3Graph(graphData, eventKeys) {
     if (isFirstLoad) {
         svgSelection = d3.select("#chart")
             .append("svg")
-            .attr("viewBox", `0 0 ${baseWidth} ${baseHeight}`);
+            .attr("viewBox", `0 0 ${baseWidth} ${baseHeight}`)
+            .style("width", "100%")
+            .style("height", "auto");
 
         svg = svgSelection.append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+            .attr("transform", `translate(${margin.left},${margin.top})`);;
 
         svg.append("g").attr("class", "layer-background");
         svg.append("g").attr("class", "layer-data-paths");
@@ -56,7 +58,7 @@ function drawD3Graph(graphData, eventKeys) {
     const yMaxCalculated = Math.max(stepSize, Math.ceil(rawMaxWithBuffer / stepSize) * stepSize);
 
     const y = d3.scaleLinear()
-        .domain([0, yMaxCalculated])
+        .domain([0, yMaxCalculated + stepSize]) 
         .range([height, 0]);
 
     const yTicks = [];
@@ -66,6 +68,40 @@ function drawD3Graph(graphData, eventKeys) {
 
     if (isFirstLoad) {
         const defs = svg.append("defs");
+
+        // Met behulp van Gemini een roze filter toegevoegd op de vissen
+        const filter = defs.append("filter")
+        .attr("id", "pink-tint-filter");
+
+       filter.append("feColorMatrix")
+        .attr("type", "matrix")
+        .attr("values", `
+            0.2126 0.7152 0.0722 0 0
+            0.2126 0.7152 0.0722 0 0
+            0.2126 0.7152 0.0722 0 0
+            0      0      0      1 0
+        `)
+        .attr("result", "gray");
+
+        const transfer = filter.append("feComponentTransfer")
+            .attr("in", "gray");
+        
+        transfer.append("feFuncR").attr("type", "table").attr("tableValues", "0.98 1.0");
+        transfer.append("feFuncG").attr("type", "table").attr("tableValues", "0.40 1.0");
+        transfer.append("feFuncB").attr("type", "table").attr("tableValues", "0.65 1.0");
+        transfer.append("feFuncA").attr("type", "identity");
+
+        const filterBlueGreen = defs.append("filter").attr("id", "blue-green-filter");
+        filterBlueGreen.append("feColorMatrix")
+            .attr("type", "matrix")
+            .attr("values", "0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0")
+            .attr("result", "gray");
+        const transferBlueGreen = filterBlueGreen.append("feComponentTransfer").attr("in", "gray");
+        
+        transferBlueGreen.append("feFuncR").attr("type", "table").attr("tableValues", "0.00 1.0");
+        transferBlueGreen.append("feFuncG").attr("type", "table").attr("tableValues", "0.55 1.0");
+        transferBlueGreen.append("feFuncB").attr("type", "table").attr("tableValues", "0.55 1.0");
+        transferBlueGreen.append("feFuncA").attr("type", "identity");
 
         defs.append("clipPath")
             .attr("id", "rect-clip")
@@ -85,7 +121,24 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("x", 0)
             .attr("rx", 20);
 
-        initFishAnimation(backgroundLayer, width, height, false);
+        backgroundLayer.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", x("06:00") || 0)
+            .attr("height", height + 20)
+            .attr("fill", "var(--color-dark-green)")
+            .style("opacity", 0.3)
+            .style("pointer-events", "none");
+
+        backgroundLayer.append("rect")
+            .attr("x", x("22:00") || width)
+            .attr("y", 0)
+            .attr("width", width - (x("22:00") || width))
+            .attr("height", height + 20)
+            .attr("fill", "var(--color-dark-green)")
+            .style("opacity", 0.3)
+            .style("pointer-events", "none");
+
         initBubbleAnimation(backgroundLayer, width, height, false);
 
         // Border radius added for a path with help from Gemini
@@ -96,10 +149,10 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("d", `
                 M 0,0 
                 L ${width},0 
-                L ${width},${height + 25 - radius} 
-                A ${radius},${radius} 0 0 1 ${width - radius},${height + 25} 
-                L ${radius},${height + 25} 
-                A ${radius},${radius} 0 0 1 0,${height + 25 - radius} 
+                L ${width},${height + 20 - radius} 
+                A ${radius},${radius} 0 0 1 ${width - radius},${height + 20} 
+                L ${radius},${height + 20} 
+                A ${radius},${radius} 0 0 1 0,${height + 20 - radius} 
                 Z
             `);
 
@@ -113,27 +166,41 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("class", "axis-text")
             .text((data, i) => i % 2 !== 0 ? "" : data.hour);
 
-        interfaceLayer.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left + 10)
-            .attr("x", -height + 80)
-            .attr("class", "axis-text")
-            .attr("text-anchor", "middle")
-            .text("Deurbellers ⟶");
+        const yAxisGroup = interfaceLayer.append("g")
+            .attr("transform", `translate(${margin.left - 70}, ${height - 80}) rotate(-90)`);
 
-        interfaceLayer.append("text")
-            .attr("y", height + margin.bottom - 10)
-            .attr("x", width / 15)
+        yAxisGroup.append("text")
             .attr("class", "axis-text")
             .attr("text-anchor", "middle")
-            .text("Tijd (Uren) ⟶");
+            .attr("dominant-baseline", "central")
+            .text("Deurbellers");
+
+        yAxisGroup.append("path")
+            .attr("d", "M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755083,0.353555947 L1.207,6.413 L13.8279,6.4139 C14.0733599,6.4139 14.2775084,6.59077516 14.3198443,6.82402437 L14.3279,6.9139 C14.3279,7.19004237 14.1040424,7.4139 13.8279,7.4139 L1.206,7.413 L7.26755083,13.4742441 C7.44111844,13.6478091 7.46040554,13.9172334 7.3254109,14.1121025 L7.26755595,14.1813508 C7.07229521,14.3766144 6.75571272,14.3766167 6.56044917,14.1813559 L-0.353550834,7.26745595 L-0.364,7.254 L-0.382406269,7.23604364 L-0.397,7.215 L-0.411406785,7.19820848 L-0.42,7.181 L-0.431735343,7.16625957 L-0.443,7.141 L-0.454798924,7.12197126 L-0.459,7.107 L-0.468718737,7.0883662 L-0.475,7.063 L-0.483727237,7.04074132 L-0.487,7.018 L-0.491944331,7.00377563 L-0.493,6.985 L-0.498191709,6.95651572 L-0.498,6.933 L-0.5,6.9139 L-0.498,6.893 L-0.498192325,6.87129149 L-0.493,6.842 L-0.491944331,6.82402437 L-0.487,6.809 L-0.483729072,6.78706568 L-0.474,6.763 L-0.468718737,6.7394338 L-0.46,6.723 L-0.454801934,6.70583532 L-0.441,6.682 L-0.431735343,6.66154043 L-0.421,6.647 L-0.411410897,6.62959747 L-0.397,6.612 L-0.382406269,6.59175636 L-0.364,6.573 L-0.353555947,6.56034917 L6.56044917,-0.353555947 Z")
+            .attr("transform", "translate(45, -7) rotate(180, 7, 7)")
+            .attr("fill", "var(--color-dark-green)");
+
+        const xAxisGroup = interfaceLayer.append("g")
+            .attr("transform", `translate(${width / 10}, ${height + margin.bottom - 80})`);
+
+        xAxisGroup.append("text")
+            .attr("class", "axis-text")
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .text("Tijd (Uren)");
+
+        xAxisGroup.append("path")
+            .attr("d", "M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755083,0.353555947 L1.207,6.413 L13.8279,6.4139 C14.0733599,6.4139 14.2775084,6.59077516 14.3198443,6.82402437 L14.3279,6.9139 C14.3279,7.19004237 14.1040424,7.4139 13.8279,7.4139 L1.206,7.413 L7.26755083,13.4742441 C7.44111844,13.6478091 7.46040554,13.9172334 7.3254109,14.1121025 L7.26755595,14.1813508 C7.07229521,14.3766144 6.75571272,14.3766167 6.56044917,14.1813559 L-0.353550834,7.26745595 L-0.364,7.254 L-0.382406269,7.23604364 L-0.397,7.215 L-0.411406785,7.19820848 L-0.42,7.181 L-0.431735343,7.16625957 L-0.443,7.141 L-0.454798924,7.12197126 L-0.459,7.107 L-0.468718737,7.0883662 L-0.475,7.063 L-0.483727237,7.04074132 L-0.487,7.018 L-0.491944331,7.00377563 L-0.493,6.985 L-0.498191709,6.95651572 L-0.498,6.933 L-0.5,6.9139 L-0.498,6.893 L-0.498192325,6.87129149 L-0.493,6.842 L-0.491944331,6.82402437 L-0.487,6.809 L-0.483729072,6.78706568 L-0.474,6.763 L-0.468718737,6.7394338 L-0.46,6.723 L-0.454801934,6.70583532 L-0.441,6.682 L-0.431735343,6.66154043 L-0.421,6.647 L-0.411410897,6.62959747 L-0.397,6.612 L-0.382406269,6.59175636 L-0.364,6.573 L-0.353555947,6.56034917 L6.56044917,-0.353555947 Z")
+            .attr("transform", "translate(40, -7) rotate(180, 7, 7)")
+            .attr("fill", "var(--color-dark-green)");
     }
 
     const legendContainer = d3.select("#legend-items-container");
     legendContainer.selectAll("*").remove();
 
     const legendItems = [
-        { key: "total", label: "Totaal Activiteit" },
+        { key: "total", label: "Totale uploads" },
+        { key: "uploadedFish", label: "Geüploade Vissen" },
         ...eventKeys.map(key => ({ key: key, label: key }))
     ];
 
@@ -141,7 +208,7 @@ function drawD3Graph(graphData, eventKeys) {
         const isActive = currentSelectedKey === item.key;
 
         const row = legendContainer.append("div")
-            .style("background", isActive ? "var(--color-light-gold)" : "transparent")
+            .style("background", isActive ? "var(--color-purple)" : "var(--color-white)")
             .style("transition", "background 1s")
             .on("click", () => {
                 currentSelectedKey = item.key;
@@ -149,7 +216,6 @@ function drawD3Graph(graphData, eventKeys) {
             });
 
         row.append("span")
-            .style("font-weight", isActive ? "bold" : "normal")
             .text(item.label);
     });
 
@@ -236,7 +302,7 @@ function drawD3Graph(graphData, eventKeys) {
             if (currentSelectedKey === "total") {
                 tooltipContent += `<p>Totaal: <strong>${data.total}</strong> events</p><div id='line'></div>`;
                 eventKeys.forEach(key => {
-                    if (data[key] > 0) tooltipContent += `<small>${key}: <strong>${data[key]}</strong><br></small>`;
+                    if (data[key] > 0) tooltipContent += `<p>${key}: <strong>${data[key]}</strong><br></p>`;
                 });
             } else {
                 tooltipContent += `<p>${currentSelectedKey}: <strong>${data[currentSelectedKey] || 0}</strong></p>`;
@@ -264,59 +330,100 @@ function drawD3Graph(graphData, eventKeys) {
     const yAxis = d3.axisLeft(y)
         .tickValues(yTicks)
         .tickFormat(d3.format("d"))
-        .tickSize(0);
+        .tickSize(-width);
 
     yAxisGroup.transition()
         .duration(750)
         .call(yAxis)
         .on("end", () => {
-            yAxisGroup.selectAll("text").attr("dx", "-10");
-            yAxisGroup.select(".domain").remove();
+            yAxisGroup.selectAll("text")
+                .attr("dx", "8")
+                .attr("dy", "-6")
+                .style("text-anchor", "start")
+                .style("font-size", "12px");
+
+            yAxisGroup.selectAll(".tick line")
+                .attr("stroke", "rgba(0, 0, 0, 0.1)")
+                .attr("stroke-dasharray", "4,4");
+            
+            yAxisGroup.select(".domain").remove(); 
         });
 
-    yAxisGroup.selectAll("text").attr("dx", "-10");
+    yAxisGroup.selectAll("text")
+        .attr("dx", "8")
+        .attr("dy", "-6")
+        .style("text-anchor", "start")
+        .style("font-size", "12px");
+
+    yAxisGroup.selectAll(".tick line")
+        .attr("stroke", "rgba(0, 0, 0, 0.1)")
+        .attr("stroke-dasharray", "4,4");
+
     yAxisGroup.select(".domain").remove();
+
+    initFishAnimation(backgroundLayer, width, height, currentSelectedKey);
 }
 
-function createFishPath() { return "M0,6 C5,3 13,0 25,0 C32,0 40,5 45,8 L55,2 L52,10 L55,18 L45,12 C40,15 32,20 25,20 C13,20 5,17 0,14 C-3,12 -3,8 0,6 Z"; }
+function getFishImageUrl(fishKey) {
+    if (fishKey === "total" || fishKey === "uploadedFish") {
+        return "./img/fih.png";
+    }
+
+    const safeName = fishKey.toLowerCase().trim();
+    return `./img/${safeName}.png`;
+}
+
 function initBubbleAnimation(svg, width, height) {
     const floatingGroup = svg.append("g").attr("class", "bubble-layer");
     for (let i = 0; i < 20; i++) {
-        const bubble = floatingGroup.append("circle")
-        .attr("fill", "var(--color-blue-green)")
-        .attr("stroke", "var(--color-white");
+        const bubble = floatingGroup.append("image")
+            .attr("href", "./img/Bubble.png")
+            .style("filter", "url(#blue-green-filter)")
+            .attr("opacity", 0.6);
         const animate = (b) => {
-            const r = 2 + Math.random() * 6; const xPos = Math.random() * width;
-            b.attr("cx", xPos)
-            .attr("cy", height + 20)
-            .attr("r", r)
-            .attr("opacity", 0.6)
-            .transition().duration(4000 + Math.random() * 5000)
-            .ease(d3.easeLinear)
-            .attr("cx", xPos + (Math.random() * 40 - 20))
-            .attr("cy", -20)
-            .attr("opacity", 0)
-            .on("end", () => animate(b));
+            const r = 4 + Math.random() * 12; 
+            const xPos = Math.random() * width;
+            b.attr("width", r)
+                .attr("height", r)
+                .attr("x", xPos)
+                .attr("y", height + 20)
+                .transition().duration(4000 + Math.random() * 5000)
+                .ease(d3.easeLinear)
+                .attr("x", xPos + (Math.random() * 40 - 20))
+                .attr("y", -20)
+                .on("end", () => animate(b));
         };
         animate(bubble);
     }
 }
-function initFishAnimation(svg, width, height) {
+function initFishAnimation(svg, width, height, currentKey) {
+    svg.select(".fish-layer").remove();
+
     const fishGroup = svg.append("g").attr("class", "fish-layer");
+    const imgUrl = getFishImageUrl(currentKey);
+
     for (let i = 0; i < 5; i++) {
-        const fish = fishGroup.append("path")
-            .attr("d", createFishPath())
-            .attr("fill", "var(--color-dark-green)")
-            .attr("opacity", 0.4);
+        const fish = fishGroup.append("image")
+            .attr("href", imgUrl)
+            .attr("width", 60)
+            .attr("height", 40)
+            .attr("opacity", 0.8)
+            .style("filter", "url(#pink-tint-filter)");
 
         const animate = (f) => {
+            if (f.node() && !f.node().parentNode) return;
+
             const dir = Math.random() > 0.5 ? 1 : -1;
-            const sX = dir === 1 ? -45 : width + 5; const eX = dir === 1 ? width + 5 : -45;
-            const rY = 50 + Math.random() * (height * 0.7); const flip = dir === -1 ? `scale(1, 1)` : `scale(-1, 1)`;
-            f.attr("transform", `translate(${sX}, ${rY}) ${flip} scale(0.5)`)
+            const sX = dir === 1 ? -70 : width + 10;
+            const eX = dir === 1 ? width + 10 : -70;
+            const rY = 50 + Math.random() * (height * 0.7);
+
+            const flip = dir === -1 ? "scale(1, 1)" : "scale(-1, 1)";
+
+            f.attr("transform", `translate(${sX}, ${rY}) ${flip}`)
                 .transition().duration(9000 + Math.random() * 3000)
                 .ease(d3.easeLinear)
-                .attr("transform", `translate(${eX}, ${rY + (Math.random() * 60 - 30)}) ${flip} scale(0.5)`)
+                .attr("transform", `translate(${eX}, ${rY + (Math.random() * 60 - 30)}) ${flip}`)
                 .on("end", () => animate(f));
         };
         animate(fish);
@@ -330,14 +437,12 @@ function createGraph(data) {
         if (item.event_name === "uploadedFish") {
             const queryString = item.referrer_query || item.url_query || "";
 
-            // Gemini heeft mij geholpen met het filteren naar alleen vissen, ik was zelf nooit op (/[?&]fish=([^&]+)/i) gekomen
             const match = queryString.match(/[?&]fish=([^&]+)/i);
 
             if (match && match[1]) {
                 const rawFishString = decodeURIComponent(match[1]);
                 const cleanFishes = rawFishString.split(',')
                     .map(f => f.trim())
-                    // Filter the onbekende en unknown uit de cvs data, met behulp van Co-pilot autocorrect gedaan
                     .filter(f => f.length > 0 && f.toLowerCase() !== 'unknown' && f.toLowerCase() !== 'onbekend');
 
                 if (cleanFishes.length > 0) {
@@ -349,7 +454,7 @@ function createGraph(data) {
     });
 
     const uniqueFishArray = Array.from(fishTypes).sort();
-    const eventKeysForLegend = ["uploadedFish", ...uniqueFishArray];
+    const eventKeysForLegend = [...uniqueFishArray];
 
     const groupedHours = Array.from({ length: 24 }, (_, i) => {
         const hourString = `${String(i).padStart(2, '0')}:00`;
