@@ -9,7 +9,7 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     if(legendText) {
         legendText.innerHTML = `
         <img src="${pngUrl}" alt="${fishName}" class="legend-fish-icon" />
-        ${fishName} <span class="fish-count">${totalSpotted}</span>`;
+        ${fishName} <span class="fish-count">${totalSpotted} x gespot</span>`;
     }
 
     // Calculate how many visual fish to render
@@ -118,6 +118,7 @@ export function initAquarium(data) {
         
         // Add decorations
         aquarium.innerHTML = `
+        <img src="/img/Stone_Wall_Background-2.jpg" alt="Canal wall" class="canal-wall">
         <img src="/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-2">

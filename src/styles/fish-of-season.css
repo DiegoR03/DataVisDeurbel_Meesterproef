@@ -1,10 +1,8 @@
 .aquarium-legend {
+    flex: 0 0 250px;
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap; 
-    gap: 12px 16px;  
-    margin-bottom: 30px;
-    padding: 0 10px;
+    flex-direction: column; 
+    gap: 12px;
 }
 
 /* The individual fish tags */
@@ -64,10 +62,38 @@
     box-shadow: inset 0 20px 50px rgba(0, 0, 0, 0.3), 0 4px 15px rgba(0, 0, 0, 0.1);
     position: relative; 
     overflow: hidden;   
+    flex: 1;
 }
 
 
+.aquarium-layout-wrapper {
+    display: flex;
+    flex-direction: row; 
+    gap: 32px; 
+    align-items: flex-start; 
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
+}
 
+
+@media (max-width: 900px) {
+    .aquarium-layout-wrapper {
+        flex-direction: column; 
+    }
+
+    .aquarium-legend {
+        flex: auto; 
+        flex-direction: row; 
+        flex-wrap: wrap; 
+        width: 100%;
+    }
+
+    .main-aquarium {
+        width: 100%;
+        min-height: 500px; 
+    }
+}
 
 .card-title {
     color: var(--color-purple, #A68CFF); 
@@ -175,7 +201,10 @@
     left: -10%;
     width: 70%;
     height: 180px;
-    background: linear-gradient(to bottom, #54422c 0%, #211a11 100%);
+    background-image: url('/img/mud2.avif'), linear-gradient(to bottom, #54422c 0%, #211a11 100%);
+    background-blend-mode: overlay; /* Dit zorgt dat de textuur zich mengt met de gradient */
+    background-repeat: repeat;
+    filter: blur(1.5px) brightness(0.6) sepia(0.3);
     border-radius: 50% 50% 0 0; 
     z-index: 1; 
     pointer-events: none;
@@ -189,7 +218,10 @@
     right: -10%;
     width: 75%;
     height: 220px;
-    background: linear-gradient(to bottom, #54422c 10%, #211a11 100%);
+    background-image: url('/img/mud2.avif'), linear-gradient(to bottom, #54422c 10%, #211a11 100%);
+    background-blend-mode: overlay;
+    background-repeat: repeat;
+    filter: blur(1.5px) brightness(0.6) sepia(0.3);
     border-radius: 50% 50% 0 0; 
     z-index: 3; 
     pointer-events: none;
@@ -297,4 +329,37 @@
     bottom: 75px;
     filter: brightness(0.6) sepia(0.3);
     height: 40px;
+}
+
+.legend-title {
+    font-size: 14px;
+    color: #666; /* Een subtiele grijze kleur */
+    margin-bottom: 8px; /* Een klein beetje ademruimte */
+    font-weight: 600;
+}
+
+
+
+.canal-wall {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    /* Maak hem even hoog als het hele aquarium! */
+    height: 100%; 
+    
+    /* Zorgt dat de stenen mooi verdeeld blijven en niet uitrekken */
+    object-fit: cover; 
+    
+    z-index: 0; /* Helemaal achteraan */
+    pointer-events: none; /* Zorg dat muiskliks er doorheen gaan */
+    
+    /* HET VERVAAGDE ONDERWATER-EFFECT: */
+    /* Opacity maakt hem deels doorzichtig, zodat hij mengt met je waterkleur */
+    opacity: 0.25; 
+    
+    /* Optioneel: Blur() maakt hem letterlijk een beetje onscherp (out-of-focus) 
+       voor extra diepte-effect! */
+    filter: blur(6px) brightness(0.3) sepia(0.3);
 }
