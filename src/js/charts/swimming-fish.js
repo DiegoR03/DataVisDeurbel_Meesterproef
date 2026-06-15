@@ -1,4 +1,4 @@
-// Het overzicht van visgroottes (schaalfactoren)
+// Summary of fish sizes
 const fishScaleMap = {
     "Alver": 0.5,
     "Blankvoorn": 0.7,
@@ -21,43 +21,72 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
 
     // Update the text in the legend above the aquarium
     const legendText = document.getElementById(legendId);
-    if(legendText) {
+    if (legendText) {
         legendText.innerHTML = `
         <img src="${pngUrl}" alt="${fishName}" class="legend-fish-icon" />
         ${fishName} <span class="fish-count">${totalSpotted} x gespot</span>`;
     }
 
     // Calculate how many visual fish to render
-    const MAX_VISUAL_FISH = 6; 
+    const MAX_VISUAL_FISH = 6;
     const DATA_MAXIMUM = 800;
 
     let fishToRender = Math.ceil((totalSpotted / DATA_MAXIMUM) * MAX_VISUAL_FISH);
-    
+
     if (fishToRender === 0 && totalSpotted > 0) fishToRender = 1;
     if (fishToRender > MAX_VISUAL_FISH) fishToRender = MAX_VISUAL_FISH;
 
     // Find the main aquarium container
     const container = document.getElementById(containerId);
-    if (!container) return; 
+    if (!container) return;
+
+    // Check eerst of onze custom tooltip al bestaat
+    let tooltip = document.getElementById("custom-fish-tooltip");
+    if (!tooltip) {
+        tooltip = document.createElement("div");
+        tooltip.id = "custom-fish-tooltip";
+        tooltip.classList.add("custom-fish-tooltip");
+        document.body.appendChild(tooltip);
+    }
 
     // Generate and animate the fish
     for (let i = 0; i < fishToRender; i++) {
         const fishImg = document.createElement("img");
         fishImg.src = pngUrl;
         fishImg.classList.add("swimming-fish");
-        
-        // --- NIEUWE GROOTTE LOGICA ---
-        // 1. Zoek de schaalfactor op (standaard 1.0 als we hem niet kennen)
+
+
+        fishImg.alt = `Zwemmende ${fishName}`;
+
+        // Mouse enters fish, make visible
+        fishImg.addEventListener("mouseenter", () => {
+            tooltip.textContent = fishName;
+            tooltip.classList.add("visible");
+        });
+
+        // Mouse hovers over fish, tooltip follows
+        fishImg.addEventListener("mousemove", (e) => {
+            tooltip.style.left = `${e.clientX}px`;
+            tooltip.style.top = `${e.clientY}px`;
+        });
+
+        // Mouse leaves fish, make invisible
+        fishImg.addEventListener("mouseleave", () => {
+            tooltip.classList.remove("visible");
+        });
+
+       
+        // Zoek de schaalfactor op (standaard 1.0 als we hem niet kennen)
         const scale = fishScaleMap[fishName] || 1.0;
+
         
-        // 2. Bepaal een basisgrootte (bijv. 70px) met een klein beetje willekeur (+ of - 10px) 
-        // zodat vissen van dezelfde soort toch nét iets van elkaar verschillen.
+        
         const baseSize = 70 + (Math.random() * 20 - 10);
-        
-        // 3. Vermenigvuldig de basis met de schaal
+
+        // Vermenigvuldig de basis met de schaal
         const finalSize = baseSize * scale;
         fishImg.style.width = `${finalSize}px`;
-        // ------------------------------
+       
 
         // Randomize the vertical starting position
         const randomTop = 5 + Math.random() * 80;
@@ -96,7 +125,7 @@ export function createBubbles(containerId, amount) {
         // Randomize floating speed
         const duration = 4 + Math.random() * 6;
         bubble.style.animationDuration = `${duration}s`;
-        
+
         // Negative delay so they are already floating when the page loads
         const delay = (Math.random() * 10) * -1;
         bubble.style.animationDelay = `${delay}s`;
@@ -112,9 +141,9 @@ export function initAquarium(data) {
 
     const aquarium = document.getElementById("main-aquarium");
     const filterInputs = document.querySelectorAll('input[name="fish-filter"]');
-    
+
     const fishSpecies = [
-       { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "/img/ruisvoorn.png" },
+        { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "/img/ruisvoorn.png" },
         { name: "Baars", legendId: "legend-baars", imgPath: "/img/baars.png" },
         { name: "Paling", legendId: "legend-paling", imgPath: "/img/paling.png" },
         { name: "Alver", legendId: "legend-alver", imgPath: "/img/alver.png" },
@@ -132,14 +161,14 @@ export function initAquarium(data) {
         const count = data.filter(d => d.fish_name === fish.name).length;
         return { ...fish, count: count };
     });
-    
+
     const sortedFish = [...fishWithCounts].sort((a, b) => b.count - a.count);
     const top3Fish = sortedFish.slice(0, 3); // Grab only the top 3
 
     // Function to draw the aquarium based on the choice
     function renderAquarium(mode) {
         if (!aquarium) return;
-        
+
         // Add decorations
         aquarium.innerHTML = `
         <img src="/img/Stone_Wall_Background-2.jpg" alt="Canal wall" class="canal-wall">
@@ -148,8 +177,8 @@ export function initAquarium(data) {
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
         <img src="/img/zadel.png" alt="Fietszadel" class="zadel">
-        `; 
-        
+        `;
+
         // Hide all legend items first
         fishSpecies.forEach(fish => {
             const legendEl = document.getElementById(fish.legendId);

@@ -346,20 +346,42 @@
     left: 0;
     width: 100%;
     
-    /* Maak hem even hoog als het hele aquarium! */
+    
     height: 100%; 
     
-    /* Zorgt dat de stenen mooi verdeeld blijven en niet uitrekken */
+    
     object-fit: cover; 
     
-    z-index: 0; /* Helemaal achteraan */
-    pointer-events: none; /* Zorg dat muiskliks er doorheen gaan */
+    z-index: 0; 
+    pointer-events: none;
     
-    /* HET VERVAAGDE ONDERWATER-EFFECT: */
-    /* Opacity maakt hem deels doorzichtig, zodat hij mengt met je waterkleur */
+    
     opacity: 0.25; 
     
-    /* Optioneel: Blur() maakt hem letterlijk een beetje onscherp (out-of-focus) 
-       voor extra diepte-effect! */
+    
     filter: blur(6px) brightness(0.3) sepia(0.3);
+}
+
+
+.custom-fish-tooltip {
+    position: fixed; 
+    background-color: var(--color-dark-green, #1E3F20);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none; 
+    opacity: 0; 
+    transition: opacity 0.2s ease; /* Zachte fade-in */
+    z-index: 9999; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--color-purple, #A68CFF);
+    
+    /* Verschuift het wolkje iets naar boven zodat hij niet onder je cursor zit */
+    transform: translate(-50%, -150%); 
+}
+
+.custom-fish-tooltip.visible {
+    opacity: 1;
 }
