@@ -259,7 +259,7 @@
 
   padding: var(--button-padding);
 
-  background: var(--color-off-white);
+  background: var(--color-white);
   color: var(--color-dark-green);
 
   border: 1px solid var(--color-dark-green);
@@ -287,10 +287,6 @@
 .aquarium-filters input[type="radio"]:focus-visible + .filter-btn {
   outline: var(--button-focus-outline);
   outline-offset: var(--button-focus-outline-offset);
-}
-
-.filter-btn:hover {
-  transform: translateY(-2px);
 }
 
 .bicycle-wreck {
