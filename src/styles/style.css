@@ -63,6 +63,12 @@
   --padding-top: clamp(3rem, 5.5555555556vw, 6.6666666667rem);
   --padding-side: 1.5rem;
   --padding: 1.5rem;
+
+  /* Button padding */
+  --button-padding: 0.5em 0.8em;
+  --button-focus-outline: 2px dashed #01463c;
+  --button-focus-outline-offset: 2px;
+
 }
 
 /***********************/
