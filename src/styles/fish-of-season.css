@@ -1,156 +1,153 @@
+.fish-of-season-section {
+  padding: var(--spacing-top) var(--padding-side);
+  background: var(--color-light-gold);
+}
+
 .aquarium-legend {
-    flex: 0 0 250px;
-    display: flex;
-    flex-direction: column; 
-    gap: 12px;
+  flex: 0 0 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* The individual fish tags */
 .aquarium-legend p {
-    background-color: white;
-    color: var(--color-dark-green, #1E3F20);
-    margin: 0;
-    padding: 6px 8px 6px 16px; 
-    border-radius: 50px; 
-    font-size: 15px;
-    font-weight: 600;
-    
-    
-    display: flex;
-    align-items: center;
-    gap: 12px; 
-    
-   
-    box-shadow: 0 4px 10px var(--color-purple) 0.5;
-    border: 1px solid var(--color-purple);
-    transition: transform 0.2s ease;
+  background-color: white;
+  color: var(--color-dark-green, #1e3f20);
+  margin: 0;
+  padding: 6px 8px 6px 16px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-shadow: 0 4px 10px var(--color-purple) 0.5;
+  border: 1px solid var(--color-purple);
+  transition: transform 0.2s ease;
 }
 
-
 .aquarium-legend p:hover {
-    transform: translateY(-2px);
-    cursor: default;
+  transform: translateY(-2px);
+  cursor: default;
 }
 
 /* The badge for the actual number */
 .aquarium-legend .fish-count {
-    background-color: var(--color-blue-green);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 30px; 
-    font-size: 13px;
-    font-weight: bold;
+  background-color: var(--color-blue-green);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .legend-fish-icon {
-    height: 24px; 
-    width: auto;
-    object-fit: contain; 
+  height: 24px;
+  width: auto;
+  object-fit: contain;
 }
-
 
 .aquarium-legend p {
-    padding: 6px 8px 6px 8px; 
+  padding: 6px 8px 6px 8px;
 }
-
 
 .main-aquarium {
-    width: 100%;
-    height: 600px; 
-    background: linear-gradient(180deg, var(--color-blue-green) 0%, rgb(21, 162, 148) 40%, var(--color-dark-green) 100%);
-    border-radius: 16px;
-    box-shadow: inset 0 20px 50px rgba(0, 0, 0, 0.3), 0 4px 15px rgba(0, 0, 0, 0.1);
-    position: relative; 
-    overflow: hidden;   
-    flex: 1;
+  width: 100%;
+  height: 600px;
+  background: linear-gradient(
+    180deg,
+    var(--color-blue-green) 0%,
+    rgb(21, 162, 148) 40%,
+    var(--color-dark-green) 100%
+  );
+  border-radius: 16px;
+  box-shadow:
+    inset 0 20px 50px rgba(0, 0, 0, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
 }
-
 
 .aquarium-layout-wrapper {
-    display: flex;
-    flex-direction: row; 
-    gap: 32px; 
-    align-items: flex-start; 
-    width: 100%;
-    margin-top: 24px;
-    padding: 12px;
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 24px;
 }
 
-
 @media (max-width: 900px) {
-    .aquarium-layout-wrapper {
-        flex-direction: column; 
-    }
+  .aquarium-layout-wrapper {
+    flex-direction: column;
+  }
 
-    .aquarium-legend {
-        flex: auto; 
-        flex-direction: row; 
-        flex-wrap: wrap; 
-        width: 100%;
-    }
+  .aquarium-legend {
+    flex: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
 
-    .main-aquarium {
-        width: 100%;
-        min-height: 500px; 
-    }
+  .main-aquarium {
+    width: 100%;
+    min-height: 500px;
+  }
 }
 
 .card-title {
-    color: var(--color-purple, #A68CFF); 
-    font-size: 36px;
-    font-weight: bold;
-    margin: 0 0 10px 0;
+  color: var(--color-purple, #a68cff);
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
 }
 
 .card-subtitle {
-    color: var(--color-dark-green, #1E3F20); 
-    font-size: 22px;
-    font-weight: bold;
-    margin: 0;
+  color: var(--color-dark-green, #1e3f20);
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
 }
-
-
-
 
 /* The water container inside the card */
 .aquarium-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; 
-    z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
 }
-
 
 .swimming-fish {
-    position: absolute;
-    right: -150px; 
-    animation-name: swim-across;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    z-index: 2;
+  position: absolute;
+  right: -150px;
+  animation-name: swim-across;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  z-index: 2;
 }
 
-
 .swimming-fish.flipped {
-    transform: scaleX(-1);
+  transform: scaleX(-1);
 }
 
 /* The actual swimming path */
 @keyframes swim-across {
-    0% {
-        transform: translateX(0) translateY(0);
-    }
-    50% {
-        
-        transform: translateX(-50vw) translateY(-30px);
-    }
-    100% {
-        
-        transform: translateX(-120vw) translateY(20px);
-    }
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(-50vw) translateY(-30px);
+  }
+  100% {
+    transform: translateX(-120vw) translateY(20px);
+  }
 }
 
 /* =================
@@ -158,208 +155,212 @@
    ================= */
 
 .bubble {
-    position: absolute;
-    bottom: -20px; 
-    background: rgba(255, 255, 255, 0.2); 
-    border: 1px solid rgba(255, 255, 255, 0.5); 
-    border-radius: 50%; 
-    z-index: 3;
-    
-    animation-name: float-up;
-    animation-timing-function: ease-in;
-    animation-iteration-count: infinite;
-    z-index: 4;
+  position: absolute;
+  bottom: -20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  z-index: 3;
+
+  animation-name: float-up;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  z-index: 4;
 }
 
 /* The upward floating path with a slight left/right wobble */
 @keyframes float-up {
-    0% {
-        transform: translateY(0) translateX(0) scale(1);
-        opacity: 0; 
-    }
-    10% {
-        opacity: 1; 
-    }
-    50% {
-        
-        transform: translateY(-300px) translateX(15px) scale(1.1); 
-    }
-    100% {
-        
-        transform: translateY(-650px) translateX(-15px) scale(1.2);
-        opacity: 0; /* Pop/fade out at the surface */
-    }
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-300px) translateX(15px) scale(1.1);
+  }
+  100% {
+    transform: translateY(-650px) translateX(-15px) scale(1.2);
+    opacity: 0; /* Pop/fade out at the surface */
+  }
 }
-
-
-
 
 .main-aquarium::before {
-    content: "";
-    position: absolute;
-    bottom: -100px;
-    left: -10%;
-    width: 70%;
-    height: 180px;
-    background-image: url('/img/mud2.avif'), linear-gradient(to bottom, #54422c 0%, #211a11 100%);
-    background-blend-mode: overlay; /* Dit zorgt dat de textuur zich mengt met de gradient */
-    background-repeat: repeat;
-    filter: blur(1.5px) brightness(0.6) sepia(0.3);
-    border-radius: 50% 50% 0 0; 
-    z-index: 1; 
-    pointer-events: none;
+  content: "";
+  position: absolute;
+  bottom: -100px;
+  left: -10%;
+  width: 70%;
+  height: 180px;
+  background-image:
+    url("/img/mud2.avif"), linear-gradient(to bottom, #54422c 0%, #211a11 100%);
+  background-blend-mode: overlay; /* Dit zorgt dat de textuur zich mengt met de gradient */
+  background-repeat: repeat;
+  filter: blur(1.5px) brightness(0.6) sepia(0.3);
+  border-radius: 50% 50% 0 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
-
 .main-aquarium::after {
-    content: "";
-    position: absolute;
-    bottom: -120px;
-    right: -10%;
-    width: 75%;
-    height: 220px;
-    background-image: url('/img/mud2.avif'), linear-gradient(to bottom, #54422c 10%, #211a11 100%);
-    background-blend-mode: overlay;
-    background-repeat: repeat;
-    filter: blur(1.5px) brightness(0.6) sepia(0.3);
-    border-radius: 50% 50% 0 0; 
-    z-index: 3; 
-    pointer-events: none;
+  content: "";
+  position: absolute;
+  bottom: -120px;
+  right: -10%;
+  width: 75%;
+  height: 220px;
+  background-image:
+    url("/img/mud2.avif"), linear-gradient(to bottom, #54422c 10%, #211a11 100%);
+  background-blend-mode: overlay;
+  background-repeat: repeat;
+  filter: blur(1.5px) brightness(0.6) sepia(0.3);
+  border-radius: 50% 50% 0 0;
+  z-index: 3;
+  pointer-events: none;
 }
 
 /* =================
    Aquarium Filters 
    ================= */
 
-
 .aquarium-filters {
-    border: none;
-    padding: 0;
-    margin: 0 0 20px 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+  border: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
 /* hide text visualy but keep for screenreaders */
 .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
-
 
 .aquarium-filters input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
 }
 
-
 .filter-btn {
-    padding: 10px 20px;
-    border: 2px solid var(--color-purple, #A68CFF);
-    background-color: transparent;
-    color: var(--color-purple, #A68CFF);
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: var(--button-padding);
+
+  background: var(--color-off-white);
+  color: var(--color-dark-green);
+
+  border: 1px solid var(--color-dark-green);
+  border-radius: 1.5em;
+
+  font-size: var(--font-size-button);
+  font-weight: 700;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.filter-btn:focus-visible {
+  background: var(--color-off-white);
 }
 
 .aquarium-filters input[type="radio"]:checked + .filter-btn {
-    background-color: var(--color-purple, #A68CFF);
-    color: white;
+  background: var(--color-purple);
+  color: var(--color-dark-green);
 }
 
 /* Accessability: focus ring when tabbing */
 .aquarium-filters input[type="radio"]:focus-visible + .filter-btn {
-    outline: 3px solid #1E3F20;
-    outline-offset: 3px;
+  outline: var(--button-focus-outline);
+  outline-offset: var(--button-focus-outline-offset);
 }
 
 .filter-btn:hover {
-    transform: translateY(-2px);
+  transform: translateY(-2px);
 }
 
-
 .bicycle-wreck {
-    position: absolute;
-    bottom: 40px; 
-    right: 15%; 
-    width: 250px; 
-    z-index: 2; 
-    pointer-events: none; 
-    transform: rotate(-9deg); 
-    opacity: 0.6;
-    filter: brightness(0.6) sepia(0.3);
+  position: absolute;
+  bottom: 40px;
+  right: 15%;
+  width: 250px;
+  z-index: 2;
+  pointer-events: none;
+  transform: rotate(-9deg);
+  opacity: 0.6;
+  filter: brightness(0.6) sepia(0.3);
 }
 
 .water-plant {
-    position: absolute;
-    bottom: 25px; 
-    left: 10%;
-    height: 180px; 
-    width: auto;
-    z-index: 0; 
-    pointer-events: none; 
-    filter: brightness(0.6) sepia(0.3);
+  position: absolute;
+  bottom: 25px;
+  left: 10%;
+  height: 180px;
+  width: auto;
+  z-index: 0;
+  pointer-events: none;
+  filter: brightness(0.6) sepia(0.3);
 }
 
 .plant-2 {
-    left: 68%;
+  left: 68%;
 }
 
 .plant-3 {
-    left: 48%;
-    transform: scaleX(-1);
-    height: 140px;
+  left: 48%;
+  transform: scaleX(-1);
+  height: 140px;
 }
 
 .zadel {
-    position: absolute;
-    right: 10%;
-    bottom: 75px;
-    filter: brightness(0.6) sepia(0.3);
-    height: 40px;
+  position: absolute;
+  right: 10%;
+  bottom: 75px;
+  filter: brightness(0.6) sepia(0.3);
+  height: 40px;
 }
 
 .legend-title {
-    font-size: 14px;
-    color: #666; /* Een subtiele grijze kleur */
-    margin-bottom: 8px; /* Een klein beetje ademruimte */
-    font-weight: 600;
+  font-size: 14px;
+  color: #666; /* Een subtiele grijze kleur */
+  margin-bottom: 8px; /* Een klein beetje ademruimte */
+  font-weight: 600;
 }
 
-
-
 .canal-wall {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    
-    /* Maak hem even hoog als het hele aquarium! */
-    height: 100%; 
-    
-    /* Zorgt dat de stenen mooi verdeeld blijven en niet uitrekken */
-    object-fit: cover; 
-    
-    z-index: 0; /* Helemaal achteraan */
-    pointer-events: none; /* Zorg dat muiskliks er doorheen gaan */
-    
-    /* HET VERVAAGDE ONDERWATER-EFFECT: */
-    /* Opacity maakt hem deels doorzichtig, zodat hij mengt met je waterkleur */
-    opacity: 0.25; 
-    
-    /* Optioneel: Blur() maakt hem letterlijk een beetje onscherp (out-of-focus) 
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  /* Maak hem even hoog als het hele aquarium! */
+  height: 100%;
+
+  /* Zorgt dat de stenen mooi verdeeld blijven en niet uitrekken */
+  object-fit: cover;
+
+  z-index: 0; /* Helemaal achteraan */
+  pointer-events: none; /* Zorg dat muiskliks er doorheen gaan */
+
+  /* HET VERVAAGDE ONDERWATER-EFFECT: */
+  /* Opacity maakt hem deels doorzichtig, zodat hij mengt met je waterkleur */
+  opacity: 0.25;
+
+  /* Optioneel: Blur() maakt hem letterlijk een beetje onscherp (out-of-focus) 
        voor extra diepte-effect! */
-    filter: blur(6px) brightness(0.3) sepia(0.3);
+  filter: blur(6px) brightness(0.3) sepia(0.3);
 }

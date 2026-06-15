@@ -3,7 +3,7 @@ import "../styles/fish-of-season.css";
 ---
 
 <section class="fish-of-season-section" id="after-world-map">
-  <h2>Vis van het seizoen</h2>
+  <h2 class="world-map-title">Vis van het seizoen</h2>
 
   <fieldset class="aquarium-filters">
     <legend class="visually-hidden"
@@ -16,10 +16,11 @@ import "../styles/fish-of-season.css";
       name="fish-filter"
       value="all"
       checked
+      class="primary-button"
     />
     <label for="filter-all" class="filter-btn">Alle Vissen</label>
 
-    <input type="radio" id="filter-top3" name="fish-filter" value="top3" />
+    <input type="radio" id="filter-top3" name="fish-filter" value="top3" class="secondary-button" />
     <label for="filter-top3" class="filter-btn">Top 3 Meest Gespot</label>
   </fieldset>
 
