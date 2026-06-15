@@ -341,14 +341,6 @@
   font-weight: 600;
 }
 
-.canal-wall {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-
-  /* Maak hem even hoog als het hele aquarium! */
-  height: 100%;
 
 .canal-wall {
     position: absolute;
