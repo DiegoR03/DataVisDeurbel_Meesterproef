@@ -11,8 +11,7 @@ function fetchSnapshot(data) {
     return;
   }
 
-  const fishSnapshots = data.filter(
-    (item) =>
+  const fishSnapshots = data.filter((item) =>
       item.snapshot_url &&
       item.fish_name &&
       item.fish_name !== "Unknown" &&
@@ -43,11 +42,7 @@ function fetchSnapshot(data) {
     const likelyhoodOfFish = parseFloat(searchParams.get("likelyhoodOfFish"));
 
     if (!likelyhoodOfFish || likelyhoodOfFish <= 0.345) continue;
-
-    // // get the total amount of snapshots taken for each fish
-    fishNumber[fishName] = (fishNumber[fishName] || 0) + 1;
   }
-  console.log("fish count", fishNumber);
 
   // render de html voor ul's met de bovenstaande afbeeldingen
   function renderFishList(container) {
@@ -190,28 +185,43 @@ function fetchSnapshot(data) {
 
   // Elements inside the detail container
   const fishNameEl = document.querySelector(".fish-facts-name");
-  const fishActivityEl = document.querySelector(".fish-facts-activity");
+  const aboutFishEl = document.querySelector(".fish-facts-about");
   const fishPicturesEl = document.querySelector(".fish-facts-pictures");
-  const fishAmountEl = document.querySelector(".fish-facts-amount");
+  const smallFishFacts = document.querySelector('.fish-facts-activity');
 
   const fishTag = document.querySelectorAll('.fish-facts-tag');
 
   // Feitjes van elke vis
   // https://nl.wikipedia.org/wiki/Kolblei / https://nl.wikipedia.org/wiki/Snoek / https://nl.wikipedia.org/wiki/Baars / https://nl.wikipedia.org/wiki/Alver
   const fishFacts = {
-    Kolblei: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig.",
-    Snoek: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden.[2] Snoeken kunnen vijftien jaar oud worden.",
-    Baars: "De Baars, ook wel Europese baars of rivierbaars genoemd, is een vis uit de familie echte baarzen, die van nature in de Benelux voorkomt. Verwanten van deze soort zijn onder andere de snoekbaars en de pos.",
-    Alver: "De alver is een zoetwatervis die behoort tot de eigenlijke karpers. Hij is ook bekend onder de namen: moertje, alvenaar, alfje, alft, nesteling en panharing en in Vlaanderen als schieter, spekje of ablette.",
+      kolblei: {
+      fact: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig.",
+      activeTime: "18:00",
+      size: "15 tot 25",
+    },
+    snoek: {
+      fact: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden.[2] Snoeken kunnen vijftien jaar oud worden.",
+      activeTime: "14:00",
+      size: "40 tot 100",
+    },
+    baars: {
+      fact: "De Baars, ook wel Europese baars of rivierbaars genoemd, is een vis uit de familie echte baarzen, die van nature in de Benelux voorkomt. Verwanten van deze soort zijn onder andere de snoekbaars en de pos.",
+      activeTime: "08:00",
+      size: "15 tot 35",
+    },
+    alver: {
+      fact: "De alver is een zoetwatervis die behoort tot de eigenlijke karpers. Hij is ook bekend onder de namen: moertje, alvenaar, alfje, alft, nesteling en panharing en in Vlaanderen als schieter, spekje of ablette.",
+      activeTime: "18:00",
+      size: "15 tot 17",
+    }
   };
 
-  // UPDATE DETAIL PANEL
+  // update popover leer onze vissen kennen
   function showFishDetails(fishName) {
-    // Get amount of snapshots for this fish
-    const fishCount = fishNumber[fishName] ?? 0;
-
     // filter snapshots naar dezelfde vis
     const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
+
+    const fishData = fishFacts[fishName?.toLowerCase()];
 
     // Update fish name
     if (fishNameEl) {
@@ -219,8 +229,18 @@ function fetchSnapshot(data) {
     }
 
     // Update fish fact
-    if (fishActivityEl) {
-      fishActivityEl.textContent = fishFacts[fishName] ?? "Geen informatie beschikbaar over deze vis.";}
+    if (aboutFishEl) {
+        aboutFishEl.textContent =
+        fishData.fact ?? "Geen informatie beschikbaar over deze vis.";
+    }
+
+    console.log(fishName);
+    if (smallFishFacts) {
+      smallFishFacts.innerHTML = `
+        <li>De ${fishName} is het meest actief rond ${fishData.activeTime}</li>
+        <li>${fishName} word gemiddeld ${fishData.size} cm</li>
+        `;
+    }
 
     // Update fish images
     if (fishPicturesEl) {
@@ -238,11 +258,6 @@ function fetchSnapshot(data) {
         <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260501-201012.jpeg" alt="${fishName}"></li>
       `
     }
-
-    // Update amount text
-    if (fishAmountEl) {
-        fishAmountEl.textContent = `Er zijn ${fishCount} foto's van ${fishName}`;
-      }
 
     fishFactsPopOver.classList.add("active");
   }
