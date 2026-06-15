@@ -24,10 +24,8 @@
   margin-bottom: 1rem;
 }
 
-.world-map-title {
+.title {
   margin: 0;
-
-  font-size: var(--font-size-h2);
   text-align: left;
 }
 
@@ -348,7 +346,7 @@
 
 .world-map-skip-button:focus-visible {
   outline: var(--button-focus-outline);
-  outline-offset:var(--button-focus-outline-offset);
+  outline-offset: var(--button-focus-outline-offset);
 }
 
 /***********************************/
