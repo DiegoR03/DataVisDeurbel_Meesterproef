@@ -1,9 +1,34 @@
 ---
+// @ts-nocheck
+import "../styles/fish-facts.css";
+
+const fishOptions = [
+    { name: "Kolblei", img: "/img/kolblei.png" },
+    { name: "Snoek", img: "/img/snoek.png" },
+    { name: "Alver", img: "/img/alver.png" },
+    { name: "Baars", img: "/img/baars.png" },
+    { name: "Blankvorn", img: "/img/blankvoorn.png" },
+    { name: "Snoekbaars", img: "/img/snoekbaars.png" },
+    { name: "Meerval", img: "/img/meerval.png" },
+    { name: "Winde", img: "/img/winde.png" },
+    { name: "Brasem", img: "/img/brasem.png" },
+    { name: "Paling", img: "/img/paling.png" },
+    { name: "Ruisvoorn", img: "/img/ruisvoorn.png" },
+  ];
 
 ---
 <section class="fish-facts-container">
     <h2>Leer onze vissen kennen</h2>
-    <ul class="fish-icons-details-list"></ul>
+    <ul class="fish-icons-details-list">
+        {fishOptions.map(fish => {
+            return (<li class="fish-item" tabindex="0" data-set={fish.name}>
+                <div class="fish-facts-tag">
+                    <img src={fish.img} alt={`picture of ${fish.name}`} />
+                    <p>{fish.name}</p>
+                </div>
+            </li>)
+        })}
+    </ul>
     <div class="fish-facts-popover">
         <h2 class="fish-facts-name"></h2>
         <p class="fish-facts-activity"></p>
@@ -12,9 +37,4 @@
 
 </section>
 
-<script>
-
-import "../styles/fish-facts.css";
-import "../js/charts/picture-of-month";
-
-</script>
+<script src="../js/charts/picture-of-month.js"></script>
