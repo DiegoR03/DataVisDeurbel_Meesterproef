@@ -186,7 +186,7 @@ function fetchSnapshot(data) {
   }
 
   const fishListDetails = document.querySelector(".fish-icons-details-list");
-  renderFishDetails(fishListDetails);
+  // renderFishDetails(fishListDetails);
 
   // All fish buttons in the list
   const fishFactsButtons = document.querySelectorAll(".fish-icons-details-list li");
