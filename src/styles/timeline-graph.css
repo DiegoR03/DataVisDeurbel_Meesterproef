@@ -212,6 +212,7 @@
             width: 100%;
             grid-column: 3 / 13;
             display: block;
+            background: transparent;
 
             svg {
                 position: absolute;
@@ -223,7 +224,8 @@
                 overflow: visible;
 
                 .main-graph-bg,
-                .main-graph-gradient-bg {
+                .main-graph-sunrise-bg,
+                .main-graph-night-bg {
                     transition: fill 0.8s ease-in-out, opacity 0.8s ease-in-out;
                 }
 
@@ -233,88 +235,67 @@
                     transition: fill 0.8s ease-in-out, stroke 0.8s ease-in-out;
                 }
 
-                &[data-theme="day"] {
-                    .main-graph-bg {
-                        fill: var(--color-light-gold);
-                    }
+                .main-graph-bg {
+                    fill: url(#sun-gradient);
+                    opacity: 1;
+                    mix-blend-mode: multiply; 
+                }
 
-                    .main-graph-gradient-bg {
+                /* https://www.w3schools.com/cssref/pr_mix-blend-mode.php */
+                .main-graph-sunrise-bg {
+                    fill: url(#sun-set-gradient);
+                    opacity: 0;
+                    mix-blend-mode: multiply; 
+                }
+
+                .main-graph-night-bg {
+                    fill: url(#night-gradient);
+                    opacity: 0;
+                    mix-blend-mode: multiply; 
+                }
+
+                &[data-theme="day"] {
+                    .main-graph-sunrise-bg {
                         opacity: 0;
                     }
-
-                    text,
-                    .axis-text {
-                        fill: var(--color-dark-green);
+                    .main-graph-night-bg {
+                        opacity: 0;
                     }
-
-                    .y-axis path,
-                    .layer-interface path {
+                    text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-dark-green);
                     }
                 }
 
-                &[data-theme="sunrise"] {
-                    .main-graph-bg {
-                        fill: var(--color-light-gold);
-                    }
-
-                    .main-graph-gradient-bg {
-                        opacity: 1;
-                    }
-
-                    text,
-                    .axis-text {
-                        fill: var(--color-dark-green);
-                    }
-
-                    .y-axis path,
-                    .layer-interface path {
-                        fill: var(--color-dark-green);
-                    }
-                }
-
+                &[data-theme="sunrise"],
                 &[data-theme="sunset"] {
-                    .main-graph-bg {
-                        fill: var(--color-light-gold);
+                    .main-graph-sunrise-bg {
+                        opacity: 0.9;
                     }
-
-                    .main-graph-gradient-bg {
-                        opacity: 1;
+                    .main-graph-night-bg {
+                        opacity: 0;
                     }
-
-                    text,
-                    .axis-text {
-                        fill: var(--color-dark-green);
-                    }
-
-                    .y-axis path,
-                    .layer-interface path {
+                    text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-dark-green);
                     }
                 }
 
                 &[data-theme="night"] {
-                    .main-graph-bg {
-                        fill: var(--color-dark-green);
-                    }
-
-                    .main-graph-gradient-bg {
+                    .main-graph-sunrise-bg {
                         opacity: 0;
                     }
-
-                    text,
-                    .axis-text {
+                    .main-graph-night-bg {
+                        opacity: 0.95;
+                    }
+                    text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-white);
                     }
-
-                    .y-axis path,
-                    .layer-interface path {
-                        fill: var(--color-white);
-                    }
-
                     g[transform*="rotate(-90)"] text,
                     g[transform*="rotate(-90)"] path {
                         fill: var(--color-dark-green) !important;
+                    }
+
+                    .axis-text-hours {
+                        fill: var(--color-dark-green);
                     }
                 }
             }
@@ -377,6 +358,8 @@
             .slider-circle {
                 width: var(--circle-size);
                 height: var(--circle-size);
+                flex-shrink: 0;
+                flex-basis: var(--circle-size);
                 border-radius: 50%;
                 border: var(--color-dark-green) 1px solid;
                 margin: 0;
@@ -385,7 +368,7 @@
                 align-items: center;
                 justify-content: center;
                 overflow: hidden;
-                background-color: var(--color-purple);
+                background-color: var(--color-light-gold);
                 order: 1;
 
                 .image-container {
@@ -403,6 +386,8 @@
                     width: calc(var(--circle-size) - 8px);
                     height: calc(var(--circle-size) - 8px);
                     object-fit: contain;
+                    background-color: var(--color-purple);
+                    border-radius: 50%;
                 }
             }
 
@@ -435,7 +420,7 @@
                     color: var(--color-white);
 
                     .slider-circle {
-                        background-color: var(--color-white);
+                        background-color: var(--color-light-gold);
                         order: 3;
                         margin-left: auto;
 

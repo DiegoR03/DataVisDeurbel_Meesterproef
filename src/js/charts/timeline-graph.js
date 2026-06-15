@@ -16,9 +16,9 @@ function getHourTheme(hourString) {
 
     if (hourInt >= 6 && hourInt < 9) {
         return "sunrise";
-    } else if (hourInt >= 9 && hourInt < 18) {
+    } else if (hourInt >= 9 && hourInt < 17) {
         return "day";
-    } else if (hourInt >= 18 && hourInt < 22) {
+    } else if (hourInt >= 17 && hourInt < 21) {
         return "sunset";
     } else {
         return "night";
@@ -53,6 +53,7 @@ function drawD3Graph(graphData, eventKeys) {
 
         svg.append("g").attr("class", "layer-background");
         svg.append("g").attr("class", "layer-data-paths");
+        svg.append("g").attr("class", "layer-clipped-foreground");
         svg.append("g").attr("class", "layer-sun-moon-path");
         svg.append("g").attr("class", "layer-interface");
         svg.append("g").attr("class", "y-axis");
@@ -62,6 +63,7 @@ function drawD3Graph(graphData, eventKeys) {
 
     const backgroundLayer = svg.select(".layer-background");
     const dataPathLayer = svg.select(".layer-data-paths");
+    const clippedForegroundLayer = svg.select(".layer-clipped-foreground");
     const sunMoonPathLayer = svg.select(".layer-sun-moon-path");
     const interfaceLayer = svg.select(".layer-interface");
     const yAxisGroup = svg.select(".y-axis");
@@ -91,7 +93,25 @@ function drawD3Graph(graphData, eventKeys) {
     if (isFirstLoad) {
         const defs = svg.append("defs");
 
-        // --- Lineaire Gradient voor Zonsopgang / Zonsondergang ---
+        const sunSetGradient = defs.append("linearGradient")
+            .attr("id", "sun-set-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+
+        sunSetGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "var(--color-gold)");
+
+        sunSetGradient.append("stop")
+            .attr("offset", "50%")
+            .attr("stop-color", "var(--color-blue-green)");
+
+        sunSetGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "var(--color-blue-green)");
+
         const sunGradient = defs.append("linearGradient")
             .attr("id", "sun-gradient")
             .attr("x1", "0%")
@@ -105,9 +125,28 @@ function drawD3Graph(graphData, eventKeys) {
 
         sunGradient.append("stop")
             .attr("offset", "100%")
-            .attr("stop-color", "var(--color-gold)");
+            .attr("stop-color", "var(--color-blue-green)");
+        
+        const nightGradient = defs.append("linearGradient")
+            .attr("id", "night-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
 
-        // Roze filter
+        nightGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "var(--color-dark-green)");
+
+        nightGradient.append("stop")
+            .attr("offset", "60%")
+            .attr("stop-color", "var(--color-blue-green)");
+
+        nightGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "var(--color-dark-green)");
+
+
         const filter = defs.append("filter").attr("id", "pink-tint-filter");
         filter.append("feColorMatrix")
             .attr("type", "matrix")
@@ -125,19 +164,18 @@ function drawD3Graph(graphData, eventKeys) {
         transfer.append("feFuncB").attr("type", "table").attr("tableValues", "0.65 1.0");
         transfer.append("feFuncA").attr("type", "identity");
 
-        // Blauw-groen filter
         const filterBlueGreen = defs.append("filter").attr("id", "blue-green-filter");
         filterBlueGreen.append("feColorMatrix")
             .attr("type", "matrix")
             .attr("values", "0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0")
             .attr("result", "gray");
+
         const transferBlueGreen = filterBlueGreen.append("feComponentTransfer").attr("in", "gray");
         transferBlueGreen.append("feFuncR").attr("type", "table").attr("tableValues", "0.00 1.0");
         transferBlueGreen.append("feFuncG").attr("type", "table").attr("tableValues", "0.55 1.0");
         transferBlueGreen.append("feFuncB").attr("type", "table").attr("tableValues", "0.55 1.0");
         transferBlueGreen.append("feFuncA").attr("type", "identity");
 
-        // ClipPaths
         defs.append("clipPath")
             .attr("id", "rect-clip")
             .append("rect")
@@ -159,8 +197,25 @@ function drawD3Graph(graphData, eventKeys) {
                 A ${radius},${radius} 0 0 1 0,${height + 20 - radius} 
                 Z
             `);
+            
 
         backgroundLayer.attr("clip-path", "url(#rect-clip)");
+        clippedForegroundLayer.attr("clip-path", "url(#rect-clip)");
+
+        const backgroundBlurFilter = defs.append("filter").attr("id", "background-blur");
+        backgroundBlurFilter.append("feGaussianBlur")
+            .attr("stdDeviation", "8");
+
+        backgroundLayer.append("image")
+            .attr("href", "./img/Stone_Wall_Background-2.jpg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height + 20)
+            .attr("preserveAspectRatio", "xMidYMid slice")
+            .style("pointer-events", "none")
+            .style("filter", "url(#background-blur)")
+            .attr("opacity", 0.3);
 
         backgroundLayer.append("rect")
             .attr("class", "main-graph-bg")
@@ -171,12 +226,19 @@ function drawD3Graph(graphData, eventKeys) {
             .style("pointer-events", "none");
 
         backgroundLayer.append("rect")
-            .attr("class", "main-graph-gradient-bg")
+            .attr("class", "main-graph-sunrise-bg")
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", width)
             .attr("height", height + 20)
-            .attr("fill", "url(#sun-gradient)")
+            .style("pointer-events", "none");
+
+        backgroundLayer.append("rect")
+            .attr("class", "main-graph-night-bg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height + 20)
             .style("pointer-events", "none");
 
         initBubbleAnimation(backgroundLayer, width, height);
@@ -201,8 +263,8 @@ function drawD3Graph(graphData, eventKeys) {
             .text("Deurbellers");
 
         yLabelGroup.append("path")
-            .attr("d", "M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755595,-0.353550834 Z")
-            .attr("transform", "translate(45, -7) rotate(180, 7, 7)")
+            .attr("d", "M7.06034405,0.146449166 C7.25560479,-0.0488143917 7.57218728,-0.0488166812 7.76745083,0.146444053 L14.6814559,7.06034917 L14.692,7.073 L14.7103063,7.09175636 L14.725,7.112 L14.7393109,7.12959747 L14.749,7.147 L14.7596353,7.16154043 L14.769,7.182 L14.7827019,7.20583532 L14.788,7.223 L14.7966187,7.2394338 L14.802,7.263 L14.8116291,7.28706568 L14.815,7.309 L14.8198443,7.32402437 L14.82,7.34 L14.8260923,7.37129149 L14.826,7.402 L14.8279,7.4139 L14.826,7.424 L14.8260917,7.45651572 L14.82,7.487 L14.8198443,7.50377563 L14.815,7.518 L14.8116272,7.54074132 L14.803,7.563 L14.7966187,7.5883662 L14.787,7.607 L14.7826989,7.62197126 L14.771,7.641 L14.7596353,7.66625957 L14.748,7.681 L14.7393068,7.69820848 L14.725,7.715 L14.7103063,7.73604364 L14.692,7.754 L14.6814508,7.76745595 L7.76745083,14.6813559 C7.57218728,14.8766167 7.25560479,14.8766144 7.06034405,14.6813508 C6.86508332,14.4860873 6.86508561,14.1695048 7.06034917,13.9742441 L13.121,7.913 L0.5,7.9139 C0.254540111,7.9139 0.0503916296,7.73702484 0.00805566941,7.50377563 L-5.68434189e-14,7.4139 C-5.68434189e-14,7.13775763 0.223857625,6.9139 0.5,6.9139 L13.12,6.913 L7.06034917,0.853555947 C6.88678156,0.679990851 6.86749446,0.410566589 7.0024891,0.215697472 L7.06034405,0.146449166 Z")
+            .attr("transform", "translate(55, -7.4)")
             .attr("fill", "var(--color-dark-green)");
 
         const xAxisGroup = interfaceLayer.append("g")
@@ -215,8 +277,8 @@ function drawD3Graph(graphData, eventKeys) {
             .text("Tijd (Uren)");
 
         xAxisGroup.append("path")
-            .attr("d", "M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755595,-0.353550834 Z")
-            .attr("transform", "translate(40, -7) rotate(180, 7, 7)")
+            .attr("d", "M7.06034405,0.146449166 C7.25560479,-0.0488143917 7.57218728,-0.0488166812 7.76745083,0.146444053 L14.6814559,7.06034917 L14.692,7.073 L14.7103063,7.09175636 L14.725,7.112 L14.7393109,7.12959747 L14.749,7.147 L14.7596353,7.16154043 L14.769,7.182 L14.7827019,7.20583532 L14.788,7.223 L14.7966187,7.2394338 L14.802,7.263 L14.8116291,7.28706568 L14.815,7.309 L14.8198443,7.32402437 L14.82,7.34 L14.8260923,7.37129149 L14.826,7.402 L14.8279,7.4139 L14.826,7.424 L14.8260917,7.45651572 L14.82,7.487 L14.8198443,7.50377563 L14.815,7.518 L14.8116272,7.54074132 L14.803,7.563 L14.7966187,7.5883662 L14.787,7.607 L14.7826989,7.62197126 L14.771,7.641 L14.7596353,7.66625957 L14.748,7.681 L14.7393068,7.69820848 L14.725,7.715 L14.7103063,7.73604364 L14.692,7.754 L14.6814508,7.76745595 L7.76745083,14.6813559 C7.57218728,14.8766167 7.25560479,14.8766144 7.06034405,14.6813508 C6.86508332,14.4860873 6.86508561,14.1695048 7.06034917,13.9742441 L13.121,7.913 L0.5,7.9139 C0.254540111,7.9139 0.0503916296,7.73702484 0.00805566941,7.50377563 L-5.68434189e-14,7.4139 C-5.68434189e-14,7.13775763 0.223857625,6.9139 0.5,6.9139 L13.12,6.913 L7.06034917,0.853555947 C6.88678156,0.679990851 6.86749446,0.410566589 7.0024891,0.215697472 L7.06034405,0.146449166 Z")
+            .attr("transform", "translate(45, -7.4)")
             .attr("fill", "var(--color-dark-green)");
     }
 
@@ -235,7 +297,7 @@ function drawD3Graph(graphData, eventKeys) {
         sunTrajectoryPath = sunMoonPathLayer.append("path")
             .attr("class", "sun-trajectory")
             .attr("fill", "none")
-            .attr("stroke", "rgba(255, 255, 255, 0.35)")
+            .attr("stroke", "var(--color-pink")
             .attr("stroke-dasharray", "6,6")
             .attr("stroke-width", 2);
     }
@@ -269,7 +331,6 @@ function drawD3Graph(graphData, eventKeys) {
         const imageWrapper = circle.append("div")
             .attr("class", "image-container");
 
-        // Image van de visdeurbel zelf
         imageWrapper.append("img")
             .attr("src", "https://visdeurbel.nl/wp-content/themes/visdeurbel/assets/874c058f53f2f79839e4.svg")
             .attr("alt", "Check")
@@ -323,6 +384,7 @@ function drawD3Graph(graphData, eventKeys) {
     }
     linePath.datum(clipPoints).transition().duration(750).attr("d", lineGenerator);
 
+    interfaceLayer.select(".fish-layer").remove();
     interfaceLayer.select(".bubbles-layer").remove();
     interfaceLayer.select(".sun-moon-interactive-layer").remove();
     interfaceLayer.select(".interaction-layer").remove();
@@ -448,7 +510,7 @@ function drawD3Graph(graphData, eventKeys) {
 
     yAxisGroup.select(".domain").remove();
 
-    initFishAnimation(backgroundLayer, width, height, currentSelectedKey);
+    initFishAnimation(clippedForegroundLayer, width, height, currentSelectedKey);
 }
 
 function getFishImageUrl(fishKey) {
@@ -494,7 +556,7 @@ function initFishAnimation(svg, width, height, currentKey) {
             .attr("href", imgUrl)
             .attr("width", 60)
             .attr("height", 40)
-            .attr("opacity", 0.8)
+            .attr("opacity", 0.9)
             .style("filter", "url(#pink-tint-filter)");
 
         const animate = (f) => {
