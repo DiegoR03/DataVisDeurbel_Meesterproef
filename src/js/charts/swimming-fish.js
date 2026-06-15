@@ -13,6 +13,22 @@ const fishScaleMap = {
     "Meerval": 2.2
 };
 
+// Het overzicht van zwemsnelheden (basis tijd in seconden om het scherm over te steken)
+// Let op: Lager getal = snellere vis!
+const fishSpeedMap = {
+    "Alver": 10,       // Heel snel, schiet voorbij
+    "Blankvoorn": 12,  // Vlotte zwemmer
+    "Ruisvoorn": 12,   // Vlotte zwemmer
+    "Baars": 14,       // Actieve jager
+    "Kolblei": 16,     // Gemiddeld
+    "Winde": 18,       // Rustige zwemmer
+    "Brasem": 20,      // Log en rustig
+    "Snoekbaars": 22,  // Ligt vaak stil, zwemt traag voorbij
+    "Snoek": 25,       // Grote vis, indrukwekkend tempo
+    "Paling": 28,      // Kronkelt heel rustig over de bodem
+    "Meerval": 35      // Gigantisch, dobbert als een onderzeeër voorbij
+};
+
 // Function to add fish to the main aquarium
 export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl) {
     // Filter the data for the specific fish
@@ -28,8 +44,8 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     }
 
     // Calculate how many visual fish to render
-    const MAX_VISUAL_FISH = 6;
-    const DATA_MAXIMUM = 800;
+    const MAX_VISUAL_FISH = 7;
+    const DATA_MAXIMUM = 600;
 
     let fishToRender = Math.ceil((totalSpotted / DATA_MAXIMUM) * MAX_VISUAL_FISH);
 
@@ -93,8 +109,14 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         fishImg.style.top = `${randomTop}%`;
 
         // Randomize swimming speed
-        const randomDuration = 15 + Math.random() * 20;
-        fishImg.style.animationDuration = `${randomDuration}s`;
+        // Zoek de basis-snelheid op (standaard 20 seconden als we hem niet kennen)
+        const baseSpeed = fishSpeedMap[fishName] || 20;
+        
+        // Voeg een héél klein beetje willekeur toe (+ tussen de 0 en 5 seconden erbij)
+        // Zo zwemmen twee Alvers niet exact even hard, wat er natuurlijker uitziet.
+        const finalDuration = baseSpeed + (Math.random() * 5);
+        
+        fishImg.style.animationDuration = `${finalDuration}s`;
 
         // Randomize start delay
         const randomDelay = (Math.random() * 20) * -1;
