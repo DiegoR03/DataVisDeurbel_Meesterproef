@@ -10,7 +10,7 @@
   gap: 3rem var(--padding);
   align-items: start;
 
-  padding: var(--spacing-top) var(--padding-side) 0;
+  padding: var(--spacing-top) var(--padding-side);
 }
 
 .world-map-section-header {
@@ -325,7 +325,7 @@
   align-items: center;
   gap: 0.5rem;
 
-  padding: 0.5em 0.8em;
+  padding: var(--button-padding);
 
   background: var(--color-purple);
   color: var(--color-dark-green);
@@ -347,8 +347,8 @@
 }
 
 .world-map-skip-button:focus-visible {
-  outline: 3px solid var(--color-dark-green);
-  outline-offset: 4px;
+  outline: var(--button-focus-outline);
+  outline-offset:var(--button-focus-outline-offset);
 }
 
 /***********************************/

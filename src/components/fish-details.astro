@@ -17,15 +17,15 @@ const fishOptions = [
   ];
 
 ---
-<section class="fish-facts-container">
+<section class="fish-facts-container" data-fish-options={JSON.stringify(fishOptions)}>
     <h2>Leer onze vissen kennen</h2>
     <ul class="fish-icons-details-list">
         {fishOptions.map(fish => {
             return (<li class="fish-item" tabindex="0" data-set={fish.name}>
-                <div class="fish-facts-tag">
+                <button class="fish-facts-tag">
                     <img src={fish.img} alt={`picture of ${fish.name}`} />
                     <p>{fish.name}</p>
-                </div>
+                </button>
             </li>)
         })}
     </ul>
