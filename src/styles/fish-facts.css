@@ -26,6 +26,7 @@
     background-color: var(--color-off-white);
     width: clamp(2rem, 15vw, 25vw);
     height: fit-content;
+    border: solid 2px var(--color-dark-green);
     border-radius: 8px;
     display: flex;
     align-items: center;
