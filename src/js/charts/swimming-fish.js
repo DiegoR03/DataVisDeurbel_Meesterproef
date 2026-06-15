@@ -1,3 +1,18 @@
+// Het overzicht van visgroottes (schaalfactoren)
+const fishScaleMap = {
+    "Alver": 0.5,
+    "Blankvoorn": 0.7,
+    "Ruisvoorn": 0.7,
+    "Kolblei": 0.8,
+    "Baars": 0.9,
+    "Winde": 1.0,
+    "Brasem": 1.1,
+    "Snoekbaars": 1.3,
+    "Paling": 1.3,
+    "Snoek": 1.6,
+    "Meerval": 2.2
+};
+
 // Function to add fish to the main aquarium
 export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl) {
     // Filter the data for the specific fish
@@ -31,9 +46,18 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         fishImg.src = pngUrl;
         fishImg.classList.add("swimming-fish");
         
-        // Randomize the size
-        const randomSize = 40 + Math.random() * 40;
-        fishImg.style.width = `${randomSize}px`;
+        // --- NIEUWE GROOTTE LOGICA ---
+        // 1. Zoek de schaalfactor op (standaard 1.0 als we hem niet kennen)
+        const scale = fishScaleMap[fishName] || 1.0;
+        
+        // 2. Bepaal een basisgrootte (bijv. 70px) met een klein beetje willekeur (+ of - 10px) 
+        // zodat vissen van dezelfde soort toch nét iets van elkaar verschillen.
+        const baseSize = 70 + (Math.random() * 20 - 10);
+        
+        // 3. Vermenigvuldig de basis met de schaal
+        const finalSize = baseSize * scale;
+        fishImg.style.width = `${finalSize}px`;
+        // ------------------------------
 
         // Randomize the vertical starting position
         const randomTop = 5 + Math.random() * 80;
