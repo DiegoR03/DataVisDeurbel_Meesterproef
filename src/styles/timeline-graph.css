@@ -32,7 +32,6 @@
             margin: 0;
             line-height: 1.9rem;
         }
-
     }
 
     #tooltip {
@@ -88,7 +87,6 @@
             background: var(--color-light-gold);
             border-radius: 1rem;
             padding: 20px;
-
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
@@ -103,8 +101,6 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 padding-bottom: 8px;
             }
-
-
         }
 
         #chart {
@@ -112,7 +108,6 @@
             position: relative;
             width: 100%;
             grid-column: 3 / 13;
-
             aspect-ratio: 1000 / 600;
             display: block;
 
@@ -124,6 +119,58 @@
                 height: 100%;
                 display: block;
                 overflow: visible;
+
+                /* Animatie-instellingen voor vloeiende overgangen */
+                .main-graph-bg,
+                .main-graph-gradient-bg {
+                    transition: fill 0.8s ease-in-out, opacity 0.8s ease-in-out;
+                }
+                
+                text, .axis-text, path {
+                    transition: fill 0.8s ease-in-out, stroke 0.8s ease-in-out;
+                }
+
+                /* --- DAG STAND --- */
+                &[data-theme="day"] {
+                    .main-graph-bg { fill: var(--color-light-gold); }
+                    .main-graph-gradient-bg { opacity: 0; }
+                    text, .axis-text { fill: var(--color-dark-green); }
+                    .y-axis path, .layer-interface path { fill: var(--color-dark-green); }
+                }
+
+                /* --- ZONSOPGANG STAND --- */
+                &[data-theme="sunrise"] {
+                    .main-graph-bg { fill: var(--color-light-gold); }
+                    .main-graph-gradient-bg { opacity: 1; } /* Fade de gradient zachtjes in */
+                    text, .axis-text { fill: var(--color-dark-green); }
+                    .y-axis path, .layer-interface path { fill: var(--color-dark-green); }
+                }
+
+                /* --- ZONSONDERGANG STAND --- */
+                &[data-theme="sunset"] {
+                    .main-graph-bg { fill: var(--color-light-gold); }
+                    .main-graph-gradient-bg { opacity: 1; } /* Fade de gradient zachtjes in */
+                    text, .axis-text { fill: var(--color-dark-green); }
+                    .y-axis path, .layer-interface path { fill: var(--color-dark-green); }
+                }
+
+                /* --- NACHT STAND --- */
+                &[data-theme="night"] {
+                    .main-graph-bg { fill: var(--color-dark-green); }
+                    .main-graph-gradient-bg { opacity: 0; }
+                    
+                    /* Alle teksten en assen IN het vlak worden wit */
+                    text, .axis-text { fill: var(--color-white); }
+                    .y-axis path, .layer-interface path { fill: var(--color-white); } 
+                    
+                    /* EXCLUSIEF het label "Deurbellers" en het bijbehorende pijltje (buiten het vlak) */
+                    g[transform*="rotate(-90)"] text { 
+                        fill: var(--color-dark-green) !important; 
+                    }
+                    g[transform*="rotate(-90)"] path { 
+                        fill: var(--color-dark-green) !important; 
+                    }
+                }
             }
         }
     }
@@ -132,7 +179,6 @@
         fill: transparent;
         stroke: transparent;
         stroke-width: 3px;
-
         transition: stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out, opacity 0.1s ease-in-out;
         border-radius: var(--border-radius);
         opacity: 0.1;
@@ -209,6 +255,20 @@
         pointer-events: all;
     }
 
+    .sun-trajectory {
+        pointer-events: none;
+    }
+
+    .sun-moon-hover-icon {
+        pointer-events: none;
+        animation: rotateIcon 20s linear infinite;
+    }
+
+    @keyframes rotateIcon {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
     @media screen and (max-width: 870px) {
         #chart-container {
             flex-direction: column;
@@ -236,11 +296,8 @@
             div {
                 width: 25vw;
             }
-
         }
-
     }
-
 
     @media screen and (max-width: 450px) {
         overflow: hidden;
