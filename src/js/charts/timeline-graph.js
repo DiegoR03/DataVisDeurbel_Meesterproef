@@ -1,7 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 const baseWidth = 1000;
-const baseHeight = 600;
+const baseHeight = 550;
 
 const margin = { top: 5, right: 0, bottom: 80, left: 60 };
 const width = baseWidth - margin.left - margin.right;
@@ -13,7 +13,7 @@ let currentSelectedKey = "total";
 
 function getHourTheme(hourString) {
     const hourInt = parseInt(hourString.split(':')[0], 10);
-    
+
     if (hourInt >= 6 && hourInt < 9) {
         return "sunrise";
     } else if (hourInt >= 9 && hourInt < 18) {
@@ -27,9 +27,9 @@ function getHourTheme(hourString) {
 
 function getSunYPosition(hourString, chartHeight) {
     const hourInt = parseInt(hourString.split(':')[0], 10);
-    const radians = (hourInt - 6) * (Math.PI / 12); 
+    const radians = (hourInt - 6) * (Math.PI / 12);
     const normalizedY = (Math.sin(radians) + 1) / 2;
-    
+
     const minHeight = 60;
     const maxHeight = chartHeight - 60;
     return maxHeight - normalizedY * (maxHeight - minHeight);
@@ -80,7 +80,7 @@ function drawD3Graph(graphData, eventKeys) {
     const yMaxCalculated = Math.max(stepSize, Math.ceil(rawMaxWithBuffer / stepSize) * stepSize);
 
     const y = d3.scaleLinear()
-        .domain([0, yMaxCalculated + stepSize]) 
+        .domain([0, yMaxCalculated + stepSize])
         .range([height, 0]);
 
     const yTicks = [];
@@ -162,7 +162,6 @@ function drawD3Graph(graphData, eventKeys) {
 
         backgroundLayer.attr("clip-path", "url(#rect-clip)");
 
-        // Basis achtergrondlaag (voor egale kleuren)
         backgroundLayer.append("rect")
             .attr("class", "main-graph-bg")
             .attr("x", 0)
@@ -171,7 +170,6 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("height", height + 20)
             .style("pointer-events", "none");
 
-        // Extra gradient-laag voor vloeiende opacity transities
         backgroundLayer.append("rect")
             .attr("class", "main-graph-gradient-bg")
             .attr("x", 0)
@@ -190,7 +188,7 @@ function drawD3Graph(graphData, eventKeys) {
             .join("text")
             .attr("x", data => x(data.hour) + x.bandwidth() / 2)
             .attr("text-anchor", "middle")
-            .attr("class", "axis-text")
+            .attr("class", "axis-text-hours")
             .text((data, i) => i % 2 !== 0 ? "" : data.hour);
 
         const yLabelGroup = interfaceLayer.append("g")
@@ -247,25 +245,48 @@ function drawD3Graph(graphData, eventKeys) {
     legendContainer.selectAll("*").remove();
 
     const legendItems = [
-        { key: "total", label: "Totale uploads" },
-        { key: "uploadedFish", label: "Geüploade Vissen" },
+        { key: "total", label: "Totaal" },
         ...eventKeys.map(key => ({ key: key, label: key }))
     ];
 
     legendItems.forEach(item => {
         const isActive = currentSelectedKey === item.key;
 
-        const row = legendContainer.append("div")
-            .style("background", isActive ? "var(--color-purple)" : "var(--color-white)")
-            .style("transition", "background 1s")
+        const buttonContainer = legendContainer.append("div")
+            .attr("class", "legend-button-wrapper")
+            .classed("is-active", isActive);
+
+        const button = buttonContainer.append("button")
+            .attr("class", "legend-button")
             .on("click", () => {
                 currentSelectedKey = item.key;
                 drawD3Graph(graphData, eventKeys);
             });
 
-        row.append("span").text(item.label);
-    });
+        const circle = button.append("div")
+            .attr("class", "slider-circle");
 
+        const imageWrapper = circle.append("div")
+            .attr("class", "image-container");
+
+        // Image van de visdeurbel zelf
+        imageWrapper.append("img")
+            .attr("src", "https://visdeurbel.nl/wp-content/themes/visdeurbel/assets/874c058f53f2f79839e4.svg")
+            .attr("alt", "Check")
+            .attr("class", "circle-image");
+
+        const contentWrapper = button.append("span")
+            .attr("class", "button-content-wrapper");
+
+        contentWrapper.append("span")
+            .attr("class", "button-text")
+            .text(item.label);
+
+        contentWrapper.append("img")
+            .attr("src", getFishImageUrl(item.key))
+            .attr("alt", item.label)
+            .attr("class", "fish-type-image");
+    });
     const clipPoints = [
         { hour: visibleHours[0].hour, edgeX: 0, value: visibleHours[0][currentSelectedKey] || 0 },
         ...visibleHours.map(data => ({ hour: data.hour, edgeX: x(data.hour) + x.bandwidth() / 2, value: data[currentSelectedKey] || 0 })),
@@ -385,7 +406,7 @@ function drawD3Graph(graphData, eventKeys) {
             const i = visibleHours.indexOf(data);
             d3.select(`.circle-${i}`).style("opacity", 0);
             d3.select("#tooltip").style("display", "none");
-            
+
             sunMoonInteractiveGroup.selectAll(".sun-moon-hover-icon").remove();
         });
 
@@ -411,8 +432,8 @@ function drawD3Graph(graphData, eventKeys) {
             yAxisGroup.selectAll(".tick line")
                 .attr("stroke", "rgba(0, 0, 0, 0.1)")
                 .attr("stroke-dasharray", "4,4");
-            
-            yAxisGroup.select(".domain").remove(); 
+
+            yAxisGroup.select(".domain").remove();
         });
 
     yAxisGroup.selectAll("text")
@@ -446,7 +467,7 @@ function initBubbleAnimation(svg, width, height) {
             .style("filter", "url(#blue-green-filter)")
             .attr("opacity", 0.6);
         const animate = (b) => {
-            const r = 4 + Math.random() * 12; 
+            const r = 4 + Math.random() * 12;
             const xPos = Math.random() * width;
             b.attr("width", r)
                 .attr("height", r)

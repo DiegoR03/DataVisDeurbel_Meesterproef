@@ -4,25 +4,42 @@
 
 <section class="timeline-graph-section">
     <div id="info-container">
-        <h2>Het beste tijdstip van het seizoen</h2>
+        <div>
+            <h2>Het beste tijdstip van het seizoen</h2>
+            <hr>
+            <button popovertarget="timeline-popover" aria-label="Toon info" id="info-button">
+                <span>?</span>
+            </button>
+        </div>
+            
+        <div id="timeline-popover" popover>
+            <button popovertarget="timeline-popover" aria-label="Toon info" id="close-button">
+                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M13.7071 0.292893C14.0976 0.683417 14.0976 1.31658 13.7071 1.70711L1.70711 13.7071C1.31658 14.0976 0.683417 14.0976 0.292893 13.7071C-0.0976311 13.3166 -0.0976311 12.6834 0.292893 12.2929L12.2929 0.292893C12.6834 -0.0976311 13.3166 -0.0976311 13.7071 0.292893Z"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292893 0.292893C0.683417 -0.0976311 1.31658 -0.0976311 1.70711 0.292893L13.7071 12.2929C14.0976 12.6834 14.0976 13.3166 13.7071 13.7071C13.3166 14.0976 12.6834 14.0976 12.2929 13.7071L0.292893 1.70711C-0.0976311 1.31658 -0.0976311 0.683417 0.292893 0.292893Z"></path>
+                </svg>
+            </button>
 
-        <p id="last-update">
-            Laatste update: <span id="latest-date">Nog geen data geladen</span>
-        </p>
+            <h3>Data <span>vis</span>ualisation 🐟</h3>
 
-        <p id="info">
-            <strong>Filter per vissoort:</strong> Klik op een vis in de legenda om
-            de grafiek aan te passen. Je ziet dan meteen die specifieke vissoort door
-            het grafiek zwemmen!
-        </p>
-        <p id="info">
-            <strong>Bekijk de details:</strong> Beweeg je muis over de grafiek om
-            de exacte aantallen per uur te bekijken in de pop-up.
-        </p>
-        <p id="info">
-            <strong>Dag & Nacht:</strong> De donkere vlakken in de achtergrond laten
-            zien wanneer het nacht is (tussen 22:00 en 06:00 uur).
-        </p>
+            <p id="info">
+                <strong>Filter per vissoort:</strong> Klik op een vis in de legenda om
+                de grafiek aan te passen. Je ziet dan meteen die specifieke vissoort door
+                het grafiek zwemmen!
+            </p>
+            <p id="info">
+                <strong>Bekijk de details:</strong> Beweeg je muis over de grafiek om
+                de exacte aantallen per uur te bekijken in de pop-up.
+            </p>
+            <p id="info">
+                <strong>Dag & Nacht:</strong> De donkere vlakken in de achtergrond laten
+                zien wanneer het nacht is (tussen 22:00 en 06:00 uur).
+            </p>
+
+            <p id="last-update">
+                Data bijgewerkt op: <span id="latest-date">Nog geen data geladen</span>
+            </p>
+        </div>       
     </div>
 
     <div id="chart-container">
@@ -34,7 +51,8 @@
     </div>
 
     <div class="tooltip" id="tooltip"></div>
-</section>
+
+    </section>
 
 <script>
     import "../styles/timeline-graph.css";
