@@ -62,13 +62,4 @@ import "../styles/fish-of-season.css";
   </div>
 </section>
 
-<script>
-  //@ts-nocheck
-  import { initAquarium } from "../js/charts/swimming-fish.js";
-  const rawData = window.SERVER_VIS_DATA || [];
-  const data = rawData.map((item) => ({
-    ...item,
-    created_at: item.created_at ? new Date(item.created_at) : null,
-  }));
-  initAquarium(data);
-</script>
+<script src="../js/charts/swimming-fish.js"></script>

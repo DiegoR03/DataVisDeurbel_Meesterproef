@@ -236,3 +236,18 @@ export function initAquarium(data) {
 
     renderAquarium("all");
 }
+
+function initMainAquarium() {
+  const rawData = window.SERVER_VIS_DATA || [];
+ 
+  const data = rawData.map((item) => ({
+    ...item,
+    created_at: item.created_at ? new Date(item.created_at) : null,
+  }));
+ 
+  initAquarium(data);
+}
+ 
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", initMainAquarium);
+}
