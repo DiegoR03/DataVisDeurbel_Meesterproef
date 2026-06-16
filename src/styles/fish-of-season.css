@@ -15,18 +15,25 @@
   background-color: white;
   color: var(--color-dark-green, #1e3f20);
   margin: 0;
-  padding: 6px 8px 6px 16px;
+  padding: 6px 8px 6px 16px; /* Samengevoegd voor een strakke rand */
   border-radius: 50px;
   font-size: 15px;
   font-weight: 600;
 
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between; /* Zorgt dat de tekst links en de badge rechts staat */
 
-  box-shadow: 0 4px 10px var(--color-purple) 0.5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtiele, werkende schaduw */
   border: 1px solid var(--color-purple);
   transition: transform 0.2s ease;
+}
+
+/* NIEUW: Zorgt dat het plaatje en de naam links netjes naast elkaar staan */
+.legend-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .aquarium-legend p:hover {
@@ -42,16 +49,13 @@
   border-radius: 30px;
   font-size: 13px;
   font-weight: bold;
+  margin-left: auto; /* De ultieme zekerheid dat de badge he-le-maal naar rechts wordt geduwd */
 }
 
 .legend-fish-icon {
   height: 24px;
   width: auto;
   object-fit: contain;
-}
-
-.aquarium-legend p {
-  padding: 6px 8px 6px 8px;
 }
 
 .main-aquarium {
@@ -199,7 +203,7 @@
   background-repeat: repeat;
   filter: blur(1.5px) brightness(0.6) sepia(0.3);
   border-radius: 50% 50% 0 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
 }
 
@@ -330,12 +334,7 @@
   height: 40px;
 }
 
-.legend-title {
-  font-size: 14px;
-  color: #666; /* Een subtiele grijze kleur */
-  margin-bottom: 8px; /* Een klein beetje ademruimte */
-  font-weight: 600;
-}
+
 
 
 .canal-wall {
@@ -382,4 +381,43 @@
 
 .custom-fish-tooltip.visible {
     opacity: 1;
+}
+
+/*Depth Gauge*/
+.depth-gauge {
+    position: absolute;
+    top: 0;
+    right: 5%; 
+    height: 100%;
+    width: 45px;
+    background-color: var(--color-dark-green); 
+    border-left: 2px solid #222;
+    border-right: 2px solid #222;
+    z-index: 5; 
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    
+    padding-top: 10px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+
+    z-index: 1; 
+    filter: blur(1.2px);
+    opacity: 0.5;
+}
+
+.depth-mark {
+    display: block;
+    width: 100%;
+    text-align: right;
+    padding-right: 4px;
+    font-family: 'Bricolage Grotesque', sans-serif; 
+    font-size: 14px;
+    font-weight: 800;
+    color: white;
+    
+    border-bottom: 5px solid #111; 
+    line-height: 0.5; 
 }
