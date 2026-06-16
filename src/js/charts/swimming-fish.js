@@ -13,20 +13,19 @@ const fishScaleMap = {
     "Meerval": 2.2
 };
 
-// Het overzicht van zwemsnelheden (basis tijd in seconden om het scherm over te steken)
-// Let op: Lager getal = snellere vis!
+// Overview of swimming speeds (base time in seconds to cross the screen)
 const fishSpeedMap = {
-    "Alver": 10,       // Heel snel, schiet voorbij
-    "Blankvoorn": 12,  // Vlotte zwemmer
-    "Ruisvoorn": 12,   // Vlotte zwemmer
-    "Baars": 14,       // Actieve jager
-    "Kolblei": 16,     // Gemiddeld
-    "Winde": 18,       // Rustige zwemmer
-    "Brasem": 20,      // Log en rustig
-    "Snoekbaars": 22,  // Ligt vaak stil, zwemt traag voorbij
-    "Snoek": 25,       // Grote vis, indrukwekkend tempo
-    "Paling": 28,      // Kronkelt heel rustig over de bodem
-    "Meerval": 35      // Gigantisch, dobbert als een onderzeeër voorbij
+    "Alver": 10,      
+    "Blankvoorn": 12,  
+    "Ruisvoorn": 12,  
+    "Baars": 14,      
+    "Kolblei": 16,     
+    "Winde": 18,       
+    "Brasem": 20,      
+    "Snoekbaars": 22,  
+    "Snoek": 25,       
+    "Paling": 28,      
+    "Meerval": 35      
 };
 
 // Function to add fish to the main aquarium
@@ -48,7 +47,7 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Check eerst of onze custom tooltip al bestaat
+    // First check if our custom tooltip already exists
     let tooltip = document.getElementById("custom-fish-tooltip");
     if (!tooltip) {
         tooltip = document.createElement("div");
@@ -84,14 +83,14 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         });
 
        
-        // Zoek de schaalfactor op (standaard 1.0 als we hem niet kennen)
+        // Look up the scale factor (default 1.0 if unknown)
         const scale = fishScaleMap[fishName] || 1.0;
 
         
         
         const baseSize = 70 + (Math.random() * 20 - 10);
 
-        // Vermenigvuldig de basis met de schaal
+        // Multiply the base size by the scale
         const finalSize = baseSize * scale;
         fishImg.style.width = `${finalSize}px`;
        
@@ -101,11 +100,11 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         fishImg.style.top = `${randomTop}%`;
 
         // Randomize swimming speed
-        // Zoek de basis-snelheid op (standaard 20 seconden als we hem niet kennen)
+        // Look up the base speed (default 20 seconds if unknown)
         const baseSpeed = fishSpeedMap[fishName] || 20;
         
-        // Voeg een héél klein beetje willekeur toe (+ tussen de 0 en 5 seconden erbij)
-        // Zo zwemmen twee Alvers niet exact even hard, wat er natuurlijker uitziet.
+        // Add a tiny bit of randomness (+ between 0 and 5 seconds extra)
+        // This ensures two Alvers don't swim at the exact same speed, looking more natural.
         const finalDuration = baseSpeed + (Math.random() * 5);
         
         fishImg.style.animationDuration = `${finalDuration}s`;
@@ -170,7 +169,7 @@ export function initAquarium(data) {
         { name: "Winde", legendId: "legend-winde", imgPath: "/img/winde.png" }
     ];
 
-    // 1. Vul de legenda labels direct met de juiste getallen en icoontjes
+    // Fill the legend labels directly with the correct numbers and icons
     fishSpecies.forEach(fish => {
         const totalSpotted = data.filter(d => d.fish_name === fish.name).length;
         const legendText = document.getElementById(fish.legendId);
@@ -180,7 +179,7 @@ export function initAquarium(data) {
                 <img src="${fish.imgPath}" alt="${fish.name}" class="legend-fish-icon" />
                 ${fish.name}
             </span>
-            <span class="fish-count">${totalSpotted}</span>`; // x gespot was te lang!
+            <span class="fish-count">${totalSpotted}</span>`;
         }
     });
 
@@ -190,7 +189,7 @@ export function initAquarium(data) {
     }));
     const top3Fish = [...fishWithCounts].sort((a, b) => b.count - a.count).slice(0, 3);
 
-    // 2. Functie om de juiste vissen te tekenen
+    // Function to render the correct fish
     function renderAquarium(mode) {
         if (!aquarium) return;
         
@@ -214,20 +213,20 @@ export function initAquarium(data) {
         } else if (mode === "top3") {
             activeList = top3Fish;
         } else {
-            // Als de 'mode' de naam van een vis is!
+            // If the 'mode' is the name of a specific fish!
             const singleFish = fishSpecies.find(f => f.name === mode);
             if(singleFish) activeList = [singleFish];
         }
 
         activeList.forEach(fish => {
-            // We hoeven het label niet meer te verbergen, alleen de vis tekenen!
+            // No need to hide the label anymore, just draw the fish!
             addFishToAquarium(data, fish.name, "main-aquarium", fish.legendId, fish.imgPath);
         });
 
         createBubbles("main-aquarium", 25);
     }
 
-    // 3. Luister naar ELKE radioknop (Alle, Top3 én de enkele vissen)
+    // Listen to EVERY radio button (All, Top 3, and the individual fish)
     filterInputs.forEach(input => {
         input.addEventListener('change', (e) => {
             renderAquarium(e.target.value);

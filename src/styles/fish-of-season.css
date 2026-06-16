@@ -3,9 +3,8 @@
   background: var(--color-light-gold);
 }
 
-/* NIEUW: De container voor de complete zijbalk */
 .aquarium-sidebar {
-  flex: 0 0 270px; /* Geeft de zijbalk een vaste, strakke breedte */
+  flex: 0 0 270px; 
   display: flex;
   flex-direction: column;
 }
@@ -29,14 +28,14 @@
 }
 
 /* =================
-   Aquarium Filters (De Knoppen)
+   Aquarium Filters
    ================= */
 .aquarium-filters {
   border: none;
   padding: 0;
   margin: 0;
   display: flex;
-  flex-direction: column; /* Houdt ze netjes onder elkaar in de zijbalk */
+  flex-direction: column; 
   gap: 10px;
   width: 100%;
 }
@@ -60,7 +59,6 @@
   border: 0;
 }
 
-/* --- EXACT JOUW CODE VOOR DE KNOPPEN --- */
 .filter-btn {
   display: inline-flex;
   align-items: center;
@@ -99,9 +97,9 @@
 }
 /* --------------------------------------- */
 
-/* =================
-   Inhoud van de Vis-knoppen (Icoontjes en getallen)
-   ================= */
+/* ============================
+   Content of the fish buttons
+   ============================ */
 .legend-left {
   display: flex;
   align-items: center;
@@ -121,12 +119,12 @@
   border-radius: 30px;
   font-size: 13px;
   font-weight: bold;
-  margin-left: auto; /* Duwt de badge netjes naar de rechterkant van de knop */
+  margin-left: auto; 
 }
 
-/* =================
-   Het Aquarium
-   ================= */
+/* ============
+   The Aquarium
+   ============ */
 .main-aquarium {
   width: 100%;
   min-height: 600px;
@@ -142,7 +140,7 @@
     0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
-  flex: 1; /* Zorgt dat het aquarium alle overgebleven ruimte rechts opeist */
+  flex: 1; 
 }
 
 .aquarium-layout-wrapper {
@@ -154,7 +152,7 @@
   margin-top: 24px;
 }
 
-/* Responsive layout voor mobiel/tablets */
+/* Responsive layout for mobile/tablets */
 @media (max-width: 900px) {
   .aquarium-layout-wrapper {
     flex-direction: column;
@@ -171,11 +169,11 @@
   }
 
   .filter-btn {
-    flex: 1 1 calc(50% - 10px); /* Knoppen netjes verdelen op mobiel */
+    flex: 1 1 calc(50% - 10px); 
   }
 
   .filter-divider {
-    display: none; /* Geen streepje nodig op mobiel */
+    display: none; 
   }
 
   .main-aquarium {
