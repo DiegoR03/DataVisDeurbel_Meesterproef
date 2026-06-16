@@ -175,7 +175,7 @@ function fetchSnapshot(data) {
   }
 
   const fishListDetails = document.querySelector(".fish-icons-details-list");
-  // renderFishDetails(fishListDetails);
+  renderFishDetails(fishListDetails);
 
   // All fish buttons in the list
   const fishFactsButtons = document.querySelectorAll(".fish-icons-details-list li");
@@ -194,7 +194,7 @@ function fetchSnapshot(data) {
   // Feitjes van elke vis
   // https://nl.wikipedia.org/wiki/Kolblei / https://nl.wikipedia.org/wiki/Snoek / https://nl.wikipedia.org/wiki/Baars / https://nl.wikipedia.org/wiki/Alver
   const fishFacts = {
-      kolblei: {
+    kolblei: {
       fact: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig.",
       activeTime: "18:00",
       size: "15 tot 25",
@@ -230,15 +230,14 @@ function fetchSnapshot(data) {
 
     // Update fish fact
     if (aboutFishEl) {
-        aboutFishEl.textContent =
-        fishData.fact ?? "Geen informatie beschikbaar over deze vis.";
+        aboutFishEl.textContent = fishData?.fact ?? "Geen informatie beschikbaar over deze vis.";
     }
 
-    console.log(fishName);
     if (smallFishFacts) {
       smallFishFacts.innerHTML = `
-        <li>De ${fishName} is het meest actief rond ${fishData.activeTime}</li>
-        <li>${fishName} word gemiddeld ${fishData.size} cm</li>
+        <li><h3>Vis-feitjes</h3></li>
+        <li><p>De ${fishName} is het meest actief rond ${fishData.activeTime && "onbekend"}</p></li>
+        <li><p>${fishName} word gemiddeld ${fishData.size && "onbekend"} cm</p></li>
         `;
     }
 
@@ -246,21 +245,47 @@ function fetchSnapshot(data) {
     if (fishPicturesEl) {
       fishPicturesEl.innerHTML = currentFishPics
         .slice(0, 4)
-        .map(fish =>
-            `<li><img src="${fish.snapshot_url}" alt="${fishName}"></li>`)
+        .map(fish =>`<li><img class="fish-preview" src="${fish.snapshot_url}" alt="${fishName}"></li>`)
         .join("");
     }
     if(fishName === "Kolblei") {
       fishPicturesEl.innerHTML = `
-        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260504-083511.jpeg" alt="${fishName}"></li>
-        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260503-113552.jpeg" alt="${fishName}"></li>
-        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260502-071753.jpeg" alt="${fishName}"></li>
-        <li><img src="https://blub-blub.b-cdn.net/fish-2026/05/20260501-201012.jpeg" alt="${fishName}"></li>
+        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260504-083511.jpeg" alt="${fishName}"></li>
+        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260503-113552.jpeg" alt="${fishName}"></li>
+        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260502-071753.jpeg" alt="${fishName}"></li>
+        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260501-201012.jpeg" alt="${fishName}"></li>
       `
     }
 
     fishFactsPopOver.classList.add("active");
   }
+
+  // popover voor img in leer onze vissen kennen
+  const imageModel = document.querySelector('.fish-image-modal');
+  const closeImage = document.querySelector('.fish-image-close');
+  const openImage = document.querySelector('.fish-image-full');
+
+  console.log(openImage);
+
+  fishPicturesEl.addEventListener('click', (event) =>  {
+    const image = event.target.closest('.fish-preview');
+    console.log(image);
+
+    if(!image) return;
+
+    openImage.src = image.src;
+    openImage.alt = image.alt;
+
+    console.log("img src", openImage.src)
+
+    imageModel.classList.add('active-img');
+    document.body.style.overflow = "hidden"
+  });
+
+  closeImage.addEventListener('click', () => {
+    imageModel.classList.remove('active-img');
+    document.body.style.overflow = "scroll"
+  });
 
   // CLICK EVENTS
   fishFactsButtons.forEach((button) => {
