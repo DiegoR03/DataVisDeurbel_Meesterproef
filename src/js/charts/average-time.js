@@ -245,7 +245,7 @@ function updateStopwatch(weekData) {
     const minutenTekst = gemiddeldeMinuten === 1 ? "minuut" : "minuten";
     d3.select("#stopwatch-text").html(`
         Gemiddeld duurde het deze week <span class="stopwatch-text-highlight">${gemiddeldeMinuten} ${minutenTekst}</span> voordat er 
-        een 🐟 vis werd gezien. De <span class="stopwatch-text-highlight">${latestFishName}</span> was de laatste vis van deze week.
+        een 🐟 vis werd gezien. De <span class="stopwatch-text-highlight">${latestFishName}</span> was the laatste vis van deze week.
     `);
 }
 
@@ -261,9 +261,12 @@ function setupKalenderBase() {
 
     const layoutContainer = wrapper.append("div").attr("class", "calendar-layout-container");
 
-    const viewWidth = 500; 
+    // Verhoogd om de bredere linkermarge op te vangen zonder de cellen in elkaar te drukken
+    const viewWidth = 600; 
     const viewHeight = 250;
-    const margin = { top: 15, right: 15, bottom: 15, left: 15 };
+    
+    // De linkermarge is aanzienlijk vergroot van 35 naar 95 om de langere tekstlabels volledig te tonen
+    const margin = { top: 15, right: 15, bottom: 15, left: 95 };
     
     const chartWidth = viewWidth - margin.left - margin.right;
     const chartHeight = viewHeight - margin.top - margin.bottom;
@@ -443,7 +446,6 @@ function updateVisKalender(weekData) {
 
     function verbergTooltip(element) {
         d3.select(element).style("stroke", "none");
-        d3.select("#tooltip").style("none");
         d3.select("#tooltip").style("display", "none");
     }
 
@@ -475,83 +477,60 @@ function updateVisKalender(weekData) {
     // Bron: https://d3js.org/d3-selection/events: Registreert alle muis- en toetsenbord-events voor de interactieve tooltips.
     gridCellsGroup.selectAll("rect")
     .on("mouseenter", function (event, d) {
-        if (d.count === 0) return;
-
-        d3.select(this)
-            .style("stroke", "var(--color-purple)")
-            .style("stroke-width", "2px");
-
-        const tellingen = d3.rollups(d.fishes, v => v.length, f => f);
-        tellingen.sort((a, b) => b[1] - a[1]);
-        
-        let tooltipContent = `<h3>${d.dag} - ${d.dagdeel.split(" ")[0]}</h3><div id='line'></div>`;
-        tooltipContent += `<p>Totaal gespot: <strong>${d.count} vissen</strong></p>`;
-        
-        tellingen.forEach(([name, aantal]) => {
-            tooltipContent += `<p>🐟 ${aantal}x <strong>${name}</strong></p>`;
-        });
-
-        d3.select("#tooltip")
-            .style("display", "block")
-            .html(tooltipContent);
-        
         toonTooltip(this, d);
     })
-        // Met behulp van Gemini: Voorkomt dat de tooltip buiten de randen van de browser-viewport valt bij mousemove.
-        .on("mousemove", function (event) {
-            const tooltip = d3.select("#tooltip");
-            const tooltipNode = tooltip.node();
-            if (!tooltipNode) return;
+    // Met behulp van Gemini: Voorkomt dat de tooltip buiten de randen van de browser-viewport valt bij mousemove.
+    .on("mousemove", function (event) {
+        const tooltip = d3.select("#tooltip");
+        const tooltipNode = tooltip.node();
+        if (!tooltipNode) return;
 
-            const tooltipWidth = tooltipNode.offsetWidth;
-            const tooltipHeight = tooltipNode.offsetHeight;
+        const tooltipWidth = tooltipNode.offsetWidth;
+        const tooltipHeight = tooltipNode.offsetHeight;
 
-            const mouseX = event.pageX;
-            const mouseY = event.pageY;
+        const mouseX = event.pageX;
+        const mouseY = event.pageY;
 
-            const scrollX = window.scrollX || window.pageXOffset;
-            const scrollY = window.scrollY || window.pageYOffset;
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-            const offsetX = 15;
-            const offsetY = 15;
+        const offsetX = 15;
+        const offsetY = 15;
 
-            let targetX = mouseX + offsetX;
-            let targetY = mouseY + offsetY;
+        let targetX = mouseX + offsetX;
+        let targetY = mouseY + offsetY;
 
-            if ((targetX + tooltipWidth) > (scrollX + viewportWidth)) {
-                targetX = mouseX - tooltipWidth - offsetX;
-            }
+        if ((targetX + tooltipWidth) > (scrollX + viewportWidth)) {
+            targetX = mouseX - tooltipWidth - offsetX;
+        }
 
-            if ((targetY + tooltipHeight) > (scrollY + viewportHeight)) {
-                targetY = mouseY - tooltipHeight - offsetY;
-            }
+        if ((targetY + tooltipHeight) > (scrollY + viewportHeight)) {
+            targetY = mouseY - tooltipHeight - offsetY;
+        }
 
-            targetX = Math.max(scrollX + 10, targetX);
-            targetY = Math.max(scrollY + 10, targetY);
-            
-            tooltip
-                .style("left", targetX + "px")
-                .style("top", targetY + "px");
-        })
-        .on("mouseleave", function () {
-            d3.select(this).style("stroke", "none");
-            d3.select("#tooltip").style("none");
-            d3.select("#tooltip").style("display", "none");
-            verbergTooltip(this);
-        })
-        .on("focus", function (event, d) {
-            toonTooltip(this, d);
-            
-            const rect = this.getBoundingClientRect();
-            d3.select("#tooltip")
-                .style("left", (rect.left + window.scrollX + rect.width + 10) + "px")
-                .style("top", (rect.top + window.scrollY) + "px");
-        })
-        .on("blur", function () {
-            verbergTooltip(this);
-        });
+        targetX = Math.max(scrollX + 10, targetX);
+        targetY = Math.max(scrollY + 10, targetY);
+        
+        tooltip
+            .style("left", targetX + "px")
+            .style("top", targetY + "px");
+    })
+    .on("mouseleave", function () {
+        verbergTooltip(this);
+    })
+    .on("focus", function (event, d) {
+        toonTooltip(this, d);
+        
+        const rect = this.getBoundingClientRect();
+        d3.select("#tooltip")
+            .style("left", (rect.left + window.scrollX + rect.width + 10) + "px")
+            .style("top", (rect.top + window.scrollY) + "px");
+    })
+    .on("blur", function () {
+        verbergTooltip(this);
+    });
 }
 
 if (typeof window !== "undefined") {

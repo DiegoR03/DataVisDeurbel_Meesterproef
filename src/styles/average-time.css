@@ -459,14 +459,13 @@
     #stopwatch-container {
         flex-direction: column;
         width: 100%;
-        transform: none;
+        transform: none !important; 
         gap: 2rem;
 
         .stopwatch-wrapper, .calendar-section {
             width: 100%;
             padding: 2rem 1.5rem;
         }
-
         .calendar-section {
             .calendar-layout-container {
                 flex-direction: column;
