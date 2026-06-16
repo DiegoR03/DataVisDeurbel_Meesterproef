@@ -1,8 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-// Met behulp van https://d3js.org/getting-started
 
 const baseWidth = 1000;
-const baseHeight = 600;
+const baseHeight = 550;
 
 const margin = { top: 5, right: 0, bottom: 80, left: 60 };
 const width = baseWidth - margin.left - margin.right;
@@ -12,10 +11,31 @@ const radius = 18;
 
 let currentSelectedKey = "total";
 
-function drawD3Graph(graphData, eventKeys) {
+function getHourTheme(hourString) {
+    const hourInt = parseInt(hourString.split(':')[0], 10);
 
-    // Transition gedaan met behulp van Gemini, ik wist niet waar ik moest beginnen....
-    // Antwoord: Om de data écht te zien bewegen met transities zonder de functie te splitsen en zonder dat oude grafieken blijven staan, gaan we gebruikmaken van een slimme D3-techniek: we checken bij het aanroepen van de functie of de SVG al bestaat. Bestaat de SVG nog niet (eerste keer laden)? Dan maken we alles aan. Bestaat de SVG al (er is op de legenda geklikt)? Dan pakken we de bestaande elementen en animeren we ze met .transition() naar hun nieuwe plek.
+    if (hourInt >= 6 && hourInt < 9) {
+        return "sunrise";
+    } else if (hourInt >= 9 && hourInt < 17) {
+        return "day";
+    } else if (hourInt >= 17 && hourInt < 21) {
+        return "sunset";
+    } else {
+        return "night";
+    }
+}
+
+function getSunYPosition(hourString, chartHeight) {
+    const hourInt = parseInt(hourString.split(':')[0], 10);
+    const radians = (hourInt - 6) * (Math.PI / 12);
+    const normalizedY = (Math.sin(radians) + 1) / 2;
+
+    const minHeight = 60;
+    const maxHeight = chartHeight - 60;
+    return maxHeight - normalizedY * (maxHeight - minHeight);
+}
+
+function drawD3Graph(graphData, eventKeys) {
     let svgSelection = d3.select("#chart").select("svg");
     let isFirstLoad = svgSelection.empty();
     let svg;
@@ -25,13 +45,16 @@ function drawD3Graph(graphData, eventKeys) {
             .append("svg")
             .attr("viewBox", `0 0 ${baseWidth} ${baseHeight}`)
             .style("width", "100%")
-            .style("height", "auto");
+            .style("height", "auto")
+            .attr("data-theme", "day");
 
         svg = svgSelection.append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);;
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
         svg.append("g").attr("class", "layer-background");
         svg.append("g").attr("class", "layer-data-paths");
+        svg.append("g").attr("class", "layer-clipped-foreground");
+        svg.append("g").attr("class", "layer-sun-moon-path");
         svg.append("g").attr("class", "layer-interface");
         svg.append("g").attr("class", "y-axis");
     } else {
@@ -40,6 +63,8 @@ function drawD3Graph(graphData, eventKeys) {
 
     const backgroundLayer = svg.select(".layer-background");
     const dataPathLayer = svg.select(".layer-data-paths");
+    const clippedForegroundLayer = svg.select(".layer-clipped-foreground");
+    const sunMoonPathLayer = svg.select(".layer-sun-moon-path");
     const interfaceLayer = svg.select(".layer-interface");
     const yAxisGroup = svg.select(".y-axis");
 
@@ -50,7 +75,6 @@ function drawD3Graph(graphData, eventKeys) {
         .range([0, width])
         .padding(0);
 
-    // De || 0 || 0 is gedaan met Co-pilot sinds ik daar niet achter kwam. Hij had het met autocorrect afgemaakt voor mij
     const dataMax = d3.max(visibleHours, data => Number(data[currentSelectedKey]) || 0) || 0;
 
     const stepSize = dataMax > 500 ? 500 : 50;
@@ -58,7 +82,7 @@ function drawD3Graph(graphData, eventKeys) {
     const yMaxCalculated = Math.max(stepSize, Math.ceil(rawMaxWithBuffer / stepSize) * stepSize);
 
     const y = d3.scaleLinear()
-        .domain([0, yMaxCalculated + stepSize]) 
+        .domain([0, yMaxCalculated + stepSize])
         .range([height, 0]);
 
     const yTicks = [];
@@ -69,23 +93,72 @@ function drawD3Graph(graphData, eventKeys) {
     if (isFirstLoad) {
         const defs = svg.append("defs");
 
-        // Met behulp van Gemini een roze filter toegevoegd op de vissen
-        const filter = defs.append("filter")
-        .attr("id", "pink-tint-filter");
+        const sunSetGradient = defs.append("linearGradient")
+            .attr("id", "sun-set-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
 
-       filter.append("feColorMatrix")
-        .attr("type", "matrix")
-        .attr("values", `
-            0.2126 0.7152 0.0722 0 0
-            0.2126 0.7152 0.0722 0 0
-            0.2126 0.7152 0.0722 0 0
-            0      0      0      1 0
-        `)
-        .attr("result", "gray");
+        sunSetGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "var(--color-gold)");
 
-        const transfer = filter.append("feComponentTransfer")
-            .attr("in", "gray");
+        sunSetGradient.append("stop")
+            .attr("offset", "50%")
+            .attr("stop-color", "var(--color-blue-green)");
+
+        sunSetGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "var(--color-blue-green)");
+
+        const sunGradient = defs.append("linearGradient")
+            .attr("id", "sun-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+
+        sunGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "var(--color-light-gold)");
+
+        sunGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "var(--color-blue-green)");
         
+        const nightGradient = defs.append("linearGradient")
+            .attr("id", "night-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+
+        nightGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "var(--color-dark-green)");
+
+        nightGradient.append("stop")
+            .attr("offset", "60%")
+            .attr("stop-color", "var(--color-blue-green)");
+
+        nightGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "var(--color-dark-green)");
+
+
+        const filter = defs.append("filter").attr("id", "pink-tint-filter");
+        filter.append("feColorMatrix")
+            .attr("type", "matrix")
+            .attr("values", `
+                0.2126 0.7152 0.0722 0 0
+                0.2126 0.7152 0.0722 0 0
+                0.2126 0.7152 0.0722 0 0
+                0       0      0      1 0
+            `)
+            .attr("result", "gray");
+
+        const transfer = filter.append("feComponentTransfer").attr("in", "gray");
         transfer.append("feFuncR").attr("type", "table").attr("tableValues", "0.98 1.0");
         transfer.append("feFuncG").attr("type", "table").attr("tableValues", "0.40 1.0");
         transfer.append("feFuncB").attr("type", "table").attr("tableValues", "0.65 1.0");
@@ -96,8 +169,8 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("type", "matrix")
             .attr("values", "0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0")
             .attr("result", "gray");
+
         const transferBlueGreen = filterBlueGreen.append("feComponentTransfer").attr("in", "gray");
-        
         transferBlueGreen.append("feFuncR").attr("type", "table").attr("tableValues", "0.00 1.0");
         transferBlueGreen.append("feFuncG").attr("type", "table").attr("tableValues", "0.55 1.0");
         transferBlueGreen.append("feFuncB").attr("type", "table").attr("tableValues", "0.55 1.0");
@@ -112,37 +185,6 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("y", 0)
             .attr("rx", 20);
 
-        backgroundLayer.attr("clip-path", "url(#rect-clip)");
-
-        backgroundLayer.append("rect")
-            .attr("width", width)
-            .attr("height", height + 20)
-            .attr("fill", "var(--color-light-gold)")
-            .attr("x", 0)
-            .attr("rx", 20);
-
-        backgroundLayer.append("rect")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", x("06:00") || 0)
-            .attr("height", height + 20)
-            .attr("fill", "var(--color-dark-green)")
-            .style("opacity", 0.3)
-            .style("pointer-events", "none");
-
-        backgroundLayer.append("rect")
-            .attr("x", x("22:00") || width)
-            .attr("y", 0)
-            .attr("width", width - (x("22:00") || width))
-            .attr("height", height + 20)
-            .attr("fill", "var(--color-dark-green)")
-            .style("opacity", 0.3)
-            .style("pointer-events", "none");
-
-        initBubbleAnimation(backgroundLayer, width, height, false);
-
-        // Border radius added for a path with help from Gemini
-        // Antwoord: https://gemini.google.com/app/fad94f25a6a64dde
         defs.append("clipPath")
             .attr("id", "round-bottom-clip")
             .append("path")
@@ -155,6 +197,51 @@ function drawD3Graph(graphData, eventKeys) {
                 A ${radius},${radius} 0 0 1 0,${height + 20 - radius} 
                 Z
             `);
+            
+
+        backgroundLayer.attr("clip-path", "url(#rect-clip)");
+        clippedForegroundLayer.attr("clip-path", "url(#rect-clip)");
+
+        const backgroundBlurFilter = defs.append("filter").attr("id", "background-blur");
+        backgroundBlurFilter.append("feGaussianBlur")
+            .attr("stdDeviation", "8");
+
+        backgroundLayer.append("image")
+            .attr("href", "./img/Stone_Wall_Background-2.jpg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height + 20)
+            .attr("preserveAspectRatio", "xMidYMid slice")
+            .style("pointer-events", "none")
+            .style("filter", "url(#background-blur)")
+            .attr("opacity", 0.3);
+
+        backgroundLayer.append("rect")
+            .attr("class", "main-graph-bg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height + 20)
+            .style("pointer-events", "none");
+
+        backgroundLayer.append("rect")
+            .attr("class", "main-graph-sunrise-bg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height + 20)
+            .style("pointer-events", "none");
+
+        backgroundLayer.append("rect")
+            .attr("class", "main-graph-night-bg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height + 20)
+            .style("pointer-events", "none");
+
+        initBubbleAnimation(backgroundLayer, width, height);
 
         interfaceLayer.append("g")
             .attr("transform", `translate(0, ${height + 50})`)
@@ -163,21 +250,21 @@ function drawD3Graph(graphData, eventKeys) {
             .join("text")
             .attr("x", data => x(data.hour) + x.bandwidth() / 2)
             .attr("text-anchor", "middle")
-            .attr("class", "axis-text")
+            .attr("class", "axis-text-hours")
             .text((data, i) => i % 2 !== 0 ? "" : data.hour);
 
-        const yAxisGroup = interfaceLayer.append("g")
+        const yLabelGroup = interfaceLayer.append("g")
             .attr("transform", `translate(${margin.left - 70}, ${height - 80}) rotate(-90)`);
 
-        yAxisGroup.append("text")
+        yLabelGroup.append("text")
             .attr("class", "axis-text")
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "central")
             .text("Deurbellers");
 
-        yAxisGroup.append("path")
-            .attr("d", "M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755083,0.353555947 L1.207,6.413 L13.8279,6.4139 C14.0733599,6.4139 14.2775084,6.59077516 14.3198443,6.82402437 L14.3279,6.9139 C14.3279,7.19004237 14.1040424,7.4139 13.8279,7.4139 L1.206,7.413 L7.26755083,13.4742441 C7.44111844,13.6478091 7.46040554,13.9172334 7.3254109,14.1121025 L7.26755595,14.1813508 C7.07229521,14.3766144 6.75571272,14.3766167 6.56044917,14.1813559 L-0.353550834,7.26745595 L-0.364,7.254 L-0.382406269,7.23604364 L-0.397,7.215 L-0.411406785,7.19820848 L-0.42,7.181 L-0.431735343,7.16625957 L-0.443,7.141 L-0.454798924,7.12197126 L-0.459,7.107 L-0.468718737,7.0883662 L-0.475,7.063 L-0.483727237,7.04074132 L-0.487,7.018 L-0.491944331,7.00377563 L-0.493,6.985 L-0.498191709,6.95651572 L-0.498,6.933 L-0.5,6.9139 L-0.498,6.893 L-0.498192325,6.87129149 L-0.493,6.842 L-0.491944331,6.82402437 L-0.487,6.809 L-0.483729072,6.78706568 L-0.474,6.763 L-0.468718737,6.7394338 L-0.46,6.723 L-0.454801934,6.70583532 L-0.441,6.682 L-0.431735343,6.66154043 L-0.421,6.647 L-0.411410897,6.62959747 L-0.397,6.612 L-0.382406269,6.59175636 L-0.364,6.573 L-0.353555947,6.56034917 L6.56044917,-0.353555947 Z")
-            .attr("transform", "translate(45, -7) rotate(180, 7, 7)")
+        yLabelGroup.append("path")
+            .attr("d", "M7.06034405,0.146449166 C7.25560479,-0.0488143917 7.57218728,-0.0488166812 7.76745083,0.146444053 L14.6814559,7.06034917 L14.692,7.073 L14.7103063,7.09175636 L14.725,7.112 L14.7393109,7.12959747 L14.749,7.147 L14.7596353,7.16154043 L14.769,7.182 L14.7827019,7.20583532 L14.788,7.223 L14.7966187,7.2394338 L14.802,7.263 L14.8116291,7.28706568 L14.815,7.309 L14.8198443,7.32402437 L14.82,7.34 L14.8260923,7.37129149 L14.826,7.402 L14.8279,7.4139 L14.826,7.424 L14.8260917,7.45651572 L14.82,7.487 L14.8198443,7.50377563 L14.815,7.518 L14.8116272,7.54074132 L14.803,7.563 L14.7966187,7.5883662 L14.787,7.607 L14.7826989,7.62197126 L14.771,7.641 L14.7596353,7.66625957 L14.748,7.681 L14.7393068,7.69820848 L14.725,7.715 L14.7103063,7.73604364 L14.692,7.754 L14.6814508,7.76745595 L7.76745083,14.6813559 C7.57218728,14.8766167 7.25560479,14.8766144 7.06034405,14.6813508 C6.86508332,14.4860873 6.86508561,14.1695048 7.06034917,13.9742441 L13.121,7.913 L0.5,7.9139 C0.254540111,7.9139 0.0503916296,7.73702484 0.00805566941,7.50377563 L-5.68434189e-14,7.4139 C-5.68434189e-14,7.13775763 0.223857625,6.9139 0.5,6.9139 L13.12,6.913 L7.06034917,0.853555947 C6.88678156,0.679990851 6.86749446,0.410566589 7.0024891,0.215697472 L7.06034405,0.146449166 Z")
+            .attr("transform", "translate(55, -7.4)")
             .attr("fill", "var(--color-dark-green)");
 
         const xAxisGroup = interfaceLayer.append("g")
@@ -190,35 +277,77 @@ function drawD3Graph(graphData, eventKeys) {
             .text("Tijd (Uren)");
 
         xAxisGroup.append("path")
-            .attr("d", "M6.56044917,-0.353555947 C6.75571272,-0.548816681 7.07229521,-0.548814392 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755595,-0.353550834 C7.46281668,-0.158287276 7.46281439,0.158295214 7.26755083,0.353555947 L1.207,6.413 L13.8279,6.4139 C14.0733599,6.4139 14.2775084,6.59077516 14.3198443,6.82402437 L14.3279,6.9139 C14.3279,7.19004237 14.1040424,7.4139 13.8279,7.4139 L1.206,7.413 L7.26755083,13.4742441 C7.44111844,13.6478091 7.46040554,13.9172334 7.3254109,14.1121025 L7.26755595,14.1813508 C7.07229521,14.3766144 6.75571272,14.3766167 6.56044917,14.1813559 L-0.353550834,7.26745595 L-0.364,7.254 L-0.382406269,7.23604364 L-0.397,7.215 L-0.411406785,7.19820848 L-0.42,7.181 L-0.431735343,7.16625957 L-0.443,7.141 L-0.454798924,7.12197126 L-0.459,7.107 L-0.468718737,7.0883662 L-0.475,7.063 L-0.483727237,7.04074132 L-0.487,7.018 L-0.491944331,7.00377563 L-0.493,6.985 L-0.498191709,6.95651572 L-0.498,6.933 L-0.5,6.9139 L-0.498,6.893 L-0.498192325,6.87129149 L-0.493,6.842 L-0.491944331,6.82402437 L-0.487,6.809 L-0.483729072,6.78706568 L-0.474,6.763 L-0.468718737,6.7394338 L-0.46,6.723 L-0.454801934,6.70583532 L-0.441,6.682 L-0.431735343,6.66154043 L-0.421,6.647 L-0.411410897,6.62959747 L-0.397,6.612 L-0.382406269,6.59175636 L-0.364,6.573 L-0.353555947,6.56034917 L6.56044917,-0.353555947 Z")
-            .attr("transform", "translate(40, -7) rotate(180, 7, 7)")
+            .attr("d", "M7.06034405,0.146449166 C7.25560479,-0.0488143917 7.57218728,-0.0488166812 7.76745083,0.146444053 L14.6814559,7.06034917 L14.692,7.073 L14.7103063,7.09175636 L14.725,7.112 L14.7393109,7.12959747 L14.749,7.147 L14.7596353,7.16154043 L14.769,7.182 L14.7827019,7.20583532 L14.788,7.223 L14.7966187,7.2394338 L14.802,7.263 L14.8116291,7.28706568 L14.815,7.309 L14.8198443,7.32402437 L14.82,7.34 L14.8260923,7.37129149 L14.826,7.402 L14.8279,7.4139 L14.826,7.424 L14.8260917,7.45651572 L14.82,7.487 L14.8198443,7.50377563 L14.815,7.518 L14.8116272,7.54074132 L14.803,7.563 L14.7966187,7.5883662 L14.787,7.607 L14.7826989,7.62197126 L14.771,7.641 L14.7596353,7.66625957 L14.748,7.681 L14.7393068,7.69820848 L14.725,7.715 L14.7103063,7.73604364 L14.692,7.754 L14.6814508,7.76745595 L7.76745083,14.6813559 C7.57218728,14.8766167 7.25560479,14.8766144 7.06034405,14.6813508 C6.86508332,14.4860873 6.86508561,14.1695048 7.06034917,13.9742441 L13.121,7.913 L0.5,7.9139 C0.254540111,7.9139 0.0503916296,7.73702484 0.00805566941,7.50377563 L-5.68434189e-14,7.4139 C-5.68434189e-14,7.13775763 0.223857625,6.9139 0.5,6.9139 L13.12,6.913 L7.06034917,0.853555947 C6.88678156,0.679990851 6.86749446,0.410566589 7.0024891,0.215697472 L7.06034405,0.146449166 Z")
+            .attr("transform", "translate(45, -7.4)")
             .attr("fill", "var(--color-dark-green)");
     }
+
+    const sunLineData = visibleHours.map(d => ({
+        x: x(d.hour) + x.bandwidth() / 2,
+        y: getSunYPosition(d.hour, height)
+    }));
+
+    const sunLineGenerator = d3.line()
+        .x(d => d.x)
+        .y(d => d.y)
+        .curve(d3.curveMonotoneX);
+
+    let sunTrajectoryPath = sunMoonPathLayer.select(".sun-trajectory");
+    if (sunTrajectoryPath.empty()) {
+        sunTrajectoryPath = sunMoonPathLayer.append("path")
+            .attr("class", "sun-trajectory")
+            .attr("fill", "none")
+            .attr("stroke", "var(--color-pink")
+            .attr("stroke-dasharray", "6,6")
+            .attr("stroke-width", 2);
+    }
+    sunTrajectoryPath.datum(sunLineData).attr("d", sunLineGenerator);
 
     const legendContainer = d3.select("#legend-items-container");
     legendContainer.selectAll("*").remove();
 
     const legendItems = [
-        { key: "total", label: "Totale uploads" },
-        { key: "uploadedFish", label: "Geüploade Vissen" },
+        { key: "total", label: "Totaal" },
         ...eventKeys.map(key => ({ key: key, label: key }))
     ];
 
     legendItems.forEach(item => {
         const isActive = currentSelectedKey === item.key;
 
-        const row = legendContainer.append("div")
-            .style("background", isActive ? "var(--color-purple)" : "var(--color-white)")
-            .style("transition", "background 1s")
+        const buttonContainer = legendContainer.append("div")
+            .attr("class", "legend-button-wrapper")
+            .classed("is-active", isActive);
+
+        const button = buttonContainer.append("button")
+            .attr("class", "legend-button")
             .on("click", () => {
                 currentSelectedKey = item.key;
                 drawD3Graph(graphData, eventKeys);
             });
 
-        row.append("span")
-            .text(item.label);
-    });
+        const circle = button.append("div")
+            .attr("class", "slider-circle");
 
+        const imageWrapper = circle.append("div")
+            .attr("class", "image-container");
+
+        imageWrapper.append("img")
+            .attr("src", "https://visdeurbel.nl/wp-content/themes/visdeurbel/assets/874c058f53f2f79839e4.svg")
+            .attr("alt", "Check")
+            .attr("class", "circle-image");
+
+        const contentWrapper = button.append("span")
+            .attr("class", "button-content-wrapper");
+
+        contentWrapper.append("span")
+            .attr("class", "button-text")
+            .text(item.label);
+
+        contentWrapper.append("img")
+            .attr("src", getFishImageUrl(item.key))
+            .attr("alt", item.label)
+            .attr("class", "fish-type-image");
+    });
     const clipPoints = [
         { hour: visibleHours[0].hour, edgeX: 0, value: visibleHours[0][currentSelectedKey] || 0 },
         ...visibleHours.map(data => ({ hour: data.hour, edgeX: x(data.hour) + x.bandwidth() / 2, value: data[currentSelectedKey] || 0 })),
@@ -243,10 +372,7 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("fill", "var(--color-purple)")
             .attr("clip-path", "url(#round-bottom-clip)");
     }
-    areaPath.datum(clipPoints)
-        .transition()
-        .duration(750)
-        .attr("d", areaGenerator);
+    areaPath.datum(clipPoints).transition().duration(750).attr("d", areaGenerator);
 
     let linePath = dataPathLayer.select(".line-path");
     if (linePath.empty()) {
@@ -256,15 +382,15 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("stroke", "var(--color-purple)")
             .attr("stroke-width", 3);
     }
-    linePath.datum(clipPoints)
-        .transition()
-        .duration(750)
-        .attr("d", lineGenerator);
+    linePath.datum(clipPoints).transition().duration(750).attr("d", lineGenerator);
 
+    interfaceLayer.select(".fish-layer").remove();
     interfaceLayer.select(".bubbles-layer").remove();
+    interfaceLayer.select(".sun-moon-interactive-layer").remove();
     interfaceLayer.select(".interaction-layer").remove();
 
     const bubbleGroup = interfaceLayer.append("g").attr("class", "bubbles-layer");
+    const sunMoonInteractiveGroup = interfaceLayer.append("g").attr("class", "sun-moon-interactive-layer");
     const interactionGroup = interfaceLayer.append("g").attr("class", "interaction-layer");
 
     visibleHours.forEach((data, i) => {
@@ -298,6 +424,23 @@ function drawD3Graph(graphData, eventKeys) {
             const i = visibleHours.indexOf(data);
             d3.select(`.circle-${i}`).style("opacity", 1);
 
+            const theme = getHourTheme(data.hour);
+            const iconUrl = theme === "night" ? "./img/moon.png" : "./img/sun.png";
+
+            svgSelection.attr("data-theme", theme);
+
+            const xPos = x(data.hour) + x.bandwidth() / 2;
+            const yPos = getSunYPosition(data.hour, height);
+
+            sunMoonInteractiveGroup.append("image")
+                .attr("class", "sun-moon-hover-icon")
+                .attr("href", iconUrl)
+                .attr("width", 36)
+                .attr("height", 36)
+                .attr("x", xPos - 18)
+                .attr("y", yPos - 18)
+                .style("pointer-events", "none");
+
             let tooltipContent = `<h3>${data.hour}</h3>`;
             if (currentSelectedKey === "total") {
                 tooltipContent += `<p>Totaal: <strong>${data.total}</strong> events</p><div id='line'></div>`;
@@ -325,7 +468,13 @@ function drawD3Graph(graphData, eventKeys) {
             const i = visibleHours.indexOf(data);
             d3.select(`.circle-${i}`).style("opacity", 0);
             d3.select("#tooltip").style("display", "none");
+
+            sunMoonInteractiveGroup.selectAll(".sun-moon-hover-icon").remove();
         });
+
+    svgSelection.on("mouseleave", () => {
+        svgSelection.attr("data-theme", "day");
+    });
 
     const yAxis = d3.axisLeft(y)
         .tickValues(yTicks)
@@ -345,8 +494,8 @@ function drawD3Graph(graphData, eventKeys) {
             yAxisGroup.selectAll(".tick line")
                 .attr("stroke", "rgba(0, 0, 0, 0.1)")
                 .attr("stroke-dasharray", "4,4");
-            
-            yAxisGroup.select(".domain").remove(); 
+
+            yAxisGroup.select(".domain").remove();
         });
 
     yAxisGroup.selectAll("text")
@@ -357,18 +506,17 @@ function drawD3Graph(graphData, eventKeys) {
 
     yAxisGroup.selectAll(".tick line")
         .attr("stroke", "rgba(0, 0, 0, 0.1)")
-        .attr("stroke-dasharray", "4,4");
+        .attr("stroke-dasharray", "1,4");
 
     yAxisGroup.select(".domain").remove();
 
-    initFishAnimation(backgroundLayer, width, height, currentSelectedKey);
+    initFishAnimation(clippedForegroundLayer, width, height, currentSelectedKey);
 }
 
 function getFishImageUrl(fishKey) {
     if (fishKey === "total" || fishKey === "uploadedFish") {
         return "./img/fih.png";
     }
-
     const safeName = fishKey.toLowerCase().trim();
     return `./img/${safeName}.png`;
 }
@@ -381,7 +529,7 @@ function initBubbleAnimation(svg, width, height) {
             .style("filter", "url(#blue-green-filter)")
             .attr("opacity", 0.6);
         const animate = (b) => {
-            const r = 4 + Math.random() * 12; 
+            const r = 4 + Math.random() * 12;
             const xPos = Math.random() * width;
             b.attr("width", r)
                 .attr("height", r)
@@ -396,6 +544,7 @@ function initBubbleAnimation(svg, width, height) {
         animate(bubble);
     }
 }
+
 function initFishAnimation(svg, width, height, currentKey) {
     svg.select(".fish-layer").remove();
 
@@ -407,7 +556,7 @@ function initFishAnimation(svg, width, height, currentKey) {
             .attr("href", imgUrl)
             .attr("width", 60)
             .attr("height", 40)
-            .attr("opacity", 0.8)
+            .attr("opacity", 0.9)
             .style("filter", "url(#pink-tint-filter)");
 
         const animate = (f) => {
@@ -436,7 +585,6 @@ function createGraph(data) {
     data.forEach(item => {
         if (item.event_name === "uploadedFish") {
             const queryString = item.referrer_query || item.url_query || "";
-
             const match = queryString.match(/[?&]fish=([^&]+)/i);
 
             if (match && match[1]) {

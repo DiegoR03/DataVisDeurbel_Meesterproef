@@ -13,20 +13,19 @@ const fishScaleMap = {
     "Meerval": 2.2
 };
 
-// Het overzicht van zwemsnelheden (basis tijd in seconden om het scherm over te steken)
-// Let op: Lager getal = snellere vis!
+// Overview of swimming speeds (base time in seconds to cross the screen)
 const fishSpeedMap = {
-    "Alver": 10,       // Heel snel, schiet voorbij
-    "Blankvoorn": 12,  // Vlotte zwemmer
-    "Ruisvoorn": 12,   // Vlotte zwemmer
-    "Baars": 14,       // Actieve jager
-    "Kolblei": 16,     // Gemiddeld
-    "Winde": 18,       // Rustige zwemmer
-    "Brasem": 20,      // Log en rustig
-    "Snoekbaars": 22,  // Ligt vaak stil, zwemt traag voorbij
-    "Snoek": 25,       // Grote vis, indrukwekkend tempo
-    "Paling": 28,      // Kronkelt heel rustig over de bodem
-    "Meerval": 35      // Gigantisch, dobbert als een onderzeeër voorbij
+    "Alver": 10,      
+    "Blankvoorn": 12,  
+    "Ruisvoorn": 12,  
+    "Baars": 14,      
+    "Kolblei": 16,     
+    "Winde": 18,       
+    "Brasem": 20,      
+    "Snoekbaars": 22,  
+    "Snoek": 25,       
+    "Paling": 28,      
+    "Meerval": 35      
 };
 
 // Function to add fish to the main aquarium
@@ -34,14 +33,6 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     // Filter the data for the specific fish
     const fishData = data.filter(item => item.fish_name === fishName);
     const totalSpotted = fishData.length;
-
-    // Update the text in the legend above the aquarium
-    const legendText = document.getElementById(legendId);
-    if (legendText) {
-        legendText.innerHTML = `
-        <img src="${pngUrl}" alt="${fishName}" class="legend-fish-icon" />
-        ${fishName} <span class="fish-count">${totalSpotted} x gespot</span>`;
-    }
 
     // Calculate how many visual fish to render
     const MAX_VISUAL_FISH = 7;
@@ -56,7 +47,7 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Check eerst of onze custom tooltip al bestaat
+    // First check if our custom tooltip already exists
     let tooltip = document.getElementById("custom-fish-tooltip");
     if (!tooltip) {
         tooltip = document.createElement("div");
@@ -92,14 +83,14 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         });
 
        
-        // Zoek de schaalfactor op (standaard 1.0 als we hem niet kennen)
+        // Look up the scale factor (default 1.0 if unknown)
         const scale = fishScaleMap[fishName] || 1.0;
 
         
         
         const baseSize = 70 + (Math.random() * 20 - 10);
 
-        // Vermenigvuldig de basis met de schaal
+        // Multiply the base size by the scale
         const finalSize = baseSize * scale;
         fishImg.style.width = `${finalSize}px`;
        
@@ -109,11 +100,11 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
         fishImg.style.top = `${randomTop}%`;
 
         // Randomize swimming speed
-        // Zoek de basis-snelheid op (standaard 20 seconden als we hem niet kennen)
+        // Look up the base speed (default 20 seconds if unknown)
         const baseSpeed = fishSpeedMap[fishName] || 20;
         
-        // Voeg een héél klein beetje willekeur toe (+ tussen de 0 en 5 seconden erbij)
-        // Zo zwemmen twee Alvers niet exact even hard, wat er natuurlijker uitziet.
+        // Add a tiny bit of randomness (+ between 0 and 5 seconds extra)
+        // This ensures two Alvers don't swim at the exact same speed, looking more natural.
         const finalDuration = baseSpeed + (Math.random() * 5);
         
         fishImg.style.animationDuration = `${finalDuration}s`;
@@ -163,7 +154,7 @@ export function initAquarium(data) {
 
     const aquarium = document.getElementById("main-aquarium");
     const filterInputs = document.querySelectorAll('input[name="fish-filter"]');
-
+    
     const fishSpecies = [
         { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "/img/ruisvoorn.png" },
         { name: "Baars", legendId: "legend-baars", imgPath: "/img/baars.png" },
@@ -178,58 +169,84 @@ export function initAquarium(data) {
         { name: "Winde", legendId: "legend-winde", imgPath: "/img/winde.png" }
     ];
 
-    // Calculate the top 3
-    const fishWithCounts = fishSpecies.map(fish => {
-        const count = data.filter(d => d.fish_name === fish.name).length;
-        return { ...fish, count: count };
+    // Fill the legend labels directly with the correct numbers and icons
+    fishSpecies.forEach(fish => {
+        const totalSpotted = data.filter(d => d.fish_name === fish.name).length;
+        const legendText = document.getElementById(fish.legendId);
+        if(legendText) {
+            legendText.innerHTML = `
+            <span class="legend-left">
+                <img src="${fish.imgPath}" alt="${fish.name}" class="legend-fish-icon" />
+                ${fish.name}
+            </span>
+            <span class="fish-count">${totalSpotted}</span>`;
+        }
     });
 
-    const sortedFish = [...fishWithCounts].sort((a, b) => b.count - a.count);
-    const top3Fish = sortedFish.slice(0, 3); // Grab only the top 3
+    const fishWithCounts = fishSpecies.map(fish => ({
+        ...fish, 
+        count: data.filter(d => d.fish_name === fish.name).length 
+    }));
+    const top3Fish = [...fishWithCounts].sort((a, b) => b.count - a.count).slice(0, 3);
 
-    // Function to draw the aquarium based on the choice
+    // Function to render the correct fish
     function renderAquarium(mode) {
         if (!aquarium) return;
-
-        // Add decorations
+        
         aquarium.innerHTML = `
         <img src="/img/Stone_Wall_Background-2.jpg" alt="Canal wall" class="canal-wall">
+        <div class="depth-gauge">
+            <span class="depth-mark">0.0m -</span><span class="depth-mark">0.5m -</span>
+            <span class="depth-mark">1.0m -</span><span class="depth-mark">1.5m -</span>
+            <span class="depth-mark">2.0m -</span><span class="depth-mark">2.2m -</span>
+        </div>
         <img src="/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
         <img src="/img/zadel.png" alt="Fietszadel" class="zadel">
-        `;
+        `; 
 
-        // Hide all legend items first
-        fishSpecies.forEach(fish => {
-            const legendEl = document.getElementById(fish.legendId);
-            if (legendEl) legendEl.style.display = "none";
-        });
+        let activeList = [];
+        if (mode === "all") {
+            activeList = fishSpecies;
+        } else if (mode === "top3") {
+            activeList = top3Fish;
+        } else {
+            // If the 'mode' is the name of a specific fish!
+            const singleFish = fishSpecies.find(f => f.name === mode);
+            if(singleFish) activeList = [singleFish];
+        }
 
-        // Decide which list to draw
-        const activeList = mode === "top3" ? top3Fish : fishSpecies;
-
-        // Draw the selected list
         activeList.forEach(fish => {
-            const legendEl = document.getElementById(fish.legendId);
-            if (legendEl) legendEl.style.display = "flex"; // Show legend item
-
-            // Because addFishToAquarium is in the same file, we can just call it directly!
+            // No need to hide the label anymore, just draw the fish!
             addFishToAquarium(data, fish.name, "main-aquarium", fish.legendId, fish.imgPath);
         });
 
-        // Draw the bubbles again
         createBubbles("main-aquarium", 25);
     }
 
-    // Listen to the input changes
+    // Listen to EVERY radio button (All, Top 3, and the individual fish)
     filterInputs.forEach(input => {
         input.addEventListener('change', (e) => {
             renderAquarium(e.target.value);
         });
     });
 
-    // Draw the aquarium for the first time (All fish)
     renderAquarium("all");
+}
+
+function initMainAquarium() {
+  const rawData = window.SERVER_VIS_DATA || [];
+ 
+  const data = rawData.map((item) => ({
+    ...item,
+    created_at: item.created_at ? new Date(item.created_at) : null,
+  }));
+ 
+  initAquarium(data);
+}
+ 
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", initMainAquarium);
 }
