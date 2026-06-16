@@ -305,7 +305,7 @@
   position: absolute;
   bottom: 40px;
   right: 15%;
-  width: 250px;
+  width: 350px;
   z-index: 2;
   pointer-events: none;
   transform: rotate(-9deg);
@@ -317,7 +317,7 @@
   position: absolute;
   bottom: 25px;
   left: 10%;
-  height: 180px;
+  height: 210px;
   width: auto;
   z-index: 0;
   pointer-events: none;
@@ -326,20 +326,43 @@
 
 .plant-2 {
   left: 68%;
+  height: 250px;
 }
 
 .plant-3 {
-  left: 48%;
+  left: 50%;
   transform: scaleX(-1);
-  height: 140px;
+  height: 180px;
 }
 
-.zadel {
+.plant-4 {
+    left: 27%;
+    height: 320px;
+    filter: brightness(0.5) sepia(0.3);
+}
+
+.plant-5 {
+    left: 2%;
+    height: 120px;
+}
+
+.saddle {
   position: absolute;
   right: 10%;
   bottom: 75px;
   filter: brightness(0.6) sepia(0.3);
   height: 40px;
+}
+
+.wood {
+    position: absolute;
+    bottom: 25px;
+    left: 30%;
+    height: 110px;
+    width: auto;
+    z-index: 0;
+    pointer-events: none;
+    filter: brightness(0.6) sepia(0.3);
 }
 
 .canal-wall {

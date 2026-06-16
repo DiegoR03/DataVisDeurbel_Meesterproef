@@ -200,11 +200,14 @@ export function initAquarium(data) {
             <span class="depth-mark">1.0m -</span><span class="depth-mark">1.5m -</span>
             <span class="depth-mark">2.0m -</span><span class="depth-mark">2.2m -</span>
         </div>
-        <img src="/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
+        <img src="/img/fietsklein.png" alt="Sunken bicycle wreck" class="bicycle-wreck">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
-        <img src="/img/zadel.png" alt="Fietszadel" class="zadel">
+        <img src="/img/zadel.png" alt="Bike saddle" class="saddle">
+        <img src="/img/Plant-2.png" alt="Waterplant" class="water-plant plant-4">
+        <img src="/img/Plant-1.png" alt="Waterplant" class="water-plant plant-5">
+        <img src="/img/Hout.png" alt="Wood" class="wood">
         `; 
 
         let activeList = [];
