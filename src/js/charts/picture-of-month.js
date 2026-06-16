@@ -178,32 +178,29 @@ function fetchSnapshot(data) {
   const fishTag = document.querySelectorAll('.fish-facts-tag');
 
   const fishFacts = {
-    kolblei: {
-      fact: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam...",
+  kolblei: {
+      fact: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig.",
       activeTime: "18:00",
       size: "15 tot 25",
     },
     snoek: {
-      fact: "De snoek is een grote zoetwatervis...",
+      fact: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden.[2] Snoeken kunnen vijftien jaar oud worden.",
       activeTime: "14:00",
       size: "40 tot 100",
     },
     baars: {
-      fact: "De Baars is een vis uit de familie echte baarzen...",
+      fact: "De Baars, ook wel Europese baars of rivierbaars genoemd, is een vis uit de familie echte baarzen, die van nature in de Benelux voorkomt. Verwanten van deze soort zijn onder andere de snoekbaars en de pos.",
       activeTime: "08:00",
       size: "15 tot 35",
     },
     alver: {
-      fact: "De alver is een zoetwatervis...",
+      fact: "De alver is een zoetwatervis die behoort tot de eigenlijke karpers. Hij is ook bekend onder de namen: moertje, alvenaar, alfje, alft, nesteling en panharing en in Vlaanderen als schieter, spekje of ablette.",
       activeTime: "18:00",
       size: "15 tot 17",
     }
   };
 
   function showFishDetails(fishName) {
-    console.log("fishName:", fishName);
-    console.log("fishKey:", fishName?.toLowerCase());
-    console.log("fishData:", fishFacts?.[fishName?.toLowerCase()]);
     // optional chaining (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining)
 
     const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
@@ -222,10 +219,11 @@ function fetchSnapshot(data) {
     if (smallFishFacts) {
       smallFishFacts.innerHTML = `
         <li><h3>Vis-feitjes</h3></li>
-        <li><p>De ${fishName} is het meest actief rond ${fishData?.activeTime && "onbekend"}</p></li>
-        <li><p>${fishName} word gemiddeld ${fishData?.size && "onbekend"} cm</p></li>
+        <li><p>De ${fishName} is het meest actief rond ${fishData?.activeTime ?? "onbekend"}</p></li>
+        <li><p>${fishName} word gemiddeld ${fishData?.size ?? "onbekend"} cm</p></li>
         `;
     }
+
 
     if (fishPicturesEl) {
       fishPicturesEl.innerHTML = currentFishPics
