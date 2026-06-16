@@ -64,12 +64,10 @@
             transform: translateY(0);
             flex-direction: column;
             backdrop-filter: blur(10px);
-
         }
 
         &::backdrop {
             backdrop-filter: blur(5px);
-            /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/color-mix voor color-mix */
             background-color: color-mix(in srgb, var(--color-dark-green) 50%, transparent);
             transition: opacity 0.2s ease, display 0.2s ease allow-discrete;
         }
@@ -134,8 +132,6 @@
                 fill: var(--color-dark-green);
             }
         }
-
-
     }
 
     #tooltip {
@@ -184,7 +180,6 @@
         grid-template-columns: repeat(12, 1fr);
         align-items: stretch;
         margin-top: 40px;
-
 
         #html-legend {
             grid-column: span 2;
@@ -238,29 +233,24 @@
                 .main-graph-bg {
                     fill: url(#sun-gradient);
                     opacity: 1;
-                    mix-blend-mode: multiply; 
+                    mix-blend-mode: multiply;
                 }
 
-                /* https://www.w3schools.com/cssref/pr_mix-blend-mode.php */
                 .main-graph-sunrise-bg {
                     fill: url(#sun-set-gradient);
                     opacity: 0;
-                    mix-blend-mode: multiply; 
+                    mix-blend-mode: multiply;
                 }
 
                 .main-graph-night-bg {
                     fill: url(#night-gradient);
                     opacity: 0;
-                    mix-blend-mode: multiply; 
+                    mix-blend-mode: multiply;
                 }
 
                 &[data-theme="day"] {
-                    .main-graph-sunrise-bg {
-                        opacity: 0;
-                    }
-                    .main-graph-night-bg {
-                        opacity: 0;
-                    }
+                    .main-graph-sunrise-bg { opacity: 0; }
+                    .main-graph-night-bg { opacity: 0; }
                     text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-dark-green);
                     }
@@ -268,24 +258,16 @@
 
                 &[data-theme="sunrise"],
                 &[data-theme="sunset"] {
-                    .main-graph-sunrise-bg {
-                        opacity: 0.9;
-                    }
-                    .main-graph-night-bg {
-                        opacity: 0;
-                    }
+                    .main-graph-sunrise-bg { opacity: 0.9; }
+                    .main-graph-night-bg { opacity: 0; }
                     text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-dark-green);
                     }
                 }
 
                 &[data-theme="night"] {
-                    .main-graph-sunrise-bg {
-                        opacity: 0;
-                    }
-                    .main-graph-night-bg {
-                        opacity: 0.95;
-                    }
+                    .main-graph-sunrise-bg { opacity: 0; }
+                    .main-graph-night-bg { opacity: 0.95; }
                     text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-white);
                     }
@@ -293,7 +275,6 @@
                     g[transform*="rotate(-90)"] path {
                         fill: var(--color-dark-green) !important;
                     }
-
                     .axis-text-hours {
                         fill: var(--color-dark-green);
                     }
@@ -320,11 +301,10 @@
 
     #legend-items-container {
         --circle-size: 1.5rem;
-
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        padding: 8px 12px;
+        padding: 12px;
         flex-grow: 1;
         gap: 12px;
         transition: all 0.2s ease;
@@ -340,20 +320,15 @@
             text-align: left;
             display: flex;
             align-items: center;
-            padding: 0.5rem 1rem;
+            padding: 0.1rem 0.1rem;
             border: 1px solid var(--color-dark-green);
             cursor: pointer;
             width: 100%;
             background-color: var(--color-off-white);
             transition: background-color 0.2s ease, transform 0.1s ease;
 
-            &:hover {
-                background-color: var(--color-purple);
-            }
-
-            &:active {
-                transform: scale(0.97);
-            }
+            &:hover { background-color: var(--color-purple); }
+            &:active { transform: scale(0.97); }
 
             .slider-circle {
                 width: var(--circle-size);
@@ -399,8 +374,8 @@
                 order: 2;
             }
 
-            .button-text {
-                margin-left: 0.5rem;
+            .button-text { 
+                margin-left: 0.5rem; 
             }
 
             .fish-type-image {
@@ -429,13 +404,8 @@
                             transform: scale(1);
                         }
                     }
-
-                    .button-content-wrapper {
-                        order: 2;
-                    }
-
-                    .button-text {
-                        margin-left: 0;
+                    .button-content-wrapper { 
+                        order: 2; 
                     }
                 }
             }
@@ -449,45 +419,19 @@
         font-weight: 600;
     }
 
-
-    .fish-layer,
-    .individual-bubble,
-    .sun-trajectory,
-    .sun-moon-hover-icon {
+    .fish-layer, .individual-bubble, .sun-trajectory, .sun-moon-hover-icon {
         pointer-events: none;
     }
 
-    .axis-text,
-    text,
-    .axis-text-hours {
+    .axis-text, text, .axis-text-hours {
         font-family: var(--font-body);
         font-weight: var(--font-weight-body);
         fill: var(--color-dark-green);
         font-size: var(--mobile-font-size-small);
     }
 
-    .individual-fish,
-    .individual-bubble {
-        z-index: -1;
-    }
-
-    .interaction-rect {
-        pointer-events: all;
-    }
-
-    .sun-moon-hover-icon {
-        animation: rotateIcon 20s linear infinite;
-    }
-
-    @keyframes rotateIcon {
-        from {
-            transform: rotate(0deg);
-        }
-
-        to {
-            transform: rotate(360deg);
-        }
-    }
+    .individual-fish, .individual-bubble { z-index: -1; }
+    .interaction-rect { pointer-events: all; }
 
     @media screen and (max-width: 1150px) {
         #chart-container {
@@ -505,6 +449,7 @@
 
             #chart {
                 max-width: 100vw;
+                width: 100%;
                 flex: 2;
                 aspect-ratio: 1000 / 600;
             }
@@ -515,25 +460,31 @@
             flex-wrap: wrap;
             justify-content: space-evenly;
 
-            .legend-button-wrapper {
-                width: 25vw;
-            }
+            .legend-button-wrapper { width: 42vw; }
         }
     }
 
     @media screen and (max-width: 450px) {
-        overflow: hidden;
+        #chart-container {
+            display: block;
+        }
 
         #chart {
             width: 100%;
+            height: 480px;
             overflow-x: auto;
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
+            position: relative;
+            display: block;
 
             svg {
-                min-width: 800px;
-                width: 800px;
+                position: relative;
                 display: block;
+                width: 800px;
+                min-width: 800px;
+                height: 440px;
+                overflow: visible;
             }
         }
     }
