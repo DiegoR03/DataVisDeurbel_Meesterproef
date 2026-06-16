@@ -35,17 +35,6 @@ export function addFishToAquarium(data, fishName, containerId, legendId, pngUrl)
     const fishData = data.filter(item => item.fish_name === fishName);
     const totalSpotted = fishData.length;
 
-    // Update the text in the legend above the aquarium
-    const legendText = document.getElementById(legendId);
-    if (legendText) {
-        legendText.innerHTML = `
-        <span class="legend-left">
-            <img src="${pngUrl}" alt="${fishName}" class="legend-fish-icon" />
-            ${fishName}
-        </span>
-        <span class="fish-count">${totalSpotted} x gespot</span>`;
-    }
-
     // Calculate how many visual fish to render
     const MAX_VISUAL_FISH = 7;
     const DATA_MAXIMUM = 600;
@@ -166,7 +155,7 @@ export function initAquarium(data) {
 
     const aquarium = document.getElementById("main-aquarium");
     const filterInputs = document.querySelectorAll('input[name="fish-filter"]');
-
+    
     const fishSpecies = [
         { name: "Ruisvoorn", legendId: "legend-ruisvoorn", imgPath: "/img/ruisvoorn.png" },
         { name: "Baars", legendId: "legend-baars", imgPath: "/img/baars.png" },
@@ -181,68 +170,69 @@ export function initAquarium(data) {
         { name: "Winde", legendId: "legend-winde", imgPath: "/img/winde.png" }
     ];
 
-    // Calculate the top 3
-    const fishWithCounts = fishSpecies.map(fish => {
-        const count = data.filter(d => d.fish_name === fish.name).length;
-        return { ...fish, count: count };
+    // 1. Vul de legenda labels direct met de juiste getallen en icoontjes
+    fishSpecies.forEach(fish => {
+        const totalSpotted = data.filter(d => d.fish_name === fish.name).length;
+        const legendText = document.getElementById(fish.legendId);
+        if(legendText) {
+            legendText.innerHTML = `
+            <span class="legend-left">
+                <img src="${fish.imgPath}" alt="${fish.name}" class="legend-fish-icon" />
+                ${fish.name}
+            </span>
+            <span class="fish-count">${totalSpotted}</span>`; // x gespot was te lang!
+        }
     });
 
-    const sortedFish = [...fishWithCounts].sort((a, b) => b.count - a.count);
-    const top3Fish = sortedFish.slice(0, 3); // Grab only the top 3
+    const fishWithCounts = fishSpecies.map(fish => ({
+        ...fish, 
+        count: data.filter(d => d.fish_name === fish.name).length 
+    }));
+    const top3Fish = [...fishWithCounts].sort((a, b) => b.count - a.count).slice(0, 3);
 
-    // Function to draw the aquarium based on the choice
+    // 2. Functie om de juiste vissen te tekenen
     function renderAquarium(mode) {
         if (!aquarium) return;
-
-        // Add decorations
+        
         aquarium.innerHTML = `
         <img src="/img/Stone_Wall_Background-2.jpg" alt="Canal wall" class="canal-wall">
-
         <div class="depth-gauge">
-            <span class="depth-mark">0.0m -</span>
-            <span class="depth-mark">0.5m -</span>
-            <span class="depth-mark">1.0m -</span>
-            <span class="depth-mark">1.5m -</span>
-            <span class="depth-mark">2.0m -</span>
-            <span class="depth-mark">2.5m -</span>
+            <span class="depth-mark">0.0m -</span><span class="depth-mark">0.5m -</span>
+            <span class="depth-mark">1.0m -</span><span class="depth-mark">1.5m -</span>
+            <span class="depth-mark">2.0m -</span><span class="depth-mark">2.2m -</span>
         </div>
-
         <img src="/img/fietsklein.png" alt="Verzonken fietswrak" class="bicycle-wreck">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-2">
         <img src="/img/Planten.png" alt="Waterplant" class="water-plant plant-3">
         <img src="/img/zadel.png" alt="Fietszadel" class="zadel">
-        `;
+        `; 
 
-        // Hide all legend items first
-        fishSpecies.forEach(fish => {
-            const legendEl = document.getElementById(fish.legendId);
-            if (legendEl) legendEl.style.display = "none";
-        });
+        let activeList = [];
+        if (mode === "all") {
+            activeList = fishSpecies;
+        } else if (mode === "top3") {
+            activeList = top3Fish;
+        } else {
+            // Als de 'mode' de naam van een vis is!
+            const singleFish = fishSpecies.find(f => f.name === mode);
+            if(singleFish) activeList = [singleFish];
+        }
 
-        // Decide which list to draw
-        const activeList = mode === "top3" ? top3Fish : fishSpecies;
-
-        // Draw the selected list
         activeList.forEach(fish => {
-            const legendEl = document.getElementById(fish.legendId);
-            if (legendEl) legendEl.style.display = "flex"; // Show legend item
-
-            // Because addFishToAquarium is in the same file, we can just call it directly!
+            // We hoeven het label niet meer te verbergen, alleen de vis tekenen!
             addFishToAquarium(data, fish.name, "main-aquarium", fish.legendId, fish.imgPath);
         });
 
-        // Draw the bubbles again
         createBubbles("main-aquarium", 25);
     }
 
-    // Listen to the input changes
+    // 3. Luister naar ELKE radioknop (Alle, Top3 én de enkele vissen)
     filterInputs.forEach(input => {
         input.addEventListener('change', (e) => {
             renderAquarium(e.target.value);
         });
     });
 
-    // Draw the aquarium for the first time (All fish)
     renderAquarium("all");
 }

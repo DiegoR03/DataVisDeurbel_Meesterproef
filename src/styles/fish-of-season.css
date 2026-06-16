@@ -3,53 +3,109 @@
   background: var(--color-light-gold);
 }
 
-.aquarium-legend {
-  flex: 0 0 250px;
+/* NIEUW: De container voor de complete zijbalk */
+.aquarium-sidebar {
+  flex: 0 0 270px; /* Geeft de zijbalk een vaste, strakke breedte */
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-/* The individual fish tags */
-.aquarium-legend p {
-  background-color: white;
-  color: var(--color-dark-green, #1e3f20);
+.sidebar-header {
+  margin-bottom: 16px;
+}
+
+.sidebar-title {
+  color: var(--color-blue-green);
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+}
+
+.sidebar-subtitle {
+  color: var(--color-dark-green);
+  font-size: 14px;
   margin: 0;
-  padding: 6px 8px 6px 16px; /* Samengevoegd voor een strakke rand */
-  border-radius: 50px;
-  font-size: 15px;
-  font-weight: 600;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Zorgt dat de tekst links en de badge rechts staat */
-
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtiele, werkende schaduw */
-  border: 1px solid var(--color-purple);
-  transition: transform 0.2s ease;
+  opacity: 0.8;
 }
 
-/* NIEUW: Zorgt dat het plaatje en de naam links netjes naast elkaar staan */
+/* =================
+   Aquarium Filters (De Knoppen)
+   ================= */
+.aquarium-filters {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Houdt ze netjes onder elkaar in de zijbalk */
+  gap: 10px;
+  width: 100%;
+}
+
+.filter-divider {
+  border: 0;
+  height: 2px;
+  background: var(--color-purple);
+  opacity: 0.3;
+  margin: 10px 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* --- EXACT JOUW CODE VOOR DE KNOPPEN --- */
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: var(--button-padding);
+
+  background: var(--color-white);
+  color: var(--color-dark-green);
+
+  border: 1px solid var(--color-dark-green);
+  border-radius: 1.5em;
+
+  font-size: var(--font-size-button);
+  font-weight: 700;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.filter-btn:focus-visible {
+  background: var(--color-off-white);
+}
+
+.aquarium-filters input[type="radio"]:checked + .filter-btn {
+  background: var(--color-purple);
+  color: var(--color-dark-green);
+}
+
+/* Accessability: focus ring when tabbing */
+.aquarium-filters input[type="radio"]:focus-visible + .filter-btn {
+  outline: var(--button-focus-outline);
+  outline-offset: var(--button-focus-outline-offset);
+}
+/* --------------------------------------- */
+
+/* =================
+   Inhoud van de Vis-knoppen (Icoontjes en getallen)
+   ================= */
 .legend-left {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.aquarium-legend p:hover {
-  transform: translateY(-2px);
-  cursor: default;
-}
-
-/* The badge for the actual number */
-.aquarium-legend .fish-count {
-  background-color: var(--color-blue-green);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: bold;
-  margin-left: auto; /* De ultieme zekerheid dat de badge he-le-maal naar rechts wordt geduwd */
+  gap: 0.5rem;
 }
 
 .legend-fish-icon {
@@ -58,9 +114,22 @@
   object-fit: contain;
 }
 
+.fish-count {
+  background-color: var(--color-blue-green);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: auto; /* Duwt de badge netjes naar de rechterkant van de knop */
+}
+
+/* =================
+   Het Aquarium
+   ================= */
 .main-aquarium {
   width: 100%;
-  height: 600px;
+  min-height: 600px;
   background: linear-gradient(
     180deg,
     var(--color-blue-green) 0%,
@@ -73,28 +142,40 @@
     0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
-  flex: 1;
+  flex: 1; /* Zorgt dat het aquarium alle overgebleven ruimte rechts opeist */
 }
 
 .aquarium-layout-wrapper {
   display: flex;
   flex-direction: row;
   gap: 32px;
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
   margin-top: 24px;
 }
 
+/* Responsive layout voor mobiel/tablets */
 @media (max-width: 900px) {
   .aquarium-layout-wrapper {
     flex-direction: column;
   }
 
-  .aquarium-legend {
+  .aquarium-sidebar {
     flex: auto;
+    width: 100%;
+  }
+
+  .aquarium-filters {
     flex-direction: row;
     flex-wrap: wrap;
-    width: 100%;
+  }
+
+  .filter-btn {
+    flex: 1 1 calc(50% - 10px); /* Knoppen netjes verdelen op mobiel */
+  }
+
+  .filter-divider {
+    display: none; /* Geen streepje nodig op mobiel */
   }
 
   .main-aquarium {
@@ -157,7 +238,6 @@
 /* =================
    Aquarium Bubbles
    ================= */
-
 .bubble {
   position: absolute;
   bottom: -20px;
@@ -172,7 +252,6 @@
   z-index: 4;
 }
 
-/* The upward floating path with a slight left/right wobble */
 @keyframes float-up {
   0% {
     transform: translateY(0) translateX(0) scale(1);
@@ -186,7 +265,7 @@
   }
   100% {
     transform: translateY(-650px) translateX(-15px) scale(1.2);
-    opacity: 0; /* Pop/fade out at the surface */
+    opacity: 0;
   }
 }
 
@@ -199,7 +278,7 @@
   height: 180px;
   background-image:
     url("/img/mud2.avif"), linear-gradient(to bottom, #54422c 0%, #211a11 100%);
-  background-blend-mode: overlay; /* Dit zorgt dat de textuur zich mengt met de gradient */
+  background-blend-mode: overlay;
   background-repeat: repeat;
   filter: blur(1.5px) brightness(0.6) sepia(0.3);
   border-radius: 50% 50% 0 0;
@@ -222,75 +301,6 @@
   border-radius: 50% 50% 0 0;
   z-index: 3;
   pointer-events: none;
-}
-
-/* =================
-   Aquarium Filters 
-   ================= */
-
-.aquarium-filters {
-  border: none;
-  padding: 0;
-  margin: 0 0 20px 0;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-/* hide text visualy but keep for screenreaders */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-
-.aquarium-filters input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-}
-
-.filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  padding: var(--button-padding);
-
-  background: var(--color-white);
-  color: var(--color-dark-green);
-
-  border: 1px solid var(--color-dark-green);
-  border-radius: 1.5em;
-
-  font-size: var(--font-size-button);
-  font-weight: 700;
-  text-decoration: none;
-
-  cursor: pointer;
-
-  transition: background 0.2s ease;
-}
-
-.filter-btn:focus-visible {
-  background: var(--color-off-white);
-}
-
-.aquarium-filters input[type="radio"]:checked + .filter-btn {
-  background: var(--color-purple);
-  color: var(--color-dark-green);
-}
-
-/* Accessability: focus ring when tabbing */
-.aquarium-filters input[type="radio"]:focus-visible + .filter-btn {
-  outline: var(--button-focus-outline);
-  outline-offset: var(--button-focus-outline-offset);
 }
 
 .bicycle-wreck {
@@ -334,31 +344,18 @@
   height: 40px;
 }
 
-
-
-
 .canal-wall {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    
-    
     height: 100%; 
-    
-    
     object-fit: cover; 
-    
     z-index: 0; 
     pointer-events: none;
-    
-    
     opacity: 0.25; 
-    
-    
     filter: blur(6px) brightness(0.3) sepia(0.3);
 }
-
 
 .custom-fish-tooltip {
     position: fixed; 
@@ -370,12 +367,10 @@
     font-weight: bold;
     pointer-events: none; 
     opacity: 0; 
-    transition: opacity 0.2s ease; /* Zachte fade-in */
+    transition: opacity 0.2s ease;
     z-index: 9999; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     border: 2px solid var(--color-purple, #A68CFF);
-    
-    /* Verschuift het wolkje iets naar boven zodat hij niet onder je cursor zit */
     transform: translate(-50%, -150%); 
 }
 
@@ -393,17 +388,13 @@
     background-color: var(--color-dark-green); 
     border-left: 2px solid #222;
     border-right: 2px solid #222;
-    z-index: 5; 
-    
+    z-index: 1; 
     display: flex;
     flex-direction: column;
     justify-content: space-between; 
-    
     padding-top: 10px;
     padding-bottom: 20px;
     box-sizing: border-box;
-
-    z-index: 1; 
     filter: blur(1.2px);
     opacity: 0.5;
 }
@@ -417,7 +408,6 @@
     font-size: 14px;
     font-weight: 800;
     color: white;
-    
     border-bottom: 5px solid #111; 
     line-height: 0.5; 
 }
