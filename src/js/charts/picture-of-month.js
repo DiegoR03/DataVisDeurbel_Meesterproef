@@ -2,6 +2,15 @@ function fetchSnapshot(data) {
   if (!data || data.length === 0) {
     return;
   }
+
+  const fishContainer = document.querySelector('.fish-facts-container');
+  const fishOptions = fishContainer.dataset.fishOptions ? JSON.parse(fishContainer.dataset.fishOptions) : [];
+
+  if(!fishOptions.length) {
+    console.warn('Geen vissen gevonden in component');
+    return;
+  }
+
   const fishSnapshots = data.filter(
     (item) =>
       item.snapshot_url &&
@@ -9,8 +18,9 @@ function fetchSnapshot(data) {
       item.fish_name !== "Unknown" &&
       item.fish_name !== "unknown" &&
       item.fish_name !== "onbekend" &&
-      !item.fish_name.includes(","),
+      !item.fish_name.includes(",")
   );
+
   console.log("SNAPSHOTS:", fishSnapshots);
   if (fishSnapshots.length === 0) {
     console.warn("Geen geldige vis-snapshots gevonden met likelyhoodOfFish > 0.34",);
@@ -38,21 +48,6 @@ function fetchSnapshot(data) {
     fishNumber[fishName] = (fishNumber[fishName] || 0) + 1;
   }
   console.log("fish count", fishNumber);
-
-  // render fish icons to html
-  const fishOptions = [
-    { name: "Kolblei", img: "/img/kolblei.png" },
-    { name: "Snoek", img: "/img/snoek.png" },
-    { name: "Alver", img: "/img/alver.png" },
-    { name: "Baars", img: "/img/baars.png" },
-    { name: "Blankvorn", img: "/img/blankvoorn.png" },
-    { name: "Snoekbaars", img: "/img/snoekbaars.png" },
-    { name: "Meerval", img: "/img/meerval.png" },
-    { name: "Winde", img: "/img/winde.png" },
-    { name: "Brasem", img: "/img/brasem.png" },
-    { name: "Paling", img: "/img/paling.png" },
-    { name: "Ruisvoorn", img: "/img/ruisvoorn.png" },
-  ];
 
   // render de html voor ul's met de bovenstaande afbeeldingen
   function renderFishList(container) {
@@ -133,7 +128,6 @@ function fetchSnapshot(data) {
   const popOverContainer = document.querySelector(".popover-container");
   const popOverButton = document.querySelector(".popover-button");
   const closePopover = document.querySelector(".close-popover");
-
 
   if (popOverContainer && popOverButton && closePopover) {
     popOverContainer.style.display = "none";
