@@ -133,13 +133,27 @@ function fetchSnapshot(data) {
   document.addEventListener("keydown", (event) => {
     if (!fishButtons.length) return;
 
-    if (event.key === "ArrowRight" || event.key === "ArrowUp") {
-      event.preventDefault();
-      // preventDefault stops browser default scroll behavior (MDN: https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault)
+    // Check if the element the user is currently focused on the document
+    // is actually a button inside the 'Guess the Fish' game!
+    const isInsideGame = Array.from(fishButtons).includes(document.activeElement);
 
-      currentIndex = (currentIndex + 1) % fishButtons.length;
-      fishButtons[currentIndex].focus();
-      // focus() moves keyboard focus (MDN: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus)
+    // Only execute the navigation if they are inside the game:
+    if (isInsideGame) {
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+        event.preventDefault();
+        // MDN preventDefault: https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
+
+        currentIndex = (currentIndex + 1) % fishButtons.length;
+        fishButtons[currentIndex].focus();
+        // MDN focus: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus
+      }
+      
+      // Left/Up arrow to navigate backwards in the game
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+         event.preventDefault();
+         currentIndex = (currentIndex - 1 + fishButtons.length) % fishButtons.length;
+         fishButtons[currentIndex].focus();
+      }
     }
   });
 
