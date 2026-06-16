@@ -2,6 +2,18 @@
 /* MARK: Imports */
 /*****************/
 
+/*
+  Sources used:
+  - D3 geo projections and geoPath:
+    https://d3js.org/d3-geo
+  - D3 zoom behavior:
+    https://d3js.org/d3-zoom
+  - TopoJSON to GeoJSON conversion:
+    https://github.com/topojson/topojson-client
+  - i18n ISO country code conversion:
+    https://www.npmjs.com/package/i18n-iso-countries
+*/
+
 import * as d3 from "d3";
 import { feature } from "topojson-client";
 import world from "world-atlas/countries-110m.json";
@@ -20,6 +32,8 @@ let mapZoom = null;
 
 const MAP_WIDTH = 900;
 const MAP_HEIGHT = 500;
+
+// Longitude and latitude of Utrecht, where De Visdeurbel is located.
 const UTRECHT_COORDINATES = [5.1214, 52.0907];
 
 /********************/
@@ -32,6 +46,11 @@ function renderWorldMap(data) {
 
   svg.attr("viewBox", `0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`);
 
+  // Create the map projection.
+  // The small rotation prevents Fiji from being cut off too much at the map edge
+  // Bron: https://d3js.org/d3-geo
+  // ChatGPT: Slightly rotating earth projection to prevent Fiji form being clipped
+  // at the edge of the map. 
   const projection = d3
     .geoNaturalEarth1()
     .rotate([-5, 0])
@@ -40,17 +59,23 @@ function renderWorldMap(data) {
 
   const path = d3.geoPath(projection);
 
+  // Main SVG group that contains everything that should zoom and pan together.
   const mapGroup = svg.append("g").attr("class", "world-map-group");
 
+  // Countries are placed in their own group.
   const countryGroup = mapGroup
     .append("g")
     .attr("class", "world-map-countries");
 
+  // Routes are placed after countries, so the route appears above the map.
   const routeGroup = mapGroup.append("g").attr("class", "world-map-routes");
 
   enableMapZoom(svg);
   renderUtrechtMarker(mapGroup, projection);
 
+  // Convert TopoJSON country data to GeoJSON features so D3 can draw the map.
+  // Antarctica is filtered out because it is not relevant for this visualization.
+  // Bron: https://github.com/topojson/topojson-client
   const countryFeatures = feature(
     world,
     world.objects.countries,
@@ -59,6 +84,8 @@ function renderWorldMap(data) {
   const countryCounts = getCountryCounts(data);
   const maxCount = d3.max([...countryCounts.values()]) || 1;
 
+  // Color scale for countries with visitors.
+  // Countries with more visitors get a stronger purple color.
   const colorScale = d3
     .scaleSqrt()
     .domain([1, maxCount])
@@ -78,6 +105,7 @@ function renderWorldMap(data) {
 
   renderTopCountriesList(countryCounts, countryFeatures);
 
+  // Draw the first route automatically to the country with the most visitors.
   showInitialTopCountryRoute(
     routeGroup,
     projection,
@@ -108,6 +136,8 @@ function renderWorldMap(data) {
 /* MARK: Countries */
 /*******************/
 
+// Bron: ChatGPT, automatically selecting the country with the highest visitor
+// count on page load
 function showInitialTopCountryRoute(
   routeGroup,
   projection,
@@ -115,6 +145,7 @@ function showInitialTopCountryRoute(
   countryCounts,
   countryFeatures,
 ) {
+  // Find the country with the highest visitor count.
   const topCountryEntry = [...countryCounts.entries()].sort(
     (a, b) => b[1] - a[1],
   )[0];
@@ -156,13 +187,14 @@ function renderCountries(
     .attr("d", path)
 
     // Only countries with visitors are reachable by keyboard.
+    // Bron: https://developer.mozilla.org/en-US/docs/Web/Accessibility/Keyboard-navigable_JavaScript_widgets
     .attr("tabindex", (country) => {
       const count = getCountryCount(country, countryCounts);
 
       return count > 0 ? 0 : -1;
     })
 
-    // Sort countries by visitor count, so keyboard users reach the most relevant countries first.
+    // Sort countries by visitor count, so keyboard users reach relevant countries first.
     .sort((a, b) => {
       const countA = getCountryCount(a, countryCounts);
       const countB = getCountryCount(b, countryCounts);
@@ -220,10 +252,11 @@ function renderCountries(
       setActiveCountryById(selectedCountryId);
       updateActiveCountryCard(country, countryCounts);
       drawRouteToCountry(routeGroup, projection, path, country);
-      zoomToCountry(svg, path, country);
+      zoomToCountry(svg, path, projection, country);
     })
 
     // Keyboard interaction.
+    // Bron: https://developer.mozilla.org/en-US/docs/Web/Accessibility/Keyboard-navigable_JavaScript_widgets
     .on("focus", (event, country) => {
       setActiveCountryById(String(country.id));
       updateActiveCountryCard(country, countryCounts);
@@ -240,7 +273,7 @@ function renderCountries(
 /**************/
 /* MARK: Zoom */
 /**************/
-
+// Bron: https://d3js.org/d3-zoom
 function enableMapZoom(svg) {
   mapZoom = d3
     .zoom()
@@ -256,20 +289,42 @@ function enableMapZoom(svg) {
   svg.call(mapZoom);
 }
 
-function zoomToCountry(svg, path, country) {
-  const [[x0, y0], [x1, y1]] = path.bounds(country);
+// Bronnen: https://d3js.org/d3-zoom
+// ChatGPT: calculating a zoom area that includes Utrecht and selected country and
+// Keeping the rout visible after zooming
+function zoomToCountry(svg, path, projection, country) {
+  const utrechtPoint = projection(UTRECHT_COORDINATES);
+  const countryPoint = path.centroid(country);
 
-  const dx = x1 - x0;
-  const dy = y1 - y0;
-  const x = (x0 + x1) / 2;
-  const y = (y0 + y1) / 2;
+  if (!utrechtPoint || !countryPoint) return;
+
+  /*
+    Instead of zooming only to the selected country, this zooms to the area
+    between the selected country and Utrecht. This keeps the route visible
+    and makes sure Utrecht stays in view.
+  */
+  const padding = 80;
+
+  const minX = Math.min(utrechtPoint[0], countryPoint[0]) - padding;
+  const maxX = Math.max(utrechtPoint[0], countryPoint[0]) + padding;
+  const minY = Math.min(utrechtPoint[1], countryPoint[1]) - padding;
+  const maxY = Math.max(utrechtPoint[1], countryPoint[1]) + padding;
+
+  const dx = maxX - minX;
+  const dy = maxY - minY;
+
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
 
   const scale = Math.max(
     1,
-    Math.min(4, 0.8 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)),
+    Math.min(2.5, 0.8 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)),
   );
 
-  const translate = [MAP_WIDTH / 2 - scale * x, MAP_HEIGHT / 2 - scale * y];
+  const translate = [
+    MAP_WIDTH / 2 - scale * centerX,
+    MAP_HEIGHT / 2 - scale * centerY,
+  ];
 
   // Hide the Utrecht label while zoomed in to prevent visual overlap.
   d3.select(".utrecht-marker-label-bg").style("display", "none");
@@ -307,12 +362,14 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
 
   const totalVisitors = getTotalVisitors(countryCounts);
 
+  // Bron: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
   const topCountries = [...countryCounts.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
 
   topCountriesList.innerHTML = "";
 
+  // Bron: https://www.npmjs.com/package/i18n-iso-countries
   topCountries.forEach(([numericCountryCode, count]) => {
     const countryCode = countries.numericToAlpha2(numericCountryCode);
     const countryName = countries.getName(countryCode, "nl") || countryCode;
@@ -323,27 +380,27 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
       (country) => String(country.id) === numericCountryCode,
     );
 
+    const rank =
+      topCountries.findIndex(([id]) => id === numericCountryCode) + 1;
+
     const listItem = document.createElement("li");
 
     listItem.classList.add("top-countries-list-item");
     listItem.dataset.countryId = numericCountryCode;
     listItem.tabIndex = 0;
 
-    const rank =
-      topCountries.findIndex(([id]) => id === numericCountryCode) + 1;
-
     listItem.innerHTML = `
-  <span class="top-countries-list-country">
-    <span class="rank-badge">${rank}</span>
-    ${flagEmoji} ${countryName}
-  </span>
+      <span class="top-countries-list-country">
+        <span class="rank-badge">${rank}</span>
+        ${flagEmoji} ${countryName}
+      </span>
 
-  <span class="top-countries-list-count">
-    ${percentage}%
-  </span>
-`;
+      <span class="top-countries-list-count">
+        ${percentage}%
+      </span>
+    `;
 
-    // Highlight matching country from the list.
+    // Highlight the matching country when hovering or focusing the list item.
     listItem.addEventListener("mouseenter", () => {
       setActiveCountryById(numericCountryCode);
 
@@ -384,6 +441,9 @@ function renderTopCountriesList(countryCounts, countryFeatures) {
 /***************/
 /* MARK: Route */
 /***************/
+// Bronnen: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
+// ChatGPT: Generating curved bezier routes and making routes originate from
+// selected country an end in Utrecht
 
 function drawRouteToCountry(routeGroup, projection, path, country) {
   const utrechtPoint = projection(UTRECHT_COORDINATES);
@@ -398,29 +458,70 @@ function drawRouteToCountry(routeGroup, projection, path, country) {
     Math.min(utrechtPoint[1], countryPoint[1]) - 80,
   ];
 
+  /*
+    The route starts at the selected country and ends in Utrecht.
+    This makes the animated fish swim towards De Visdeurbel instead of away from it.
+  */
+  // Bron: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
   const routePath = `
     M ${countryPoint[0]} ${countryPoint[1]}
     Q ${controlPoint[0]} ${controlPoint[1]}
     ${utrechtPoint[0]} ${utrechtPoint[1]}
-`;
+  `;
 
   routeGroup
     .append("path")
     .attr("class", "world-map-route")
     .attr("d", routePath);
 
-  routeGroup
-    .append("image")
+  /*
+    The fish is drawn directly with D3 instead of using an external image.
+    This makes it easier to style the fish with CSS variables from the design system.
+  */
+  const fish = routeGroup
+    .append("g")
     .attr("class", "route-fish-svg")
-    .attr("href", "/img/route-fish.svg")
-    .attr("width", 24)
-    .attr("height", 24)
-    .attr("x", -12)
-    .attr("y", -12)
+    .attr("transform", "scale(0.6)");
+
+  // Bron: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
+  fish
+    .append("path")
+    .attr("d", "M0 0 C7 -8 21 -10 34 0 C21 10 7 8 0 0 Z")
+    .attr("class", "route-fish-body");
+
+  fish
+    .append("path")
+    .attr("d", "M0 0 L-12 -8 L-8 0 L-12 8 Z")
+    .attr("class", "route-fish-tail");
+
+  fish
+    .append("path")
+    .attr("d", "M14 -2 C18 -8 24 -8 26 -3 C21 -4 18 -3 14 -2 Z")
+    .attr("class", "route-fish-fin");
+
+  fish
+    .append("circle")
+    .attr("cx", 25)
+    .attr("cy", -2)
+    .attr("r", 2)
+    .attr("class", "route-fish-eye");
+
+  fish
+    .append("path")
+    .attr("d", "M9 -3 C13 -1 13 1 9 3")
+    .attr("class", "route-fish-gill");
+
+  // Animate the custom fish along the route path.
+  // Bron: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateMotion
+  // ChatGPT: Creating a custom SVG fish / Animating the fish along dynamic route /
+  // Rotating fish automatically while traveling
+  fish
+    // animateMotion automatically follows the SVG path
+    // and rotates the fish in the direction of travel.
     .append("animateMotion")
     .attr("dur", "4s")
     .attr("repeatCount", "indefinite")
-    .attr("rotate", "auto-reverse")
+    .attr("rotate", "auto")
     .attr("path", routePath);
 }
 
@@ -436,6 +537,7 @@ function renderUtrechtMarker(mapGroup, projection) {
   const labelX = utrechtPoint[0] + 10;
   const labelY = utrechtPoint[1] - 8;
 
+  // Pulse ring behind the logo to make Utrecht easier to spot.
   mapGroup
     .append("circle")
     .attr("class", "utrecht-marker-pulse")
@@ -443,6 +545,7 @@ function renderUtrechtMarker(mapGroup, projection) {
     .attr("cy", utrechtPoint[1])
     .attr("r", 9);
 
+  // Visdeurbel logo marker.
   mapGroup
     .append("image")
     .attr("class", "utrecht-marker-logo")
@@ -488,6 +591,7 @@ function updateActiveCountryCard(country, countryCounts) {
   const percentage = ((count / totalVisitors) * 100).toFixed(1);
   const rank = getCountryRank(country, countryCounts);
 
+  // Hide percentage and rank when a country has no visitors.
   const percentageRow =
     count > 0
       ? `
@@ -503,13 +607,16 @@ function updateActiveCountryCard(country, countryCounts) {
       ? `
         <div class="active-country-card-row">
           <span class="card-icon">#️⃣</span>
-          <span>#${rank} meest bezochte land</span>
+          <span>${rank} meest bezochte land</span>
         </div>
       `
       : "";
 
   card.innerHTML = `
-    <strong>${flagEmoji} ${country.properties.name}</strong>
+    <strong class="country-title">
+      <span class="country-flag">${flagEmoji}</span>
+      <span class="country-name">${country.properties.name}</span>
+    </strong>
 
     <div class="active-country-card-row">
       <span class="card-icon">👥</span>

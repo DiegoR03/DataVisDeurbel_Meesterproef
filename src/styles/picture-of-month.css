@@ -1,19 +1,30 @@
 .picture-of-month-container {
     background-color: var(--color-light-gold);
-    padding-bottom: 3rem;
-    
+    padding: var(--spacing-top) var(--padding-side);
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 1rem;
+    place-items: start;
+
+    div:nth-of-type(1) {
+        grid-column: 1;
+    }
+
+    div:nth-of-type(2) {
+        grid-column: 2;
+        justify-self: center;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+
+        h3 {
+            color: var(--color-dark-green);
+        }
+    }
+
     h2 {
         font-size: var(--font-size-h2);
-        text-align: center;
         color: var(--color-dark-green);
-    }
-
-    h3 {
-        text-align: center;
-    }
-
-    p {
-        text-align: center;
     }
 }
 
@@ -28,141 +39,92 @@
 
 /* random img */
 .fish-image {
-    width: 60%;
-    object-fit: cover;
+    width: 100%;
+    grid-column: 1;
+    grid-row: 2;
     display: block;
     border-radius: 8px;
 }
 
 /* feedback guess */
-.guess-fish-feedback, .guess-fish-feedback-popover {
+.guess-fish-feedback {
     height: 2rem;
+    color: var(--color-dark-green);
+    font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem)
 }
 
 /* icons of all fishes */
-.fish-icons-list, .fish-icons-list-popover {
+.fish-icons-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    padding: 0;
+    height: 50vh;
+    gap: 12px;
+    overflow-y: scroll;
+    scrollbar-width: none; 
+    place-items: start;
+
+    border-radius: var(--border-radius);
     margin: 0;
+    padding: var(--padding);
+
 
     li {
-        list-style-type: none;
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        width: 25vw;
+        gap: 0.75rem;
+
+        list-style-type: none;
+
         align-items: center;
+        border: solid 1px var(--color-purple);
+        border-radius: var(--border-radius);
+
+        font-size: var(--font-size-button);
+        font-weight: 700;
 
         &:hover {
             cursor: pointer;
+            background-color: var(--color-purple);
+            color: var(--color-off-white);
+            border: solid 1px var(--color-dark-green);
         }
 
         img {
-            width: 65%;
+            width: 4rem;
+            height: auto;
         }
-    }
-}
-
-/* the popup */
-.popover-container {
-    display: none;
-    position: fixed;
-    height: 80%;
-    top: 10%;
-    left: 10%;
-    z-index: 999;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--color-dark-green);
-    border: solid 5px var(--color-light-gold);
-    width: clamp(50vw, 75vw, 100vw);
-
-    ul {
-        width: 100%;
-        height: 70%;
-        overflow-x: scroll;
-        scroll-snap-type: mandatory;
-        scrollbar-width: none;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        align-items: center;
-        justify-content: center;
-    }
-}
-
-/* popup button */
-.popover-button {
-    display: none;
-    justify-self: center;
-    background-color: var(--color-dark-green);
-    color: var(--color-off-white);
-    border: none;
-    border-radius: 99px;
-    padding: .5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-
-    &:hover {
-        background-color: var(--color-off-white);
-        color: var(--color-dark-green);
-        cursor: pointer
-    }
-}
-
-.close-popover {
-    position: fixed;
-    top: 3rem;
-    right: 1rem;
-    height: 2rem;
-    width: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--color-dark-green);
-    border-radius: 99px;
-    border: none;
-    padding: .8rem;
-    z-index: 1000;
-
-    &:hover {
-        cursor: pointer;
-        background-color: var(--color-dark-green);
     }
 }
 
 @media screen and (max-width: 765px) {
     .picture-of-month-container {
-        height: 50vh;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 2fr;
 
-        h3 {
-            display: none;
-        }
-    }
-
-    .popover-container {
-
-        p {
-            color: var(--color-off-white)
+        div:nth-of-type(1) {
+            grid-column: 1;
+            grid-row: 1;
         }
 
-        div {
-            img {
-                width: 100%;
-                border-radius: 0px 0px 20px 20px;
-            }
+        div:nth-of-type(2) {
+            grid-column: 1;
+            grid-row: 2;
         }
-    }
-   
-    .fish-icons-list {
-        display: none;
-    }
-
-    .popover-button {
-        display: flex;
     }
 
     .guess-fish-feedback {
         height: 0;
+    }
+
+    .fish-icons-list {
+        height: auto;
+        overflow: visible;
+        grid-template-columns: 1fr 1fr;
+        justify-content: space-around;
+        width: 80vw;
+
+        li {
+            width: fit-content;
+            padding: var(--button-padding);
+        }
     }
 }

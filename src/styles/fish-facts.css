@@ -1,16 +1,17 @@
-.fish-facts-container {
+.fish-facts-container { 
   background-color: var(--color-purple);
   padding: var(--spacing-top) var(--padding-side);
   display: grid;
   grid-template-rows: 5rem 1fr;
   grid-template-columns: 20% 80%;
-  gap: 2rem;
+  gap: .5rem;
 
   h2:first-child {
     grid-column: 1 / -1;
   }
 
   .fish-icons-details-list {
+    height: 50vh;
     display: grid;
     place-items: start;
     gap: 12px;
@@ -83,24 +84,45 @@
 
   p {
     color: var(--color-dark-green);
+    font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+    font-weight: 400;
+    max-width: 80%;
   }
 }
 
 .fish-facts-activity {
-  font-size: var(--font-size-normal);
+    width: 80%;
+    display: grid;
+    margin: 0;
+    margin-bottom: .5rem;
+    padding: 0;
+    list-style: inside;
+
+    li {
+        display: grid;
+        place-items: start;
+        font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+        margin-bottom: .5rem;
+    }
+
+    h3 {
+      margin-bottom: .5rem
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-dark-green)
+    }
 }
 
 .fish-facts-pictures {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 1rem;
-
-  width: 100%;
+  width: 95%;
   max-width: 100%;
-
   padding: 0;
   margin: 0;
-
   list-style: none;
 
   li {
@@ -109,12 +131,9 @@
 
   img {
     display: block;
-
     width: 100%;
     max-width: 100%;
-
     height: auto;
-
     border-radius: 8px;
   }
 }
@@ -145,8 +164,52 @@
   }
 }
 
+.fish-image-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(1 70 60 / 85%);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+
+  .fish-image-full {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+  }
+
+  .fish-image-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-light-gold);
+    color: var(--color-dark-green);
+    border: none;
+    border-radius: 99px;
+    padding: var(--button-padding);
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.2);
+      transition: 1s
+    }
+  }
+}
+
+
+.fish-preview {
+  cursor: pointer;
+}
+
 .active {
   display: block;
+}
+
+.active-img {
+  display: grid;
 }
 
 @media (max-width: 800px) {
@@ -184,5 +247,10 @@
     img {
       border-radius: 8px;
     }
+  }
+
+  .fish-image-close {
+    top: 10rem;
+    right: 10rem;
   }
 }

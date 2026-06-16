@@ -7,7 +7,7 @@ const fishOptions = [
     { name: "Snoek", img: "/img/snoek.png" },
     { name: "Alver", img: "/img/alver.png" },
     { name: "Baars", img: "/img/baars.png" },
-    { name: "Blankvorn", img: "/img/blankvoorn.png" },
+    { name: "Blankvoorn", img: "/img/blankvoorn.png" },
     { name: "Snoekbaars", img: "/img/snoekbaars.png" },
     { name: "Meerval", img: "/img/meerval.png" },
     { name: "Winde", img: "/img/winde.png" },
@@ -30,9 +30,18 @@ const fishOptions = [
         })}
     </ul>
     <div class="fish-facts-popover">
-        <h3 class="fish-facts-name"></h3>
-        <p class="fish-facts-activity"></p>
+        <h2 class="fish-facts-name"></h2>
+        <!-- over de vis -->
+        <p class="fish-facts-about"></p>
+        <!-- vis feitjes -->
+        <ul class="fish-facts-activity"></ul>
+        <!-- foto's van vissen -->
         <ul class="fish-facts-pictures"></ul>
+    </div>
+
+    <div class="fish-image-modal">
+        <button class="fish-image-close">X</button>
+        <img class="fish-image-full" src="" alt="">
     </div>
 
 </section>
