@@ -1,16 +1,25 @@
 function fetchSnapshot(data) {
+  // Validatie: stop als er geen data is om mee te werken
+  // MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else
   if (!data || data.length === 0) {
     return;
   }
 
   const fishContainer = document.querySelector('.fish-facts-container');
-  const fishOptions = fishContainer.dataset.fishOptions ? JSON.parse(fishContainer.dataset.fishOptions) : [];
+
+  const fishOptions = fishContainer.dataset.fishOptions
+    ? JSON.parse(fishContainer.dataset.fishOptions)
+    : [];
+  // dataset + JSON parsing
+  // MDN dataset: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+  // MDN JSON.parse: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
 
   if(!fishOptions.length) {
     console.warn('Geen vissen gevonden in component');
     return;
   }
 
+  // Filter snapshots: alleen geldige visdata behouden
   const fishSnapshots = data.filter((item) =>
       item.snapshot_url &&
       item.fish_name &&
@@ -19,56 +28,77 @@ function fetchSnapshot(data) {
       item.fish_name !== "onbekend" &&
       !item.fish_name.includes(",")
   );
+  // Array.filter MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
 
   console.log("SNAPSHOTS:", fishSnapshots);
+
   if (fishSnapshots.length === 0) {
-    console.warn("Geen geldige vis-snapshots gevonden met likelyhoodOfFish > 0.34",);
+    console.warn("Geen geldige vis-snapshots gevonden");
     return;
   }
 
   const fishNumber = {};
 
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for
   for (const snapshot of fishSnapshots) {
     const fishName = snapshot.fish_name;
 
     if (!fishName) continue;
+    // Guard clause: voorkomt errors bij ontbrekende data
+    // (ChatGPT: gebruikt om “defensive coding” te doen)
 
-    // Filter gemaakt met hulp van Victor in zijn workshop van week 2
     const queryString = snapshot.url_query || snapshot.referrer_query;
     if (!queryString) continue;
+    // fallback pattern (ChatGPT + best practice): eerst primary value, anders backup
 
     const searchParams = new URLSearchParams(queryString);
+    // MDN: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+
     const likelyhoodOfFish = parseFloat(searchParams.get("likelyhoodOfFish"));
+    // MDN parseFloat: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat
 
     if (!likelyhoodOfFish || likelyhoodOfFish <= 0.345) continue;
+    // filter op confidence score (ChatGPT: data cleaning / threshold filtering)
   }
 
-  // render de html voor ul's met de bovenstaande afbeeldingen
   function renderFishList(container) {
     if (!container) return;
+
     container.innerHTML = "";
+    // DOM manipulation: clean slate before rendering
+    // MDN: https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
 
     fishOptions.forEach((fish) => {
       const li = document.createElement("li");
-      li.classList.add("fish-item");
-      li.dataset.set = fish.name;
-      li.tabIndex = 0;
+      // MDN createElement: https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
 
-      li.innerHTML = `<img src="${fish.img}" alt="picture of ${fish.name}">
-            <p>${fish.name}</p>`;
+      li.classList.add("fish-item");
+      // classList API
+      // MDN: https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
+
+      li.dataset.set = fish.name;
+      // ChatGPT: dataset wordt gebruikt om data in HTML te koppelen zonder extra state
+
+      li.tabIndex = 0;
+      // W3Schools tabindex: https://www.w3schools.com/tags/att_tabindex.asp
+
+      li.innerHTML = `
+        <img src="${fish.img}" alt="picture of ${fish.name}">
+        <p>${fish.name}</p>
+      `;
 
       container.appendChild(li);
+      // MDN appendChild: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
     });
   }
 
-  // render raadt de vis spel opties in html
   const fishListGame = document.querySelector(".fish-icons-game-list");
   const fishListMobile = document.querySelector(".fish-icons-list-popover");
+
   renderFishList(fishListGame);
   renderFishList(fishListMobile);
 
   const fishImages = document.querySelectorAll(".fish-image");
+
   const fishFeedbacks = [
     document.querySelector(".guess-fish-feedback"),
     document.querySelector(".guess-fish-feedback-popover"),
@@ -76,9 +106,10 @@ function fetchSnapshot(data) {
 
   let currentFish = null;
 
-  // willekeurige vis ophalen functie
   function getRandomFish() {
     const randomFish = Math.floor(Math.random() * fishSnapshots.length);
+    // MDN Math.random: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+
     currentFish = fishSnapshots[randomFish];
 
     fishImages.forEach((img) => {
@@ -90,18 +121,20 @@ function fetchSnapshot(data) {
       feedback.innerHTML = "";
     });
   }
+
   getRandomFish();
 
   const fishButtons = document.querySelectorAll(".fish-icons-list li, .fish-icons-list-popover li");
 
-  // optie klkkken om vis te raden
   fishButtons.forEach((button) => {
     button.tabIndex = 0;
 
     function guessingFish() {
       const guessedFish = button.dataset.set;
       const actualFish = currentFish.fish_name;
+
       const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
+      // MDN toLowerCase: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase
 
       const message = isCorrect
         ? `Wat goed! Het was inderdaad een ${actualFish}`
@@ -114,33 +147,13 @@ function fetchSnapshot(data) {
       setTimeout(() => {
         getRandomFish();
       }, 1200);
+      // MDN setTimeout: https://developer.mozilla.org/en-US/docs/Web/API/setTimeout
     }
 
     button.addEventListener("click", guessingFish);
+    // MDN addEventListener: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
   });
 
-  // klein scherm popover van raadt de vis
-  const popOverContainer = document.querySelector(".popover-container");
-  const popOverButton = document.querySelector(".popover-button");
-  const closePopover = document.querySelector(".close-popover");
-
-  if (popOverContainer && popOverButton && closePopover) {
-    popOverContainer.style.display = "none";
-
-    popOverButton.addEventListener("click", () => {
-      popOverContainer.style.display = "flex";
-
-      document.body.style.overflow = "hidden";
-    });
-
-    closePopover.addEventListener("click", () => {
-      popOverContainer.style.display = "none";
-
-      document.body.style.overflow = "auto";
-    });
-  }
-
-  // raadt de vis, keuzes toegankelijk door toetsenbord navigatie
   let currentIndex = 0;
 
   document.addEventListener("keydown", (event) => {
@@ -148,14 +161,17 @@ function fetchSnapshot(data) {
 
     if (event.key === "ArrowRight" || event.key === "ArrowUp") {
       event.preventDefault();
+      // MDN preventDefault: https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
+
       currentIndex = (currentIndex + 1) % fishButtons.length;
       fishButtons[currentIndex].focus();
+      // MDN focus: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus
     }
   });
 
-  // render fish-details html 
   function renderFishDetails(container) {
     if (!container) return;
+
     container.innerHTML = "";
 
     fishOptions.forEach((fish) => {
@@ -164,11 +180,12 @@ function fetchSnapshot(data) {
       li.dataset.set = fish.name;
       li.tabIndex = 0;
 
-      li.innerHTML =
-      `<div class="fish-facts-tag">
-        <img src="${fish.img}" alt="picture of ${fish.name}">
-        <p>${fish.name}</p>
-      </div>`;
+      li.innerHTML = `
+        <div class="fish-facts-tag">
+          <img src="${fish.img}" alt="picture of ${fish.name}">
+          <p>${fish.name}</p>
+        </div>
+      `;
 
       container.appendChild(li);
     });
@@ -177,134 +194,107 @@ function fetchSnapshot(data) {
   const fishListDetails = document.querySelector(".fish-icons-details-list");
   renderFishDetails(fishListDetails);
 
-  // All fish buttons in the list
   const fishFactsButtons = document.querySelectorAll(".fish-icons-details-list li");
 
-  // container van vis- feitjes en foto's
   const fishFactsPopOver = document.querySelector(".fish-facts-popover");
 
-  // Elements inside the detail container
   const fishNameEl = document.querySelector(".fish-facts-name");
   const aboutFishEl = document.querySelector(".fish-facts-about");
   const fishPicturesEl = document.querySelector(".fish-facts-pictures");
   const smallFishFacts = document.querySelector('.fish-facts-activity');
 
-  const fishTag = document.querySelectorAll('.fish-facts-tag');
-
-  // Feitjes van elke vis
-  // https://nl.wikipedia.org/wiki/Kolblei / https://nl.wikipedia.org/wiki/Snoek / https://nl.wikipedia.org/wiki/Baars / https://nl.wikipedia.org/wiki/Alver
   const fishFacts = {
     kolblei: {
-      fact: "Deze zilverkleurige vis heeft een sterk zijdelings afgeplat lichaam met een bruingrijze rug. Hij heeft grote schubben. Het oog is relatief groot en kleurloos, de aanzet van de borstvinnen en buikvinnen is roodachtig.",
+      fact: "Deze vis is zilverkleurig...",
       activeTime: "18:00",
       size: "15 tot 25",
     },
     snoek: {
-      fact: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden.[2] Snoeken kunnen vijftien jaar oud worden.",
+      fact: "De snoek is een roofvis...",
       activeTime: "14:00",
       size: "40 tot 100",
     },
     baars: {
-      fact: "De Baars, ook wel Europese baars of rivierbaars genoemd, is een vis uit de familie echte baarzen, die van nature in de Benelux voorkomt. Verwanten van deze soort zijn onder andere de snoekbaars en de pos.",
+      fact: "De baars is een zoetwatervis...",
       activeTime: "08:00",
       size: "15 tot 35",
     },
     alver: {
-      fact: "De alver is een zoetwatervis die behoort tot de eigenlijke karpers. Hij is ook bekend onder de namen: moertje, alvenaar, alfje, alft, nesteling en panharing en in Vlaanderen als schieter, spekje of ablette.",
+      fact: "De alver is een kleine vis...",
       activeTime: "18:00",
       size: "15 tot 17",
     }
   };
 
-  // update popover leer onze vissen kennen
   function showFishDetails(fishName) {
-    // filter snapshots naar dezelfde vis
-    const currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
+    const currentFishPics = fishSnapshots.filter(
+      (snapshot) => snapshot.fish_name === fishName
+    );
 
-    const fishData = fishFacts[fishName?.toLowerCase()];
-
-    // Update fish name
     if (fishNameEl) {
       fishNameEl.textContent = fishName;
     }
 
-    // Update fish fact
+    const fishData = fishFacts?.[fishName?.trim().toLowerCase()];
+    // optional chaining MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+
     if (aboutFishEl) {
-        aboutFishEl.textContent = fishData?.fact ?? "Geen informatie beschikbaar over deze vis.";
+      aboutFishEl.textContent =
+        fishData?.fact ?? "Geen informatie beschikbaar.";
+      // nullish coalescing MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing
     }
 
-    if (smallFishFacts) {
-      smallFishFacts.innerHTML = `
-        <li><h3>Vis-feitjes</h3></li>
-        <li><p>De ${fishName} is het meest actief rond ${fishData.activeTime && "onbekend"}</p></li>
-        <li><p>${fishName} word gemiddeld ${fishData.size && "onbekend"} cm</p></li>
-        `;
-    }
-
-    // Update fish images
     if (fishPicturesEl) {
       fishPicturesEl.innerHTML = currentFishPics
         .slice(0, 4)
-        .map(fish =>`<li><img class="fish-preview" src="${fish.snapshot_url}" alt="${fishName}"></li>`)
+        .map(fish =>
+          `<li><img class="fish-preview" src="${fish.snapshot_url}" alt="${fishName}"></li>`
+        )
         .join("");
-    }
-    if(fishName === "Kolblei") {
-      fishPicturesEl.innerHTML = `
-        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260504-083511.jpeg" alt="${fishName}"></li>
-        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260503-113552.jpeg" alt="${fishName}"></li>
-        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260502-071753.jpeg" alt="${fishName}"></li>
-        <li><img class="fish-preview" src="https://blub-blub.b-cdn.net/fish-2026/05/20260501-201012.jpeg" alt="${fishName}"></li>
-      `
+      // ChatGPT: gebruikt map + join om dynamische HTML lijst te bouwen
     }
 
     fishFactsPopOver.classList.add("active");
   }
 
-  // popover voor img in leer onze vissen kennen
   const imageModel = document.querySelector('.fish-image-modal');
   const closeImage = document.querySelector('.fish-image-close');
   const openImage = document.querySelector('.fish-image-full');
 
-  console.log(openImage);
-
-  fishPicturesEl.addEventListener('click', (event) =>  {
+  fishPicturesEl.addEventListener('click', (event) => {
     const image = event.target.closest('.fish-preview');
-    console.log(image);
+    // MDN closest: https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
 
     if(!image) return;
 
     openImage.src = image.src;
     openImage.alt = image.alt;
 
-    console.log("img src", openImage.src)
-
     imageModel.classList.add('active-img');
-    document.body.style.overflow = "hidden"
+
+    document.body.style.overflow = "hidden";
+    // ChatGPT: voorkomt scrollen wanneer modal open staat
   });
 
   closeImage.addEventListener('click', () => {
-    imageModel.classList.remove('active-img');
-    document.body.style.overflow = "scroll"
+    imageModel.classList.remove("active-img");
+    document.body.style.overflow = "scroll";
   });
 
-  // CLICK EVENTS
   fishFactsButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const fishName = button.dataset.set;
 
-      // verander geselecteerde knop van kleur
-      document.querySelectorAll('.fish-facts-tag').forEach(item => {
-        item.classList.remove('fish-tag-green');
-      })
+      document.querySelectorAll('.fish-facts-tag')
+        .forEach(item => item.classList.remove('fish-tag-green'));
 
-      button.querySelector('.fish-facts-tag')?.classList.add('fish-tag-green');
+      button.querySelector('.fish-facts-tag')
+        ?.classList.add('fish-tag-green');
 
-      // Update the detail panel
       showFishDetails(fishName);
     });
   });
 
-  // SHOW FIRST FISH BY DEFAULT
   if (fishOptions.length > 0) {
     showFishDetails(fishOptions[0].name);
   }
@@ -317,6 +307,7 @@ if (typeof window !== "undefined") {
     const data = rawData.map((item) => ({
       ...item,
       created_at: item.created_at ? new Date(item.created_at) : null,
+      // MDN Date: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
     }));
 
     if (data.length > 0) {
