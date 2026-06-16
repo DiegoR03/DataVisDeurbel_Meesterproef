@@ -259,6 +259,8 @@ function setupKalenderBase() {
     wrapper.append("div").attr("class", "calendar-title").text("Visactiviteit deze week");
     wrapper.append("p").attr("class", "calendar-explanation").text("Bekijk op welke dagen en dagdelen de vissen het meest actief waren.");
 
+    const layoutContainer = wrapper.append("div").attr("class", "calendar-layout-container");
+
     const viewWidth = 500; 
     const viewHeight = 250;
     const margin = { top: 15, right: 15, bottom: 15, left: 15 };
@@ -267,7 +269,7 @@ function setupKalenderBase() {
     const chartHeight = viewHeight - margin.top - margin.bottom;
 
     // Met behulp van Gemini: xMidYMid zorgt ervoor dat jouw visualisatie altijd netjes in het exacte middelpunt van de container wordt geplaatst, zowel horizontaal als verticaal.
-    const svg = wrapper.append("svg")
+    const svg = layoutContainer.append("svg")
         .attr("viewBox", `0 0 ${viewWidth} ${viewHeight}`)
         .attr("preserveAspectRatio", "xMidYMid meet")
         .attr("class", "calendar-svg")
@@ -283,12 +285,17 @@ function setupKalenderBase() {
     chartGroup.append("g").attr("class", "calendar-axis x-axis");
     chartGroup.append("g").attr("class", "calendar-axis y-axis");
     chartGroup.append("g").attr("id", "calendar-grid-cells");
+
+    layoutContainer.append("div")
+        .attr("id", "side-stats-card")
+        .attr("class", "side-stats-card");
 }
 
 function updateVisKalender(weekData) {
     const svg = d3.select(".calendar-svg");
     const chartGroup = d3.select("#calendar-chart-group");
     const gridCellsGroup = d3.select("#calendar-grid-cells");
+    const statsCard = d3.select("#side-stats-card");
     
     if (svg.empty() || chartGroup.empty() || gridCellsGroup.empty()) return;
     
@@ -316,7 +323,7 @@ function updateVisKalender(weekData) {
         });
     });
 
-    // Met behulp van Gemini: Neemt de weekdata door en deelt elke vis in op basis van zijn specifieke weekdag en uurslot.
+    // Met behulp van Gemini: Neemt de weekdata door en deelt elke vis in op basis van zijn specifieke weekdag Tobacco en uurslot.
     if (weekData && weekData.length > 0) {
         weekData.forEach(fish => {
             const jsDay = fish.date.getDay(); 
@@ -357,6 +364,30 @@ function updateVisKalender(weekData) {
             cel.topFish = null;
         }
     });
+
+    if (!statsCard.empty()) {
+        const totaalVissenWekelijks = weekData ? weekData.length : 0;
+        let statsHtml = `
+            <h3>Totale Statistieken</h3>
+            <div class="stats-total-number">${totaalVissenWekelijks}</div>
+            <p class="stats-total-label">Vissen gespot deze week</p>
+            <div id="stats-line" style="height: 1px; background: #eee; margin: 12px 0;"></div>
+        `;
+
+        if (totaalVissenWekelijks > 0) {
+            const visSoortenTellingen = d3.rollups(weekData, v => v.length, f => f.fish_name);
+            visSoortenTellingen.sort((a, b) => b[1] - a[1]);
+            
+            statsHtml += `<h4>Verdeling per soort:</h4><div class="stats-list" style="max-height: 120px; overflow-y: auto;">`;
+            visSoortenTellingen.forEach(([naam, aantal]) => {
+                statsHtml += `<p style="margin: 4px 0;">🐟 <strong>${aantal}x</strong> ${naam}</p>`;
+            });
+            statsHtml += `</div>`;
+        } else {
+            statsHtml += `<p>Geen visgegevens aanwezig voor deze week.</p>`;
+        }
+        statsCard.html(statsHtml);
+    }
 
     const maxCount = d3.max(gridMatrix, d => d.count) || 1;
 
