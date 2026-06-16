@@ -1,8 +1,9 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 const baseWidth = 1000;
-const baseHeight = 550;
+const baseHeight = 650;
 
+// https://www.w3schools.com/js/js_const.asp: Maakt marges aan die niet veranderd kunnen worden voor de grid-berekening.
 const margin = { top: 5, right: 0, bottom: 80, left: 60 };
 const width = baseWidth - margin.left - margin.right;
 const height = baseHeight - margin.top - margin.bottom;
@@ -25,6 +26,7 @@ function getHourTheme(hourString) {
     }
 }
 
+// Met behulp van Gemini: Berekent een vloeiende sinusgolf zodat de zon/maan interactief stijgt en daalt per uur.
 function getSunYPosition(hourString, chartHeight) {
     const hourInt = parseInt(hourString.split(':')[0], 10);
     const radians = (hourInt - 6) * (Math.PI / 12);
@@ -51,6 +53,7 @@ function drawD3Graph(graphData, eventKeys) {
         svg = svgSelection.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        // Met behulp van Gemini: Maakt aparte groepen (<g>) aan om elementen netjes in lagen over elkaar te stapelen.
         svg.append("g").attr("class", "layer-background");
         svg.append("g").attr("class", "layer-data-paths");
         svg.append("g").attr("class", "layer-clipped-foreground");
@@ -68,6 +71,7 @@ function drawD3Graph(graphData, eventKeys) {
     const interfaceLayer = svg.select(".layer-interface");
     const yAxisGroup = svg.select(".y-axis");
 
+    // https://www.w3schools.com/jsref/jsref_filter.asp
     const visibleHours = graphData.filter(data => data.hour.includes(':'));
 
     const x = d3.scaleBand()
@@ -77,10 +81,12 @@ function drawD3Graph(graphData, eventKeys) {
 
     const dataMax = d3.max(visibleHours, data => Number(data[currentSelectedKey]) || 0) || 0;
 
+    // Met behulp van Gemini: Berekent dynamisch de stappen van de Y-as (50 of 500) zodat de grafiek er altijd strak uitziet.
     const stepSize = dataMax > 500 ? 500 : 50;
     const rawMaxWithBuffer = dataMax * 1.15;
     const yMaxCalculated = Math.max(stepSize, Math.ceil(rawMaxWithBuffer / stepSize) * stepSize);
 
+    // https://d3js.org/d3-scale/linear
     const y = d3.scaleLinear()
         .domain([0, yMaxCalculated + stepSize])
         .range([height, 0]);
@@ -93,6 +99,7 @@ function drawD3Graph(graphData, eventKeys) {
     if (isFirstLoad) {
         const defs = svg.append("defs");
 
+        // Met behulp van Gemini: Definieert SVG LinearGradients voor de achtergronden van de verschillende dagdelen.
         const sunSetGradient = defs.append("linearGradient")
             .attr("id", "sun-set-gradient")
             .attr("x1", "0%")
@@ -146,7 +153,7 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("offset", "100%")
             .attr("stop-color", "var(--color-dark-green)");
 
-
+        // Met behulp van Gemini: feColorMatrix en feComponentTransfer bootsen een CSS roze/blauwgroen filter na in SVG.
         const filter = defs.append("filter").attr("id", "pink-tint-filter");
         filter.append("feColorMatrix")
             .attr("type", "matrix")
@@ -176,6 +183,7 @@ function drawD3Graph(graphData, eventKeys) {
         transferBlueGreen.append("feFuncB").attr("type", "table").attr("tableValues", "0.55 1.0");
         transferBlueGreen.append("feFuncA").attr("type", "identity");
 
+        // Met behulp van Gemini: Maakt clipPaths aan zodat de animaties en golven niet buiten de grafiekranden breken.
         defs.append("clipPath")
             .attr("id", "rect-clip")
             .append("rect")
@@ -198,7 +206,6 @@ function drawD3Graph(graphData, eventKeys) {
                 Z
             `);
             
-
         backgroundLayer.attr("clip-path", "url(#rect-clip)");
         clippedForegroundLayer.attr("clip-path", "url(#rect-clip)");
 
@@ -206,6 +213,7 @@ function drawD3Graph(graphData, eventKeys) {
         backgroundBlurFilter.append("feGaussianBlur")
             .attr("stdDeviation", "8");
 
+        // Met behulp van Gemini: xMidYMid zorgt ervoor dat de stenen muur achtergrond altijd perfect gecentreerd staat en beeldvullend (slice) is.
         backgroundLayer.append("image")
             .attr("href", "./img/Stone_Wall_Background-2.jpg")
             .attr("x", 0)
@@ -243,6 +251,7 @@ function drawD3Graph(graphData, eventKeys) {
 
         initBubbleAnimation(backgroundLayer, width, height);
 
+        // https://d3js.org/d3-selection/joining-data: Koppelt de uren aan tekst op de X-as.
         interfaceLayer.append("g")
             .attr("transform", `translate(0, ${height + 50})`)
             .selectAll("text")
@@ -287,6 +296,7 @@ function drawD3Graph(graphData, eventKeys) {
         y: getSunYPosition(d.hour, height)
     }));
 
+    // https://d3js.org/d3-shape/line: Maakt een lijngenerator die met curveMonotoneX vloeiend de zon-curve tekent.
     const sunLineGenerator = d3.line()
         .x(d => d.x)
         .y(d => d.y)
@@ -303,6 +313,7 @@ function drawD3Graph(graphData, eventKeys) {
     }
     sunTrajectoryPath.datum(sunLineData).attr("d", sunLineGenerator);
 
+    // Met behulp van Gemini: Leegt de legenda container voordat er nieuwe knoppen worden gegenereerd (voorkomt duplicaten).
     const legendContainer = d3.select("#legend-items-container");
     legendContainer.selectAll("*").remove();
 
@@ -318,6 +329,7 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("class", "legend-button-wrapper")
             .classed("is-active", isActive);
 
+        // https://d3js.org/d3-selection/events: Voegt een interactieve click-event toe aan de vis-filterknoppen.
         const button = buttonContainer.append("button")
             .attr("class", "legend-button")
             .on("click", () => {
@@ -348,12 +360,14 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("alt", item.label)
             .attr("class", "fish-type-image");
     });
+
     const clipPoints = [
         { hour: visibleHours[0].hour, edgeX: 0, value: visibleHours[0][currentSelectedKey] || 0 },
         ...visibleHours.map(data => ({ hour: data.hour, edgeX: x(data.hour) + x.bandwidth() / 2, value: data[currentSelectedKey] || 0 })),
         { hour: visibleHours[visibleHours.length - 1].hour, edgeX: width, value: visibleHours[visibleHours.length - 1][currentSelectedKey] || 0 }
     ];
 
+    // https://d3js.org/d3-shape/area
     const areaGenerator = d3.area()
         .x(d => d.edgeX)
         .y0(height + 20)
@@ -372,6 +386,7 @@ function drawD3Graph(graphData, eventKeys) {
             .attr("fill", "var(--color-purple)")
             .attr("clip-path", "url(#round-bottom-clip)");
     }
+    // https://d3js.org/d3-transition: Zorgt voor een vloeiende overgang van 750ms als de data verandert.
     areaPath.datum(clipPoints).transition().duration(750).attr("d", areaGenerator);
 
     let linePath = dataPathLayer.select(".line-path");
@@ -454,6 +469,7 @@ function drawD3Graph(graphData, eventKeys) {
             d3.select("#tooltip").style("display", "block").html(tooltipContent);
         })
         .on("mousemove", function (event) {
+            // Met behulp van Gemini: Berekent de tooltip-positie en voorkomt dat deze rechts buiten het scherm valt.
             const tooltip = d3.select("#tooltip");
             const tooltipNode = tooltip.node();
             const tooltipWidth = tooltipNode ? tooltipNode.getBoundingClientRect().width : 180;
@@ -476,6 +492,7 @@ function drawD3Graph(graphData, eventKeys) {
         svgSelection.attr("data-theme", "day");
     });
 
+    // https://d3js.org/d3-axis: Genereert een linkeras (Y-as) en tekent de hulplijnen over de volledige breedte van de grafiek.
     const yAxis = d3.axisLeft(y)
         .tickValues(yTicks)
         .tickFormat(d3.format("d"))
@@ -515,12 +532,13 @@ function drawD3Graph(graphData, eventKeys) {
 
 function getFishImageUrl(fishKey) {
     if (fishKey === "total" || fishKey === "uploadedFish") {
-        return "./img/fih.png";
+        return "./img/Visdeurbel_logo.png";
     }
     const safeName = fishKey.toLowerCase().trim();
     return `./img/${safeName}.png`;
 }
 
+// Met behulp van Gemini: Genereert willekeurig opstijgende bubbels die oneindig loopen via een recursieve D3 transitie.
 function initBubbleAnimation(svg, width, height) {
     const floatingGroup = svg.append("g").attr("class", "bubble-layer");
     for (let i = 0; i < 20; i++) {
@@ -545,6 +563,7 @@ function initBubbleAnimation(svg, width, height) {
     }
 }
 
+// Met behulp van Gemini: Zorgt voor zwemmende vissen die horizontaal voorbij trekken en spiegelen op basis van hun zwemrichting.
 function initFishAnimation(svg, width, height, currentKey) {
     svg.select(".fish-layer").remove();
 
@@ -626,6 +645,7 @@ function createGraph(data) {
 
                 if (item.extracted_fishes) {
                     item.extracted_fishes.forEach(fish => {
+                        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
                         if (groupedHours[hourNumber].hasOwnProperty(fish)) {
                             groupedHours[hourNumber][fish] += 1;
                         }
@@ -636,6 +656,7 @@ function createGraph(data) {
     });
 
     if (latestDate) {
+        // https://developer.mozilla.org/nl/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString
         const formattedDate = latestDate.toLocaleDateString('nl-NL', {
             day: 'numeric', month: 'long', year: 'numeric'
         });

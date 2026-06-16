@@ -53,6 +53,7 @@
         padding: 1.5rem;
         color: var(--color-dark-green);
         width: 50%;
+        pointer-events: none;
 
         /* Allow discrete van Cyd weekly nerd */
         transition: opacity 0.2s ease, transform 0.2s ease allow-discrete;
@@ -64,6 +65,7 @@
             transform: translateY(0);
             flex-direction: column;
             backdrop-filter: blur(10px);
+            pointer-events: auto;
         }
 
         &::backdrop {
@@ -319,8 +321,8 @@
             border-radius: 1.5rem;
             text-align: left;
             display: flex;
+            padding: var(--button-padding);
             align-items: center;
-            padding: 0.1rem 0.1rem;
             border: 1px solid var(--color-dark-green);
             cursor: pointer;
             width: 100%;
@@ -376,6 +378,7 @@
 
             .button-text { 
                 margin-left: 0.5rem; 
+                font-size: var(--font-size-button);
             }
 
             .fish-type-image {
@@ -391,7 +394,6 @@
 
             &.is-active {
                 .legend-button {
-                    background-color: var(--color-purple);
                     color: var(--color-white);
 
                     .slider-circle {
@@ -421,6 +423,24 @@
 
     .fish-layer, .individual-bubble, .sun-trajectory, .sun-moon-hover-icon {
         pointer-events: none;
+
+        
+        .fish-container {
+            padding: 20px;
+            display: inline-block;
+        }
+
+        .fish-body-color {
+            fill: var(--color-gold);
+        }
+
+        .fish-border-color {
+            fill: var(--color-dark-green);
+        }
+
+        .fish-eye-color {
+        fill: var(--color-purple);
+        }
     }
 
     .axis-text, text, .axis-text-hours {
