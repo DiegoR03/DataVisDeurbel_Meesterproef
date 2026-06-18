@@ -1,168 +1,222 @@
 .fish-facts-container { 
   background-color: var(--color-purple);
   padding: var(--spacing-top) var(--padding-side);
-  display: grid;
-  grid-template-rows: 5rem 1fr;
-  grid-template-columns: 20% 80%;
-  gap: .5rem;
-
-  h2:first-child {
-    grid-column: 1 / -1;
-  }
-
-  .fish-icons-details-list {
-    height: 50vh;
-    display: grid;
-    place-items: start;
-    gap: 12px;
-    list-style: none;
-    padding: 0;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow: hidden;
 }
 
 .title {
   margin: 0;
   text-align: left;
-
   color: var(--color-dark-green);
   font-size: clamp(2rem, 3.75vw, 4.5rem);
 }
 
-.fish-facts-tag {
+.carousel-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  height: 750px;
+}
 
-  padding: var(--button-padding);
-
-  background: var(--color-white);
-  color: var(--color-dark-green);
-
-  border: 1px solid var(--color-dark-green);
-  border-radius: 1.5em;
-
-  font-size: var(--font-size-button);
-  font-weight: 700;
-
+.carousel-btn {
+  background: var(--color-off-white);
+  border: var(--color-dark-green) 1px solid;
+  border-radius: 3rem;
+  width: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+  height: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+  color: white;
+  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 100;
 
-  transition: all 0.2s ease;
-
-  img {
-    width: 2rem;
-    height: auto;
-  }
-
-  p {
-    margin: 0;
-    color: inherit;
+  svg {
+      width: clamp(.75rem, 0.9722222222vw, 1.1666666667rem);
+      height: auto;
+      overflow: visible;
+      transition: transform .2s .2s ease-out;
+      fill: var(--color-dark-green);
   }
 }
 
-.fish-facts-tag:hover,
-.fish-facts-tag:focus-visible {
-  background: var(--color-purple);
+.carousel-btn:hover {
+  transform: scale(1.2);
 }
 
-.fish-facts-tag:focus-visible {
-  outline: var(--button-focus-outline);
-  outline-offset: var(--button-focus-outline-offset);
-}
-
-.fish-facts-popover {
-  border-radius: 8px;
+.fish-cards-track {
+  position: relative;
   width: 100%;
   height: 100%;
-  grid-column: 2;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-  h3 {
-    color: var(--color-dark-green);
-    font-size: clamp(1.25rem, 1.8055555556vw, 2.1666666667rem);
-    line-height: var(--line-height-headers);
-    font-weight: 400;
-  }
+.fish-title {
+  font-size: var(--font-size-normal)
+}
 
-  p {
-    color: var(--color-dark-green);
-    font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
-    font-weight: 400;
-    max-width: 80%;
+.fish-card {
+  position: absolute;
+  width: clamp(350px, 35dvw, 700px);
+  height: 79dvh;
+  background: var(--color-light-gold);
+  border: 3px solid var(--color-off-white);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, z-index 0.5s ease;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  color: var(--color-dark-green);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.fish-size {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.fish-active-time {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-dark-green);
+  margin: 0.75rem 0 0.5rem 0;
+}
+
+.description-container {
+  overflow-y: auto;
+}
+
+/* Chrome, Edge, Safari */
+.description-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.description-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.description-container::-webkit-scrollbar-thumb {
+  background: var(--color-dark-green);
+  border-radius: 999px;
+}
+
+.fish-description {
+  font-size: 1.3rem;
+  color: var(--color-dark-green);
+  margin: 0;
+  line-height: 1.4;
+  margin-top: 1rem;
+}
+
+.fish-card.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  z-index: 5;
+  pointer-events: auto;
+
+  hr{
+    border-top: var(--color-dark-green) 1px solid;  
+    width: 100%;
   }
 }
 
-.fish-facts-activity {
-    width: 80%;
-    display: grid;
-    margin: 0;
-    margin-bottom: .5rem;
-    padding: 0;
-    list-style: inside;
-
-    li {
-        display: grid;
-        place-items: start;
-        font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
-        margin-bottom: .5rem;
-    }
-
-    h3 {
-      margin-bottom: .5rem
-    }
-
-    p {
-      margin: 0;
-      color: var(--color-dark-green)
-    }
+.fish-card.prev-1 {
+  transform: translate(-140%, -50%) scale(0.85);
+  opacity: .8;
+  z-index: 4;
 }
 
-.fish-facts-pictures {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 1rem;
-  width: 95%;
-  max-width: 100%;
+.fish-card.next-1 {
+  transform: translate(40%, -50%) scale(0.85);
+  opacity: .8;
+  z-index: 4;
+}
+
+.card-photo-slider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin-bottom: 0.5rem;
+}
+
+.photo-frame {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.fish-photos-list {
+  display: flex;
+  width: 100%;
+  height: 100%;
   padding: 0;
   margin: 0;
   list-style: none;
-
-  li {
-    min-width: 0;
-  }
-
-  img {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
+  transition: transform 0.3s ease-in-out;
 }
 
-.fish-facts-icon {
-  transform: scaleX(-1) rotate(30deg);
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 25rem;
+.fish-photos-list li {
+  min-width: 100%;
+  height: 100%;
 }
 
-.fish-facts-close {
-  height: 3rem;
-  width: 3rem;
-  background-color: transparent;
-  border: solid 1.5px var(--color-off-white);
-  border-radius: 99px;
+.fish-photos-list img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-btn {
   position: absolute;
-  top: 3%;
-  right: 3%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  &:hover {
-    cursor: pointer;
-  }
+  cursor: pointer;
+  z-index: 6;
+  color: var(--color-dark-green);
+  font-weight: bold;
 }
+
+.photo-btn:hover {
+  background: var(--color-white);
+}
+
+.prev-photo { left: 0.5rem; }
+.next-photo { right: 0.5rem; }
 
 .fish-image-modal {
   display: none;
@@ -172,85 +226,49 @@
   z-index: 1000;
   justify-content: center;
   align-items: center;
-
-  .fish-image-full {
-    max-width: 90vw;
-    max-height: 90vh;
-    border-radius: 8px;
-  }
-
-  .fish-image-close {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-    width: 2rem;
-    height: 2rem;
-    background-color: var(--color-light-gold);
-    color: var(--color-dark-green);
-    border: none;
-    border-radius: 99px;
-    padding: var(--button-padding);
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.2);
-      transition: 1s
-    }
-  }
 }
 
+.fish-image-modal.active-img {
+  display: flex;
+}
+
+.fish-image-modal .fish-image-full {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+}
+
+.fish-image-modal .fish-image-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--color-light-gold);
+  color: var(--color-dark-green);
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+}
 
 .fish-preview {
   cursor: pointer;
 }
 
-.active {
-  display: block;
-}
-
-.active-img {
-  display: grid;
-}
-
 @media (max-width: 800px) {
-  .fish-facts-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: 4rem 6rem 1fr;
-
-    h2:first-child {
-      grid-column: 1;
-    }
-
-    .fish-icons-details-list {
-      display: flex;
-      grid-row: 2;
-      overflow-x: scroll;
-      overflow-y: hidden;
-      scrollbar-width: none;
-      scroll-snap-type: mandatory;
-
-      .fish-facts-tag {
-        width: 9rem;
-        display: flex;
-        justify-content: center;
-        padding: 0;
-      }
-    }
+  .carousel-wrapper {
+    height: 500px;
+  }
+  .fish-card {
+    width: 300px;
+    height: 520px;
   }
 
-  .fish-facts-popover {
-    grid-row: 3;
-    grid-column: 1;
-  }
+  .fish-card.prev-1 { transform: translate(-110%, -50%) scale(0.8); }
+  .fish-card.next-1 { transform: translate(10%, -50%) scale(0.8); }
+  .fish-card.prev-2, .fish-card.next-2 { display: none; }
 
-  .fish-facts-pictures {
-    img {
-      border-radius: 8px;
-    }
-  }
-
-  .fish-image-close {
-    top: 10rem;
-    right: 10rem;
-  }
+  /* .fish-card.prev-1, .fish-card.next-1 {
+    display: none
+  } */
 }
