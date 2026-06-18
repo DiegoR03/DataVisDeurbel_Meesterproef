@@ -50,7 +50,7 @@ function renderWorldMap(data) {
   // The small rotation prevents Fiji from being cut off too much at the map edge
   // Bron: https://d3js.org/d3-geo
   // ChatGPT: Slightly rotating earth projection to prevent Fiji form being clipped
-  // at the edge of the map. 
+  // at the edge of the map.
   const projection = d3
     .geoNaturalEarth1()
     .rotate([-5, 0])
@@ -88,8 +88,8 @@ function renderWorldMap(data) {
   // Countries with more visitors get a stronger purple color.
   const colorScale = d3
     .scaleSqrt()
-    .domain([1, maxCount])
-    .range(["#f4f0ff", "#c0a8ff"]);
+    .domain([1, maxCount / 2, maxCount])
+    .range(["#eee2ff", "#c0a8ff", "#6f4ad8"]);
 
   renderCountries(
     countryGroup,
@@ -216,7 +216,7 @@ function renderCountries(
       const count = getCountryCount(country, countryCounts);
 
       if (count === 0) {
-        return "#f4f0ff";
+        return "#f1e7ff";
       }
 
       return colorScale(count);
