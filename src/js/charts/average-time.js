@@ -266,7 +266,7 @@ function setupKalenderBase() {
     const viewHeight = 250;
     
     // De linkermarge is aanzienlijk vergroot van 35 naar 95 om de langere tekstlabels volledig te tonen
-    const margin = { top: 15, right: 15, bottom: 15, left: 95 };
+    const margin = { top: 15, right: 15, bottom: 0, left: 95 };
     
     const chartWidth = viewWidth - margin.left - margin.right;
     const chartHeight = viewHeight - margin.top - margin.bottom;
@@ -370,25 +370,27 @@ function updateVisKalender(weekData) {
 
     if (!statsCard.empty()) {
         const totaalVissenWekelijks = weekData ? weekData.length : 0;
+        
         let statsHtml = `
             <h3>Totale Statistieken</h3>
             <div class="stats-total-number">${totaalVissenWekelijks}</div>
             <p class="stats-total-label">Vissen gespot deze week</p>
-            <div id="stats-line" style="height: 1px; background: #eee; margin: 12px 0;"></div>
+            <div id="stats-line"></div>
         `;
 
         if (totaalVissenWekelijks > 0) {
             const visSoortenTellingen = d3.rollups(weekData, v => v.length, f => f.fish_name);
             visSoortenTellingen.sort((a, b) => b[1] - a[1]);
             
-            statsHtml += `<h4>Verdeling per soort:</h4><div class="stats-list" style="max-height: 120px; overflow-y: auto;">`;
+            statsHtml += `<h4>Verdeling per soort:</h4><div class="stats-list has-items">`;
             visSoortenTellingen.forEach(([naam, aantal]) => {
-                statsHtml += `<p style="margin: 4px 0;">🐟 <strong>${aantal}x</strong> ${naam}</p>`;
+                statsHtml += `<p class="stats-item">🐟 <strong>${aantal}x</strong> ${naam}</p>`;
             });
             statsHtml += `</div>`;
         } else {
-            statsHtml += `<p>Geen visgegevens aanwezig voor deze week.</p>`;
+            statsHtml += `<p class="no-data-msg">Geen visgegevens aanwezig voor deze week.</p>`;
         }
+        
         statsCard.html(statsHtml);
     }
 
