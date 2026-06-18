@@ -24,14 +24,24 @@
 }
 
 .carousel-btn {
-  background: none;
-  border: none;
-  font-size: 3rem;
-  color: var(--color-dark-green);
+  background: var(--color-off-white);
+  border: var(--color-dark-green) 1px solid;
+  border-radius: 3rem;
+  width: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+  height: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+  color: white;
+  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
   cursor: pointer;
-  z-index: 10;
-  transition: transform 0.2s ease;
-  padding: 1rem;
+  transition: background-color 0.3s ease;
+  z-index: 100;
+
+  svg {
+      width: clamp(.75rem, 0.9722222222vw, 1.1666666667rem);
+      height: auto;
+      overflow: visible;
+      transition: transform .2s .2s ease-out;
+      fill: var(--color-dark-green);
+  }
 }
 
 .carousel-btn:hover {
@@ -47,12 +57,16 @@
   margin: 0;
 }
 
+.fish-title {
+  font-size: var(--font-size-normal)
+}
+
 .fish-card {
   position: absolute;
-  width: 24dvw;
+  width: clamp(350px, 35dvw, 700px);
   height: 79dvh;
-  background: var(--color-white);
-  border: 1px solid var(--color-dark-green);
+  background: var(--color-light-gold);
+  border: 3px solid var(--color-off-white);
   border-radius: 1.5rem;
   padding: 1.5rem;
   left: 50%;
@@ -91,6 +105,24 @@
   margin: 0.75rem 0 0.5rem 0;
 }
 
+.description-container {
+  overflow-y: auto;
+}
+
+/* Chrome, Edge, Safari */
+.description-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.description-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.description-container::-webkit-scrollbar-thumb {
+  background: var(--color-dark-green);
+  border-radius: 999px;
+}
+
 .fish-description {
   font-size: 1.3rem;
   color: var(--color-dark-green);
@@ -112,27 +144,15 @@
 }
 
 .fish-card.prev-1 {
-  transform: translate(-125%, -50%) scale(0.85);
-  opacity: 1;
+  transform: translate(-140%, -50%) scale(0.85);
+  opacity: .8;
   z-index: 4;
 }
 
 .fish-card.next-1 {
-  transform: translate(25%, -50%) scale(0.85);
-  opacity: 1;
+  transform: translate(40%, -50%) scale(0.85);
+  opacity: .8;
   z-index: 4;
-}
-
-.fish-card.prev-2 {
-  transform: translate(-170%, -50%) scale(0.7);
-  opacity: 0.4;
-  z-index: 3;
-}
-
-.fish-card.next-2 {
-  transform: translate(70%, -50%) scale(0.7);
-  opacity: 0.4;
-  z-index: 3;
 }
 
 .card-photo-slider {
@@ -240,10 +260,15 @@
     height: 500px;
   }
   .fish-card {
-    width: 280px;
-    height: 440px;
+    width: 300px;
+    height: 520px;
   }
+
   .fish-card.prev-1 { transform: translate(-110%, -50%) scale(0.8); }
   .fish-card.next-1 { transform: translate(10%, -50%) scale(0.8); }
   .fish-card.prev-2, .fish-card.next-2 { display: none; }
+
+  /* .fish-card.prev-1, .fish-card.next-1 {
+    display: none
+  } */
 }

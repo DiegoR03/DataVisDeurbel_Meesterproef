@@ -170,7 +170,7 @@ function fetchSnapshot(data) {
       size: "15 tot 25",
     },
     snoek: {
-      fact: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden.[2] Snoeken kunnen vijftien jaar oud worden.",
+      fact: "De snoek is een grote zoetwatervis uit de familie van de snoeken (Esocidae). Het is een van de roofvissen die in België en Nederland voorkomt. De snoek is daarnaast in delen van Europa, Azië en Noord-Amerika te vinden. Snoeken kunnen vijftien jaar oud worden.",
       activeTime: "14:00",
       size: "40 tot 100",
     },
@@ -197,20 +197,29 @@ function fetchSnapshot(data) {
       const fishName = card.dataset.fishName;
       if (!fishName) return;
 
+      // Filterd fishfacts data
       const fishData = fishFacts?.[fishName?.trim().toLowerCase()];
       
       const sizeEl = card.querySelector('.fish-size');
       const activeTimeEl = card.querySelector('.fish-active-time');
       const descEl = card.querySelector('.fish-description');
       
+      // textcontent
       if (sizeEl) sizeEl.textContent = `Grootte: ${fishData?.size ?? "onbekend"} cm`;
-      if (activeTimeEl) activeTimeEl.textContent = `De ${fishName} is het meest actief rond ${fishData?.activeTime ?? "onbekend"}`;
-      
-      // nullish coalescing (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing)
+      if (activeTimeEl) activeTimeEl.textContent = `Het meest actief rond ${fishData?.activeTime ?? "onbekend"} uur`;
       if (descEl) descEl.textContent = fishData?.fact ?? "Geen informatie beschikbaar over deze vis.";
 
-      // optional chaining (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining)
+      // filter naar snapshots van dezelfde vis
       let currentFishPics = fishSnapshots.filter((snapshot) => snapshot.fish_name === fishName);
+
+      const photoList = card.querySelector('.fish-photos-list');
+      if (photoList) {
+        photoList.innerHTML = currentFishPics
+          .slice(0, 4)
+          .map(fish => `<li><img class="fish-preview" src="${fish.snapshot_url}" alt="${fishName}"></li>`)
+          // join() converts array -> string (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)
+          .join("");
+      }
 
       if (fishName === "Kolblei") {
         currentFishPics = [
@@ -221,16 +230,7 @@ function fetchSnapshot(data) {
         ];
       }
 
-      const photoList = card.querySelector('.fish-photos-list');
-      if (photoList) {
-        // map() transforms arrays (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
-        // join() converts array -> string (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)
-        photoList.innerHTML = currentFishPics
-          .slice(0, 4)
-          .map(fish => `<li><img class="fish-preview" src="${fish.snapshot_url}" alt="${fishName}"></li>`)
-          .join("");
-      }
-
+      // elke vis start op 0
       photoIndices[fishName] = 0;
 
       const prevPhotoBtn = card.querySelector('.prev-photo');
@@ -238,13 +238,16 @@ function fetchSnapshot(data) {
 
       if (prevPhotoBtn) {
         prevPhotoBtn.addEventListener('click', (e) => {
+          // voorkomt dat dit event niet word meegegeven aan de parent of children
           e.stopPropagation(); 
+          // Ga een visfoto's terug
           movePhoto(card, fishName, -1, Math.min(currentFishPics.length, 4));
         });
       }
       if (nextPhotoBtn) {
         nextPhotoBtn.addEventListener('click', (e) => {
           e.stopPropagation();
+          // Ga een visfoto's verder
           movePhoto(card, fishName, 1, Math.min(currentFishPics.length, 4));
         });
       }
@@ -258,10 +261,13 @@ function fetchSnapshot(data) {
     const totalCards = cards.length;
     if (!totalCards) return;
 
+    // Met hulp vaan Diego geschreven
     cards.forEach((card, i) => {
       card.classList.remove('active', 'prev-1', 'next-1', 'prev-2', 'next-2');
 
+      // afstand berekenen
       let diff = i - currentFishIndex;
+      // Gemaakt met chatGPT, zorgt ervoor dat je in een nette cirkel kan omdraaien
       if (diff < -Math.floor(totalCards / 2)) diff += totalCards;
       if (diff > Math.floor(totalCards / 2)) diff -= totalCards;
 
@@ -271,20 +277,20 @@ function fetchSnapshot(data) {
         card.classList.add('prev-1');
       } else if (diff === 1) {
         card.classList.add('next-1');
-      } else if (diff === -2) {
-        card.classList.add('prev-2');
-      } else if (diff === 2) {
-        card.classList.add('next-2');
       }
     });
   }
 
+  // Met hulp van Diego
   function movePhoto(card, fishName, direction, maxPhotos) {
     if (maxPhotos <= 1) return;
 
     photoIndices[fishName] += direction;
 
+    // Als van positie 0 naar de laatste gaat, door op links te klikken
     if (photoIndices[fishName] < 0) photoIndices[fishName] = maxPhotos - 1;
+
+    // Veranderd photoIndices naar 0 als je op de laatste kaart bent
     if (photoIndices[fishName] >= maxPhotos) photoIndices[fishName] = 0;
 
     const photoList = card.querySelector('.fish-photos-list');
@@ -299,6 +305,7 @@ function fetchSnapshot(data) {
 
   if (prevFishBtn) {
     prevFishBtn.addEventListener('click', () => {
+      // Haalt de waarde -1 als je op prev drukt
       currentFishIndex = (currentFishIndex - 1 + totalFishCards) % totalFishCards;
       updateCarouselPositions();
     });
@@ -306,6 +313,7 @@ function fetchSnapshot(data) {
 
   if (nextFishBtn) {
     nextFishBtn.addEventListener('click', () => {
+      // Haalt de waarde +1 als je op next drukt
       currentFishIndex = (currentFishIndex + 1) % totalFishCards;
       updateCarouselPositions();
     });
