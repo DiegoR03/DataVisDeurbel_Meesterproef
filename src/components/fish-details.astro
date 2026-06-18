@@ -19,31 +19,43 @@ const fishOptions = [
 ---
 <section class="fish-facts-container" data-fish-options={JSON.stringify(fishOptions)}>
     <h2 class="title">Leer onze vissen kennen</h2>
-    <ul class="fish-icons-details-list">
-        {fishOptions.map(fish => {
-            return (<li class="fish-item" data-set={fish.name}>
-                <button class="fish-facts-tag">
-                    <img src={fish.img} alt={`picture of ${fish.name}`} />
-                    <p>{fish.name}</p>
-                </button>
-            </li>)
-        })}
-    </ul>
-    <div class="fish-facts-popover">
-        <h2 class="fish-facts-name"></h2>
-        <!-- over de vis -->
-        <p class="fish-facts-about"></p>
-        <!-- vis feitjes -->
-        <ul class="fish-facts-activity"></ul>
-        <!-- foto's van vissen -->
-        <ul class="fish-facts-pictures"></ul>
+
+    <div class="carousel-wrapper">
+        <button class="carousel-btn prev-fish" type="button">&#10094;</button>
+        
+        <ul class="fish-cards-track">
+            {fishOptions.map((fish) => {
+                return (
+                    <li class="fish-card" data-fish-name={fish.name}>
+                        <div class="card-header">
+                            <h3>{fish.name}</h3>
+                            <span class="fish-size"></span>
+                        </div>
+
+                        <div class="card-photo-slider">
+                            <button class="photo-btn prev-photo" type="button">&#10094;</button>
+                            <div class="photo-frame">
+                                <ul class="fish-photos-list">
+                                    </ul>
+                            </div>
+                            <button class="photo-btn next-photo" type="button">&#10095;</button>
+                        </div>
+
+                        <p class="fish-active-time"></p>
+                        <hr/>
+                        <p class="fish-description"></p>
+                    </li>
+                )
+            })}
+        </ul>
+
+        <button class="carousel-btn next-fish" type="button">&#10095;</button>
     </div>
 
     <div class="fish-image-modal">
         <button class="fish-image-close">X</button>
         <img class="fish-image-full" src="" alt="">
     </div>
-
 </section>
 
 <script src="../js/charts/picture-of-month.js"></script>
