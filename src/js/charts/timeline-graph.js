@@ -354,11 +354,6 @@ function drawD3Graph(graphData, eventKeys) {
         contentWrapper.append("span")
             .attr("class", "button-text")
             .text(item.label);
-
-        contentWrapper.append("img")
-            .attr("src", getFishImageUrl(item.key))
-            .attr("alt", item.label)
-            .attr("class", "fish-type-image");
     });
 
     const clipPoints = [
@@ -569,6 +564,7 @@ function initFishAnimation(svg, width, height, currentKey) {
 
     const fishGroup = svg.append("g").attr("class", "fish-layer");
     const imgUrl = getFishImageUrl(currentKey);
+    const isLogo = imgUrl === "./img/Visdeurbel_logo.png";
 
     for (let i = 0; i < 5; i++) {
         const fish = fishGroup.append("image")
@@ -576,22 +572,37 @@ function initFishAnimation(svg, width, height, currentKey) {
             .attr("width", 60)
             .attr("height", 40)
             .attr("opacity", 0.9)
-            .style("filter", "url(#pink-tint-filter)");
+            .style("filter", imgUrl === "./img/Visdeurbel_logo.png" ? "none" : "url(#pink-tint-filter)");
 
         const animate = (f) => {
             if (f.node() && !f.node().parentNode) return;
 
-            const dir = Math.random() > 0.5 ? 1 : -1;
-            const sX = dir === 1 ? -70 : width + 10;
-            const eX = dir === 1 ? width + 10 : -70;
-            const rY = 50 + Math.random() * (height * 0.7);
+            let startTransform, endTransform;
+            let duration = 9000 + Math.random() * 3000;
 
-            const flip = dir === -1 ? "scale(1, 1)" : "scale(-1, 1)";
+            if (isLogo) {
+                const startX = Math.random() * (width - 60);
+                const endX = startX + (Math.random() * 80 - 40);
+                
+                startTransform = `translate(${startX}, ${height + 40})`;
+                endTransform = `translate(${endX}, -50)`;
+                duration = 7000 + Math.random() * 4000;
+            } else {
+                const dir = Math.random() > 0.5 ? 1 : -1;
+                const sX = dir === 1 ? -70 : width + 10;
+                const eX = dir === 1 ? width + 10 : -70;
+                const rY = 50 + Math.random() * (height * 0.7);
+                const flip = dir === -1 ? "scale(1, 1)" : "scale(-1, 1)";
 
-            f.attr("transform", `translate(${sX}, ${rY}) ${flip}`)
-                .transition().duration(9000 + Math.random() * 3000)
+                startTransform = `translate(${sX}, ${rY}) ${flip}`;
+                endTransform = `translate(${eX}, ${rY + (Math.random() * 60 - 30)}) ${flip}`;
+            }
+
+            f.attr("transform", startTransform)
+                .transition()
+                .duration(duration)
                 .ease(d3.easeLinear)
-                .attr("transform", `translate(${eX}, ${rY + (Math.random() * 60 - 30)}) ${flip}`)
+                .attr("transform", endTransform)
                 .on("end", () => animate(f));
         };
         animate(fish);
