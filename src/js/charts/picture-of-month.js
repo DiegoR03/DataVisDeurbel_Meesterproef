@@ -34,13 +34,13 @@ function fetchSnapshot(data) {
 
     if (!fishName) continue;
 
-    // URLSearchParams parses query strings safely (MDN: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
     const queryString = snapshot.url_query || snapshot.referrer_query;
     if (!queryString) continue;
 
+    // URLSearchParams parses query strings safely (MDN: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
     const searchParams = new URLSearchParams(queryString);
 
-    // parseFloat converts string -> number (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat)
+    // convert een string naar een nummer (MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat)
     const likelyhoodOfFish = parseFloat(searchParams.get("likelyhoodOfFish"));
 
     // guard clause: skip invalid or low confidence values
@@ -55,7 +55,6 @@ function fetchSnapshot(data) {
     fishOptions.forEach((fish) => {
       const li = document.createElement("li");
       li.classList.add("fish-item"); 
-      // classList API (MDN: https://developer.mozilla.org/en-US/docs/Web/API/Element/classList)
       li.dataset.set = fish.name;
       // dataset = HTML data-* attributes (MDN: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset)
       li.tabIndex = 0;
@@ -113,8 +112,8 @@ function fetchSnapshot(data) {
       const isCorrect = guessedFish.toLowerCase() === actualFish.toLowerCase();
 
       const message = isCorrect
-        ? `Wat goed! Het was inderdaad een ${actualFish}`
-        : `Helaas, het juiste antwoord was ${actualFish}`;
+        ? `${actualFish}! Wat goed!`
+        : `${actualFish}, helaas.`;
 
       fishFeedbacks.forEach((feedback) => {
         feedback.innerHTML = message;

@@ -4,7 +4,7 @@
     display: grid;
     grid-template-columns: 60% 40%;
     gap: 1rem;
-    place-items: start;
+    align-items: start;
 
     div:nth-of-type(1) {
         grid-column: 1;
@@ -16,6 +16,7 @@
         display: flex;
         flex-direction: column;
         align-items: start;
+
 
         h3 {
             color: var(--color-dark-green);
@@ -30,6 +31,7 @@
 
 /* img container */
 .fish-picture-list {
+    height: 100%;
     margin: 0;
     padding: 0;
     display: grid;
@@ -40,46 +42,56 @@
 /* random img */
 .fish-image {
     width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
     grid-column: 1;
     grid-row: 2;
     display: block;
     border-radius: 8px;
 }
 
+.feedback-container {
+    display: flex;
+    width: 100;
+}
+
 /* feedback guess */
 .guess-fish-feedback {
     height: 2rem;
     color: var(--color-dark-green);
-    font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem)
 }
 
 /* icons of all fishes */
 .fish-icons-list {
     display: grid;
-    height: 50vh;
+    width: 35vw;
+    height: 65vh;
     gap: 12px;
-    overflow-y: scroll;
-    scrollbar-width: none; 
+    overflow-y: auto;
     place-items: start;
 
-    border-radius: var(--border-radius);
+    background-color: var(--color-off-white);
+
+    border-radius: 30px;
     margin: 0;
     padding: var(--padding);
 
 
     li {
         display: flex;
-        width: 25vw;
+        width: 100%;
         gap: 0.75rem;
-
         list-style-type: none;
 
         align-items: center;
         border: solid 1px var(--color-purple);
-        border-radius: var(--border-radius);
+        border-radius: 99px;
 
         font-size: var(--font-size-button);
         font-weight: 700;
+
+        padding: var(--button-padding);
 
         &:hover {
             cursor: pointer;
@@ -92,13 +104,30 @@
             width: 4rem;
             height: auto;
         }
+
+        p {
+            margin: 0;
+        }
     }
+}
+
+.fish-icons-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fish-icons-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fish-icons-list::-webkit-scrollbar-thumb {
+  background: var(--color-dark-green);
+  border-radius: 999px;
 }
 
 @media screen and (max-width: 765px) {
     .picture-of-month-container {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 2fr;
+        grid-template-rows: 50vh 2fr;
 
         div:nth-of-type(1) {
             grid-column: 1;
@@ -116,14 +145,10 @@
     }
 
     .fish-icons-list {
-        height: auto;
-        overflow: visible;
-        grid-template-columns: 1fr 1fr;
-        justify-content: space-around;
         width: 80vw;
+        height: 40vh;
 
         li {
-            width: fit-content;
             padding: var(--button-padding);
         }
     }
