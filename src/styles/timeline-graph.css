@@ -266,6 +266,14 @@
                     text, .axis-text, .y-axis path, .layer-interface path {
                         fill: var(--color-white);
                     }
+
+                    g[transform*="rotate(-90)"] text,
+                    g[transform*="rotate(-90)"] path {
+                        fill: var(--color-dark-green) !important;
+                    }
+                    .axis-text-hours {
+                        fill: var(--color-dark-green);
+                    }
                 }
 
                 &[data-theme="night"] {
