@@ -137,7 +137,7 @@
   z-index: 5;
   pointer-events: auto;
 
-  hr{
+  hr {
     border-top: var(--color-dark-green) 1px solid;  
     width: 100%;
   }
