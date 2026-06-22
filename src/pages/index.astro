@@ -1,8 +1,8 @@
 ---
 // @ts-nocheck
 import "../styles/style.css";
+
 import MainAquarium from "../components/MainAquarium.astro";
- 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
 import WorldMap from "../components/WorldMap.astro";
@@ -17,11 +17,11 @@ import path from 'node:path';
  
 const NULL_VALUE = "\\N";
  
-async function loadCsvData(csvUrl: any) {
+function loadCsvDataLocal() {
   try {
     const filePath = path.join(process.cwd(), 'public', 'data', 'website_event-week.csv');
     const csvText = fs.readFileSync(filePath, 'utf-8');
-    
+ 
     const rawData = parseCsv(csvText);
     return rawData.map(formatDataObject);
   } catch (error) {
@@ -102,7 +102,7 @@ function addFishData(dataObject: Record<string, any>) {
     ? decodeURIComponent(rawImageUrl)
     : null;
 }
- 
+
 const visData = loadCsvDataLocal();
 ---
 
