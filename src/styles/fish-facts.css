@@ -1,0 +1,274 @@
+.fish-facts-container { 
+  background-color: var(--color-purple);
+  padding: var(--spacing-top) var(--padding-side);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow: hidden;
+}
+
+.title {
+  margin: 0;
+  text-align: left;
+  color: var(--color-dark-green);
+  font-size: clamp(2rem, 3.75vw, 4.5rem);
+}
+
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  height: 750px;
+}
+
+.carousel-btn {
+  background: var(--color-off-white);
+  border: var(--color-dark-green) 1px solid;
+  border-radius: 3rem;
+  width: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+  height: clamp(2rem, 3.0555555556vw, 3.6666666667rem);
+  color: white;
+  font-size: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 100;
+
+  svg {
+      width: clamp(.75rem, 0.9722222222vw, 1.1666666667rem);
+      height: auto;
+      overflow: visible;
+      transition: transform .2s .2s ease-out;
+      fill: var(--color-dark-green);
+  }
+}
+
+.carousel-btn:hover {
+  transform: scale(1.2);
+}
+
+.fish-cards-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fish-title {
+  font-size: var(--font-size-normal)
+}
+
+.fish-card {
+  position: absolute;
+  width: clamp(350px, 35dvw, 700px);
+  height: 79dvh;
+  background: var(--color-light-gold);
+  border: 3px solid var(--color-off-white);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, z-index 0.5s ease;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  color: var(--color-dark-green);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.fish-size {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.fish-active-time {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-dark-green);
+  margin: 0.75rem 0 0.5rem 0;
+}
+
+.description-container {
+  overflow-y: auto;
+}
+
+/* Chrome, Edge, Safari */
+.description-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.description-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.description-container::-webkit-scrollbar-thumb {
+  background: var(--color-dark-green);
+  border-radius: 999px;
+}
+
+.fish-description {
+  font-size: 1.3rem;
+  color: var(--color-dark-green);
+  margin: 0;
+  line-height: 1.4;
+  margin-top: 1rem;
+}
+
+.fish-card.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  z-index: 5;
+  pointer-events: auto;
+
+  hr {
+    border-top: var(--color-dark-green) 1px solid;  
+    width: 100%;
+  }
+}
+
+.fish-card.prev-1 {
+  transform: translate(-140%, -50%) scale(0.85);
+  opacity: .8;
+  z-index: 4;
+}
+
+.fish-card.next-1 {
+  transform: translate(40%, -50%) scale(0.85);
+  opacity: .8;
+  z-index: 4;
+}
+
+.card-photo-slider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin-bottom: 0.5rem;
+}
+
+.photo-frame {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.fish-photos-list {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  transition: transform 0.3s ease-in-out;
+}
+
+.fish-photos-list li {
+  min-width: 100%;
+  height: 100%;
+}
+
+.fish-photos-list img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 6;
+  color: var(--color-dark-green);
+  font-weight: bold;
+}
+
+.photo-btn:hover {
+  background: var(--color-white);
+}
+
+.prev-photo { left: 0.5rem; }
+.next-photo { right: 0.5rem; }
+
+.fish-image-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(1 70 60 / 85%);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.fish-image-modal.active-img {
+  display: flex;
+}
+
+.fish-image-modal .fish-image-full {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+}
+
+.fish-image-modal .fish-image-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--color-light-gold);
+  color: var(--color-dark-green);
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+}
+
+.fish-preview {
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .carousel-wrapper {
+    height: 500px;
+  }
+  .fish-card {
+    width: 300px;
+    height: 520px;
+  }
+
+  .fish-card.prev-1 { transform: translate(-110%, -50%) scale(0.8); }
+  .fish-card.next-1 { transform: translate(10%, -50%) scale(0.8); }
+  .fish-card.prev-2, .fish-card.next-2 { display: none; }
+
+  /* .fish-card.prev-1, .fish-card.next-1 {
+    display: none
+  } */
+}

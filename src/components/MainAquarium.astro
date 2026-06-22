@@ -1,0 +1,65 @@
+---
+import "../styles/fish-of-season.css";
+---
+
+<section class="fish-of-season-section" id="after-world-map">
+  <h2 class="title">Vis van het seizoen</h2>
+
+  <div class="aquarium-layout-wrapper">
+    <aside class="aquarium-sidebar">
+
+      <div class="sidebar-header">
+        <h3 class="sidebar-title">Aantal keer gespot</h3>
+        <p class="sidebar-subtitle">Kies een vis om in de gracht te kijken.</p>
+      </div>
+      
+      <fieldset class="aquarium-filters">
+        <legend class="visually-hidden">Kies welke vissen je in het aquarium wilt zien</legend>
+
+        <input type="radio" id="filter-all" name="fish-filter" value="all" checked class="visually-hidden" />
+        <label for="filter-all" class="filter-btn">Alle Vissen</label>
+
+        <input type="radio" id="filter-top3" name="fish-filter" value="top3" class="visually-hidden" />
+        <label for="filter-top3" class="filter-btn">Top 3 Meest Gespot</label>
+
+        <hr class="filter-divider" /> <input type="radio" id="filter-ruisvoorn" name="fish-filter" value="Ruisvoorn" class="visually-hidden" />
+        <label for="filter-ruisvoorn" id="legend-ruisvoorn" class="filter-btn legend-btn">Ruisvoorn: Data loading...</label>
+
+        <input type="radio" id="filter-baars" name="fish-filter" value="Baars" class="visually-hidden" />
+        <label for="filter-baars" id="legend-baars" class="filter-btn legend-btn">Baars: Data loading...</label>
+
+        <input type="radio" id="filter-paling" name="fish-filter" value="Paling" class="visually-hidden" />
+        <label for="filter-paling" id="legend-paling" class="filter-btn legend-btn">Paling: Data loading...</label>
+
+        <input type="radio" id="filter-alver" name="fish-filter" value="Alver" class="visually-hidden" />
+        <label for="filter-alver" id="legend-alver" class="filter-btn legend-btn">Alver: Data loading...</label>
+
+        <input type="radio" id="filter-blankvoorn" name="fish-filter" value="Blankvoorn" class="visually-hidden" />
+        <label for="filter-blankvoorn" id="legend-blankvoorn" class="filter-btn legend-btn">Blankvoorn: Data loading...</label>
+
+        <input type="radio" id="filter-brasem" name="fish-filter" value="Brasem" class="visually-hidden" />
+        <label for="filter-brasem" id="legend-brasem" class="filter-btn legend-btn">Brasem: Data loading...</label>
+
+        <input type="radio" id="filter-kolblei" name="fish-filter" value="Kolblei" class="visually-hidden" />
+        <label for="filter-kolblei" id="legend-kolblei" class="filter-btn legend-btn">Kolblei: Data loading...</label>
+
+        <input type="radio" id="filter-meerval" name="fish-filter" value="Meerval" class="visually-hidden" />
+        <label for="filter-meerval" id="legend-meerval" class="filter-btn legend-btn">Meerval: Data loading...</label>
+
+        <input type="radio" id="filter-snoek" name="fish-filter" value="Snoek" class="visually-hidden" />
+        <label for="filter-snoek" id="legend-snoek" class="filter-btn legend-btn">Snoek: Data loading...</label>
+
+        <input type="radio" id="filter-snoekbaars" name="fish-filter" value="Snoekbaars" class="visually-hidden" />
+        <label for="filter-snoekbaars" id="legend-snoekbaars" class="filter-btn legend-btn">Snoekbaars: Data loading...</label>
+
+        <input type="radio" id="filter-winde" name="fish-filter" value="Winde" class="visually-hidden" />
+        <label for="filter-winde" id="legend-winde" class="filter-btn legend-btn">Winde: Data loading...</label>
+      </fieldset>
+
+    </aside>
+
+    <div class="main-aquarium" id="main-aquarium"></div>
+  </div>
+</section>
+
+<script src="../js/charts/swimming-fish.js"></script>

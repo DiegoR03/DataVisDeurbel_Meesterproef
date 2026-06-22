@@ -1,0 +1,163 @@
+/********************************/
+/* MARK: Variables for identity */
+/********************************/
+
+/* Design tokens */
+:root {
+  /* Colors */
+  --color-purple: rgba(192, 168, 255, 1);
+  --color-white: rgb(255, 255, 255);
+  --color-light-gold: rgba(248, 231, 205, 1);
+  --color-dark-green: rgba(1, 70, 60, 1);
+  --color-off-white: rgba(253, 247, 239, 1);
+  --color-gold: rgba(240, 175, 0, 1);
+  --color-pink: rgba(213, 100, 151, 1);
+  --color-blue-green: rgba(30, 172, 176, 1);
+
+  /* Gradients */
+  --gradient-data-background: linear-gradient(
+    to bottom,
+    rgba(248, 231, 205, 1),
+    rgba(253, 247, 239, 1)
+  );
+
+  --gradient-purple: linear-gradient(
+    to bottom,
+    rgba(161, 114, 255, 1),
+    rgba(192, 168, 255, 1)
+  );
+
+  /* Typography Desktop */
+  --font-heading: "Bricolage Grotesque", sans-serif;
+  --font-body: "Bricolage Grotesque", sans-serif;
+
+  --font-size-h1: clamp(2rem, 3.75vw, 4.5rem);
+  --font-size-h2: clamp(2rem, 3.75vw, 4.5rem);
+  --font-size-h3: 27px;
+
+  --font-size-normal: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+  --font-size-small: 16px;
+
+  --font-size-button: clamp(1.125rem, 1.3888888889vw, 1.6666666667rem);
+
+  --line-height-headers: 125%;
+  --line-height-normal: 150%;
+
+  /* Typography Mobile */
+  --mobile-font-size-h1: 32px;
+  --mobile-font-size-h2: 28px;
+  --mobile-font-size-h3: 20px;
+
+  --mobile-font-size-normal: 18px;
+  --mobile-font-size-small: 14px;
+
+  /* Font weights */
+  --font-weight-headings: 800;
+  --font-weight-body: 400;
+
+  /* Styling */
+  --border-radius: 16px;
+
+  /* Spacing */
+  --spacing-top: clamp(5.625rem, 11.1111111111vw, 13.3333333333rem);
+  --padding-top: clamp(3rem, 5.5555555556vw, 6.6666666667rem);
+  --padding-side: 1.5rem;
+  --padding: 1.5rem;
+
+  /* Button padding */
+  --button-padding: 0.5em 0.8em;
+  --button-focus-outline: 2px dashed #01463c;
+  --button-focus-outline-offset: 2px;
+
+}
+
+/***********************/
+/* MARK: BASIC STYLING */
+/***********************/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1,
+h2,
+h3 {
+  font-variation-settings:
+    "opsz" 96,
+    "wght" 800,
+    "wdth" 100;
+}
+
+h2 {
+  color: var(--color-dark-green);
+  margin-top: 0;
+  font-size: clamp(2rem, 3.75vw, 4.5rem);
+}
+
+h3 {
+  display: block;
+  font-size: clamp(1.25rem, 1.8055555556vw, 2.1666666667rem);
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: var(--font-weight-body);
+  unicode-bidi: isolate;
+}
+
+p {
+  font-family: "PT Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.status-message {
+  font-style: italic;
+  color: #666;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+  /* Wordt door JS aangepast naar 'table' als de data er is */
+  display: none;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 12px 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}

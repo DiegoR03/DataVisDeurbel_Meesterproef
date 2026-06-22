@@ -1,0 +1,690 @@
+/**********************************/
+/* MARK: World map section layout */
+/**********************************/
+
+.world-map-section {
+  /* Main two-column layout for the world map and statistics */
+  /* Bron: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout */
+
+  background: var(--color-off-white);
+
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3rem var(--padding);
+  align-items: start;
+
+  padding: var(--spacing-top) var(--padding-side);
+}
+
+.world-map-section-header {
+  /* Places the title and skip link on a single row */
+  /* Bron: https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox */
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0;
+  text-align: left;
+}
+
+.world-map-section-layout {
+  /* Allows child elements to participate directly in the parent grid */
+  display: contents;
+}
+
+.world-map-section-countries {
+  grid-column: 1 / span 3;
+
+  align-self: start;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  border-radius: 1rem;
+}
+
+.world-map-section-visual {
+  grid-column: 4 / span 9;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+/***********************/
+/* MARK: World map SVG */
+/***********************/
+
+.world-map {
+  /* SVG scales responsively while preserving its aspect ratio */
+  /* Bron: https://developer.mozilla.org/en-US/docs/Web/SVG */
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  border-radius: 1rem;
+
+  touch-action: none;
+  cursor: grab;
+}
+
+.world-map:active {
+  /* Visual feedback while dragging the map */
+  cursor: grabbing;
+}
+
+/*******************/
+/* MARK: Countries */
+/*******************/
+
+.world-map-country {
+  /* Default appearance for all countries */
+  stroke: var(--color-dark-green);
+  stroke-width: 1;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.2s ease,
+    stroke 0.2s ease,
+    stroke-width 0.2s ease;
+}
+
+.world-map-country:hover,
+.world-map-country:focus-visible,
+.world-map-country.is-active {
+  /*
+    Selected, hovered and keyboard-focused countries
+    all share the same visual state
+  */
+  fill: var(--color-dark-green) !important;
+
+  stroke: var(--color-dark-green);
+  stroke-width: 2.5;
+
+  filter: drop-shadow(0 0 0.35rem var(--color-dark-green));
+}
+
+.world-map-country:focus {
+  /* Remove browser default outline in favour of custom focus styling */
+  outline: none;
+}
+
+.world-map-country:focus-visible {
+  /* 
+    Bronnen: 
+    https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+    https://www.w3.org/WAI/WCAG21/quickref/ 
+  */
+  stroke: var(--color-dark-green);
+
+  stroke-width: 3;
+}
+
+.world-map-country.is-active {
+  opacity: 1;
+
+  filter: brightness(1.2);
+
+  stroke: var(--color-dark-green);
+  stroke-width: 2;
+}
+
+/*****************/
+/* MARK: Tooltip */
+/*****************/
+
+.world-map-tooltip {
+  /*
+    Floating information panel that follows
+    the user's cursor while hovering a country
+  */
+  /* Bron: https://developer.mozilla.org/en-US/docs/Web/CSS/position */
+  position: fixed;
+  z-index: 1000;
+
+  display: none;
+
+  padding: 0.75rem 1rem;
+
+  background: var(--color-white);
+  color: var(--color-dark-green);
+
+  border: 2px solid var(--color-purple);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+/****************/
+/* MARK: Legend */
+/****************/
+
+.world-map-legend {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+
+  color: var(--color-dark-green);
+  font-family: "PT Sans", sans-serif;
+}
+
+.world-map-legend-gradient {
+  /* Visual representation of the visitor density scale */
+  width: 200px;
+  height: 16px;
+
+  border: 1px solid #000000;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    to right,
+
+    #eee2ff,
+    #c0a8ff,
+    #6f4ad8
+  );
+}
+
+/****************************/
+/* MARK: Top countries list */
+/****************************/
+
+.top-countries-title {
+  margin: 0;
+  color: var(--color-dark-green);
+  max-width: none;
+}
+
+.top-countries-list {
+  /* Ranked overview of the countries with the most visitors */
+  display: grid;
+  gap: 1rem;
+
+  list-style: none;
+
+  padding: 0;
+  margin: 0;
+}
+
+.top-countries-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  color: var(--color-dark-green);
+
+  padding: 0.5rem;
+
+  border-bottom: 1px solid rgba(1, 70, 60, 0.2);
+
+  font-size: var(--font-size-normal);
+  font-weight: 800;
+  line-height: var(--line-height-headers);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.top-countries-list-country {
+  text-align: left;
+}
+
+.top-countries-list-count {
+  margin-left: auto;
+
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.top-countries-list-item.is-active {
+  background: var(--color-gold);
+
+  border-radius: 0.5rem;
+
+  transform: translateX(0.25rem);
+}
+
+.rank-badge {
+  /*
+    Bubble-style ranking indicator inspired by
+    the aquatic theme of the Visdeurbel branding
+  */
+  /* 
+    Bronnen:
+    - ChatGPT
+    - https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/radial-gradient
+  */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2rem;
+  height: 2rem;
+
+  margin-right: 0.75rem;
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.9),
+    var(--color-blue-green) 70%
+  );
+
+  color: var(--color-dark-green);
+
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  box-shadow:
+    inset -2px -2px 6px rgba(255, 255, 255, 0.3),
+    0 2px 8px rgba(192, 168, 255, 0.3);
+
+  flex-shrink: 0;
+}
+
+.top-countries-list-item:first-child .rank-badge {
+  /* Slightly emphasize the number one country */
+  transform: scale(1.15);
+}
+
+/*****************************/
+/* MARK: Active country card */
+/*****************************/
+
+.active-country-card {
+  /* Keep the flag and country name aligned on one line */
+  margin-top: auto;
+  padding-top: 1.5rem;
+
+  color: var(--color-dark-green);
+
+  font-size: var(--font-size-normal);
+}
+
+.active-country-card strong {
+  margin-bottom: 0.5rem;
+}
+
+.active-country-card span {
+  display: block;
+  font-family: "PT Sans", sans-serif;
+}
+
+.country-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  margin-bottom: 0.5rem;
+}
+
+.country-flag,
+.country-name {
+  display: inline;
+}
+
+.world-map-country-total {
+  color: var(--color-dark-green);
+
+  font-weight: 700;
+}
+
+.active-country-card-row {
+  /* Align icons and statistics in a consistent row layout */
+  /* Bron: https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox */
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.active-country-card-row span[aria-hidden="true"] {
+  width: 1.5rem;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.card-icon {
+  /* Fixed width keeps all statistic rows aligned */
+  width: 1.5rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/*********************/
+/* MARK: Skip button */
+/*********************/
+
+.world-map-skip-button {
+  /*
+    Accessibility shortcut allowing keyboard users
+    to skip the interactive map section
+  */
+  /* 
+    Bronnen:
+    - ChatGPT
+    - https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/radial-gradient
+  */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  margin-left: auto;
+  margin-top: 0;
+
+  padding: var(--button-padding);
+
+  background: var(--color-purple);
+  color: var(--color-dark-green);
+
+  border: 1px solid var(--color-dark-green);
+  border-radius: 1.5em;
+
+  font-size: var(--font-size-button);
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+
+  transition: background 0.2s ease;
+}
+
+.world-map-skip-button:hover,
+.world-map-skip-button:focus-visible {
+  background: var(--color-off-white);
+}
+
+.world-map-skip-button:focus-visible {
+  outline: var(--button-focus-outline);
+  outline-offset: var(--button-focus-outline-offset);
+}
+
+/***********************************/
+/* MARK: Route line and route fish */
+/***********************************/
+.route-fish-svg {
+  pointer-events: none;
+}
+
+.route-fish-body,
+.route-fish-tail,
+.route-fish-fin {
+  /* Main parts of the custom SVG fish */
+  fill: var(--color-pink);
+  stroke: var(--color-pink);
+  stroke-width: 1;
+}
+
+.route-fish-eye {
+  /* Eye detail for the fish illustration */
+  fill: var(--color-dark-green);
+}
+
+.route-fish-gill {
+  /* Decorative gill line */
+  fill: none;
+  stroke: var(--color-dark-green);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+.world-map-route {
+  /*
+    Curved route connecting Utrecht
+    to the selected country
+  */
+  fill: none;
+
+  stroke: var(--color-gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 8 8;
+
+  animation: routeMove 2s linear infinite;
+
+  pointer-events: none;
+}
+
+.route-fish {
+  pointer-events: none;
+}
+
+.route-fish-svg {
+  pointer-events: none;
+}
+
+@keyframes routeMove {
+  /* Creates the illusion of movement along the route */
+  /* 
+    Bronnen:
+    - https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes 
+    - ChatGPT
+  */
+
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+/************************/
+/* MARK: Utrecht marker */
+/************************/
+
+.utrecht-marker {
+  fill: var(--color-purple);
+
+  stroke: var(--color-white);
+  stroke-width: 2;
+
+  pointer-events: none;
+}
+
+.utrecht-marker-pulse {
+  /*
+    Animated pulse highlights the location
+    of the Visdeurbel in Utrecht
+  */
+  fill: none;
+
+  stroke: var(--color-purple);
+  stroke-width: 2;
+
+  opacity: 0.8;
+
+  animation: utrechtPulse 2s ease-out infinite;
+
+  pointer-events: none;
+}
+
+.utrecht-marker-label-bg {
+  /* Background pill behind the Utrecht label */
+  fill: var(--color-off-white);
+
+  stroke: var(--color-purple);
+  stroke-width: 2;
+
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+.utrecht-marker-label {
+  fill: var(--color-dark-green);
+
+  font-size: 0.8rem;
+  font-weight: 800;
+
+  pointer-events: none;
+}
+
+@keyframes utrechtPulse {
+  /* 
+    Bronnen: 
+    - https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes
+    - ChatGPT
+  */
+  from {
+    opacity: 0.8;
+
+    r: 6;
+  }
+
+  to {
+    opacity: 0;
+
+    r: 16;
+  }
+}
+
+/****************/
+/* MARK: Mobile */
+/****************/
+
+@media (max-width: 768px) {
+  /* Mobile layout optimizations */
+  /* Bron: https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries */
+  .world-map-section {
+    /* Stack content vertically on smaller screens */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    padding: var(--padding-top) var(--padding-side) 0;
+  }
+
+  .world-map-section-header {
+    /* Place skip button underneath the heading */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .world-map-skip-button {
+    margin-left: 0;
+    align-self: flex-start;
+  }
+
+  .world-map-section-header,
+  .world-map-section-countries,
+  .world-map-section-visual {
+    grid-column: auto;
+
+    width: 100%;
+  }
+
+  .world-map-section-countries {
+    order: 1;
+
+    gap: 1.5rem;
+  }
+
+  .world-map-section-visual {
+    order: 2;
+  }
+
+  .world-map {
+    border-radius: 0.75rem;
+  }
+
+  .world-map-legend {
+    /*
+      Compact legend layout to fit narrow screens
+      while preserving readability
+    */
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+
+    width: 100%;
+    margin-top: 1rem;
+
+    font-size: var(--font-size-small);
+  }
+
+  .world-map-legend-gradient {
+    width: 100%;
+    min-width: 5rem;
+    height: 0.875rem;
+  }
+
+  .top-countries-list {
+    gap: 0.5rem;
+  }
+
+  .top-countries-list-item {
+    padding: 0.75rem;
+
+    font-size: var(--font-size-normal);
+  }
+
+  .active-country-card {
+    margin-top: 0;
+    padding-top: 1rem;
+  }
+
+  .world-map-country-total {
+    margin-bottom: 0.5rem;
+  }
+
+  .utrecht-marker-label {
+    font-size: 0.7rem;
+  }
+
+  .world-map-tooltip {
+    max-width: 12rem;
+
+    font-size: var(--font-size-small);
+  }
+
+  .world-map-bubbles {
+    display: none;
+  }
+
+  .world-map-fish {
+    bottom: 1rem;
+
+    width: 3rem;
+  }
+}
+
+/************************/
+/* MARK: Reduced motion */
+/************************/
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+    Respect user accessibility preferences
+    by disabling animations and transitions
+  */
+  /* 
+    Bronnen:
+    - https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+    - https://www.w3.org/WAI/WCAG21/quickref/
+  */
+  .world-map-country,
+  .top-countries-list-item,
+  .world-map-route,
+  .utrecht-marker-pulse,
+  .world-map-bubbles span,
+  .world-map-fish {
+    animation: none;
+    transition: none;
+  }
+}
