@@ -1,109 +1,76 @@
 ---
 // @ts-nocheck
 import "../styles/style.css";
+
+import * as d3 from "d3";
+import csvText from "../data/website_event-week.csv?raw";
+
 import MainAquarium from "../components/MainAquarium.astro";
- 
 import Header from "../partials/header.astro";
 import Footer from "../partials/footer.astro";
 import WorldMap from "../components/WorldMap.astro";
 import IntroText from "../components/IntroText.astro";
-import TimelineGraph from '../components/timeline-graph.astro';
-import AverageFish from '../components/average-fish.astro';
+import TimelineGraph from "../components/timeline-graph.astro";
+import AverageFish from "../components/average-fish.astro";
 import GuessTheFish from "../components/guess-the-fish.astro";
 import FishFacts from "../components/fish-details.astro";
 
-import fs from 'node:fs';
-import path from 'node:path';
- 
 const NULL_VALUE = "\\N";
- 
-async function loadCsvData(csvUrl: any) {
+
+function loadCsvData() {
   try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'website_event-week.csv');
-    const csvText = fs.readFileSync(filePath, 'utf-8');
-    
-    const rawData = parseCsv(csvText);
+    const rawData = d3.csvParse(csvText);
+
     return rawData.map(formatDataObject);
   } catch (error) {
-    console.error("Could not load CSV data server-side:", error);
+    console.error("Could not load CSV data:", error);
+
     return [];
   }
 }
- 
-function parseCsv(csvText: string) {
-  const lines = csvText.trim().split(/\r?\n/);
-  if (lines.length === 0) return [];
- 
-  const headers = parseCsvLine(lines[0]);
-  return lines.slice(1).map((line) => {
-    const values = parseCsvLine(line);
-    return headers.reduce((obj, key, index) => {
-      obj[key] = values[index] ?? "";
-      return obj;
-    }, {} as Record<string, string>);
-  });
-}
- 
-function parseCsvLine(line: string) {
-  const values: string[] = [];
-  let current = "";
-  let inQuotes = false;
- 
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
- 
-    if (char === '"') {
-      if (inQuotes && line[i + 1] === '"') {
-        current += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === ',' && !inQuotes) {
-      values.push(current);
-      current = "";
-    } else {
-      current += char;
-    }
-  }
- 
-  values.push(current);
-  return values;
-}
- 
-function formatDataObject(dataObject: Record<string, any>) {
-  const formattedObject: Record<string, any> = {};
+
+function formatDataObject(dataObject) {
+  const formattedObject = {};
+
   Object.entries(dataObject).forEach(([key, value]) => {
     formattedObject[key] = cleanValue(value);
   });
- 
+
   formattedObject.created_at = dataObject.created_at || null;
- 
+
   addFishData(formattedObject);
+
   return formattedObject;
 }
- 
-function cleanValue(value: string | null) {
+
+function cleanValue(value) {
   if (!value || value === NULL_VALUE) return null;
+
   return value.trim();
 }
- 
-function addFishData(dataObject: Record<string, any>) {
+
+function addFishData(dataObject) {
   const queryString = dataObject.url_query || dataObject.referrer_query;
+
   if (!queryString) {
     dataObject.fish_name = "Unknown";
     dataObject.snapshot_url = null;
+
     return;
   }
+
   const params = new URLSearchParams(queryString);
+
   dataObject.fish_name = params.get("fish") || "Unknown";
+
   const rawImageUrl = params.get("snapshotFishImageUrl");
+
   dataObject.snapshot_url = rawImageUrl
     ? decodeURIComponent(rawImageUrl)
     : null;
 }
- 
-const visData = loadCsvDataLocal();
+
+const visData = loadCsvData();
 ---
 
 <!doctype html>
