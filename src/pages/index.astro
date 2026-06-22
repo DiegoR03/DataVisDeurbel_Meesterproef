@@ -11,16 +11,17 @@ import TimelineGraph from '../components/timeline-graph.astro';
 import AverageFish from '../components/average-fish.astro';
 import GuessTheFish from "../components/guess-the-fish.astro";
 import FishFacts from "../components/fish-details.astro";
+
+import fs from 'node:fs';
+import path from 'node:path';
  
 const NULL_VALUE = "\\N";
  
 async function loadCsvData(csvUrl: any) {
   try {
-    const baseUrl = Astro.url.origin;
-    const response = await fetch(`${baseUrl}${csvUrl}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
- 
-    const csvText = await response.text();
+    const filePath = path.join(process.cwd(), 'public', 'data', 'website_event-week.csv');
+    const csvText = fs.readFileSync(filePath, 'utf-8');
+    
     const rawData = parseCsv(csvText);
     return rawData.map(formatDataObject);
   } catch (error) {
@@ -102,9 +103,7 @@ function addFishData(dataObject: Record<string, any>) {
     : null;
 }
  
-const CSV_URL = "/data/website_event-week.csv";
- 
-const visData = await loadCsvData(CSV_URL);
+const visData = loadCsvDataLocal();
 ---
 
 <!doctype html>
